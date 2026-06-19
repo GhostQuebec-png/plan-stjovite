@@ -93,6 +93,8 @@
   table.mx th{background:var(--bar); color:#fff; font-size:8.5px; font-weight:700; padding:4px 3px; text-align:center; line-height:1.15; border-right:1px solid #4a4a4a; vertical-align:middle;}
   table.mx th:last-child{border-right:none;}
   table.mx td{border:1px solid var(--ligne); height:34px; vertical-align:top; padding:3px 4px; font-size:9.5px; line-height:1.2;}
+  .matrice-bas{margin-top:10px;}
+  .matrice-bas table.mx td{height:56px;}
   table.mx td[contenteditable]:empty:focus{outline:2px solid var(--or);}
   .pied{margin-top:12px; padding-top:7px; border-top:1px solid var(--ligne); display:flex; justify-content:space-between; align-items:center; font-size:9px; color:var(--label); letter-spacing:.3px;}
   .pied .proprio{font-weight:700; color:#6f6f6a;}
@@ -110,6 +112,7 @@
     .meta{margin-bottom:5px;} .meta .champ{padding:3px 9px;} .regle-or{margin:4px 0 5px;}
     .ancrage{margin-bottom:5px; padding:5px 11px;}
     table.mx td{height:20px;} table.mx th{padding:2.5px;}
+    .matrice-bas table.mx td{height:44px;}
     .pied{margin-top:3px; padding-top:3px; font-size:8.5px;}
     /* Coupures propres : ne jamais scinder un bloc, une ligne ou la matrice */
     .bloc, .matrice{break-inside:avoid; page-break-inside:avoid;}
@@ -320,7 +323,7 @@
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
         <button class="btn rouge" onclick="window.print()">Imprimer / PDF</button>
-        <button class="btn clair btn-mail">Courriel</button>
+        <button class="btn clair btn-mail">Envoyer</button>
         <button class="btn clair btn-copier">Copier</button>
         <button class="btn clair btn-date">Dater aujourd'hui</button>
         <button class="btn clair btn-reset">Réinitialiser</button>
@@ -368,7 +371,7 @@
           </div>
           <div class="bloc">
             <div class="bloc-titre"><span>Comptoir</span><span class="fait-h">Fait</span></div>
-            <label class="ligne"><span class="txt">Fonds de caisse / tiroirs-caisses approvisionnés <span>(selon la procédure du restaurant)</span></span><input type="checkbox" class="ck"></label>
+            <label class="ligne"><span class="txt">Comptage obligatoire du coffre et signalement si problème rencontré</span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Remplissage <span>(condiments, verres, couverts, crème/lait, sucre)</span></span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Frigo <span>(propre, le plat d'eau présent, les dates, thermomètres, …)</span></span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Lait glacé et garnitures remplis et avec timer</span><input type="checkbox" class="ck"></label>
@@ -381,21 +384,20 @@
             <label class="ligne"><span class="txt">Bertha — nettoyage complet extérieur et intérieur <span>(close)</span></span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Station à poutine <span>(fromage remplis avec timers, sauce avec timer, …)</span></span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Glace <span>(salle à manger, station à boissons)</span></span><input type="checkbox" class="ck"></label>
+            <label class="ligne"><span class="txt">Nouvelles boissons <span>(sirops, garnitures, timers)</span></span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Rouleaux d'imprimantes</span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Poubelles</span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Balai-moppe</span><input type="checkbox" class="ck"></label>
           </div>
           </div>
           <div class="col">
-          <div class="matrice">
-            <div class="matrice-titre">Liste matrice de priorité</div>
-            <table class="mx"><thead><tr><th>1 — Santé et sécurité</th><th>2 — Qualité et service</th><th>3 — Confort et commodité</th><th>4 — Apparence</th></tr></thead>
-            <tbody>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-            </tbody></table>
+          <div class="bloc">
+            <div class="bloc-titre"><span>Extérieur</span><span class="fait-h">Fait</span></div>
+            <label class="ligne"><span class="txt">Contrôle de l'aspect extérieur</span><input type="checkbox" class="ck"></label>
+            <label class="ligne"><span class="txt">Poubelles extérieures</span><input type="checkbox" class="ck"></label>
+            <label class="ligne"><span class="txt">Terrasse</span><input type="checkbox" class="ck"></label>
+            <label class="ligne"><span class="txt">Conteneurs <span>(déchets et cartons)</span></span><input type="checkbox" class="ck"></label>
+            <label class="ligne"><span class="txt">Stationnement</span><input type="checkbox" class="ck"></label>
           </div>
           <div class="bloc">
             <div class="bloc-titre"><span>Hygiène alimentaire / propreté</span><span class="fait-h">Fait</span></div>
@@ -413,6 +415,17 @@
           </div>
           </div>
         </div>
+        <div class="matrice matrice-bas">
+          <div class="matrice-titre">Liste matrice de priorité</div>
+          <table class="mx"><thead><tr><th>1 — Santé et sécurité</th><th>2 — Qualité et service</th><th>3 — Confort et commodité</th><th>4 — Apparence</th></tr></thead>
+          <tbody>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+          </tbody></table>
+        </div>
         <div class="pied">
           <span>McDonald's St-Jovite #22028 — usage interne</span>
           <span class="proprio">© 2026 Romuald Luce · conçu et développé par Romuald Luce</span>
@@ -423,7 +436,7 @@
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
         <button class="btn rouge" onclick="window.print()">Imprimer / PDF</button>
-        <button class="btn clair btn-mail">Courriel</button>
+        <button class="btn clair btn-mail">Envoyer</button>
         <button class="btn clair btn-copier">Copier</button>
         <button class="btn clair btn-date">Dater aujourd'hui</button>
         <button class="btn clair btn-reset">Réinitialiser</button>
@@ -473,16 +486,6 @@
           </div>
           </div>
           <div class="col">
-          <div class="matrice">
-            <div class="matrice-titre">Liste matrice de priorité</div>
-            <table class="mx"><thead><tr><th>1 — Santé et sécurité</th><th>2 — Qualité et service</th><th>3 — Confort et commodité</th><th>4 — Apparence</th></tr></thead>
-            <tbody>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-            </tbody></table>
-          </div>
           <div class="bloc">
             <div class="bloc-titre"><span>Hygiène alimentaire</span><span class="fait-h">Fait</span></div>
             <label class="ligne"><span class="txt">Seau à linges timer + bonne concentration</span><input type="checkbox" class="ck"></label>
@@ -498,6 +501,17 @@
           </div>
           </div>
         </div>
+        <div class="matrice matrice-bas">
+          <div class="matrice-titre">Liste matrice de priorité</div>
+          <table class="mx"><thead><tr><th>1 — Santé et sécurité</th><th>2 — Qualité et service</th><th>3 — Confort et commodité</th><th>4 — Apparence</th></tr></thead>
+          <tbody>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+          </tbody></table>
+        </div>
         <div class="pied">
           <span>McDonald's St-Jovite #22028 — usage interne</span>
           <span class="proprio">© 2026 Romuald Luce · conçu et développé par Romuald Luce</span>
@@ -508,7 +522,7 @@
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
         <button class="btn rouge" onclick="window.print()">Imprimer / PDF</button>
-        <button class="btn clair btn-mail">Courriel</button>
+        <button class="btn clair btn-mail">Envoyer</button>
         <button class="btn clair btn-copier">Copier</button>
         <button class="btn clair btn-date">Dater aujourd'hui</button>
         <button class="btn clair btn-reset">Réinitialiser</button>
@@ -567,16 +581,6 @@
           </div>
           </div>
           <div class="col">
-          <div class="matrice">
-            <div class="matrice-titre">Liste matrice de priorité</div>
-            <table class="mx"><thead><tr><th>1 — Santé et sécurité</th><th>2 — Qualité et service</th><th>3 — Confort et commodité</th><th>4 — Apparence</th></tr></thead>
-            <tbody>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-              <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-            </tbody></table>
-          </div>
           <div class="bloc">
             <div class="bloc-titre"><span>Hygiène alimentaire</span><span class="fait-h">Fait</span></div>
             <label class="ligne"><span class="txt">Seau à linges timer + bonne concentration</span><input type="checkbox" class="ck"></label>
@@ -601,6 +605,17 @@
           </div>
           </div>
         </div>
+        <div class="matrice matrice-bas">
+          <div class="matrice-titre">Liste matrice de priorité</div>
+          <table class="mx"><thead><tr><th>1 — Santé et sécurité</th><th>2 — Qualité et service</th><th>3 — Confort et commodité</th><th>4 — Apparence</th></tr></thead>
+          <tbody>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
+          </tbody></table>
+        </div>
         <div class="pied">
           <span>McDonald's St-Jovite #22028 — usage interne</span>
           <span class="proprio">© 2026 Romuald Luce · conçu et développé par Romuald Luce</span>
@@ -611,7 +626,7 @@
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
         <button class="btn rouge" onclick="window.print()">Imprimer / PDF</button>
-        <button class="btn clair btn-mail">Courriel</button>
+        <button class="btn clair btn-mail">Envoyer</button>
         <button class="btn clair btn-copier">Copier</button>
         <button class="btn clair btn-date">Dater aujourd'hui</button>
         <button class="btn clair btn-reset">Réinitialiser</button>
@@ -1438,15 +1453,52 @@
     const old = btn.textContent; btn.textContent = msg; btn.disabled = true;
     setTimeout(()=>{ btn.textContent = old; btn.disabled = false; }, 1600);
   }
+  // --- Partage de la fiche en image (pi\u00e8ce jointe via le partage natif iOS) ---
+  let h2cPromesse = null;
+  function chargerH2C(){
+    if(h2cPromesse) return h2cPromesse;
+    h2cPromesse = new Promise((resolve, reject)=>{
+      if(window.html2canvas) return resolve(window.html2canvas);
+      const sc = document.createElement('script');
+      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      sc.onload = ()=> resolve(window.html2canvas);
+      sc.onerror = ()=> reject(new Error('html2canvas'));
+      document.head.appendChild(sc);
+    });
+    return h2cPromesse;
+  }
+  async function partagerFiche(v, btn){
+    const feuille = v.querySelector('.feuille');
+    if(!feuille) return;
+    const titre = (v.querySelector('.titre h1')?.textContent || 'Liste').trim();
+    const date = (v.querySelector('.in-date')?.value || '').trim();
+    let base = titre.replace(/[^0-9A-Za-z\u00C0-\u00FF]+/g,'_').replace(/_+/g,'_').replace(/^_|_$/g,'');
+    const nomFichier = base + (date ? '_'+date : '') + '.png';
+    const old = btn.textContent; btn.textContent = 'Pr\u00e9paration\u2026'; btn.disabled = true;
+    try{
+      const h2c = await chargerH2C();
+      const canvas = await h2c(feuille, {scale:2, backgroundColor:'#ffffff', useCORS:true});
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      const file = new File([blob], nomFichier, {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:titre, text: titre + (date ? ' \u2014 '+date : '')});
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download=nomFichier;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(()=>URL.revokeObjectURL(url), 1000);
+      }
+    }catch(e){
+      if(!(e && e.name === 'AbortError')){
+        alert("La g\u00e9n\u00e9ration de l'image a \u00e9chou\u00e9. Utilise \u00ab Imprimer / PDF \u00bb pour enregistrer ou envoyer la fiche.");
+      }
+    }finally{
+      btn.textContent = old; btn.disabled = false;
+    }
+  }
   vues.forEach(v => {
     const bMail = v.querySelector('.btn-mail');
-    if(bMail) bMail.addEventListener('click', ()=>{
-      const txt = genererRecap(v);
-      const titre = (v.querySelector('.titre h1')?.textContent || '').trim();
-      const date = (v.querySelector('.in-date')?.value || '').trim();
-      const sujet = titre + (date ? " — " + date : "");
-      location.href = "mailto:?subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(txt);
-    });
+    if(bMail) bMail.addEventListener('click', ()=> partagerFiche(v, bMail));
     const bCopier = v.querySelector('.btn-copier');
     if(bCopier) bCopier.addEventListener('click', async ()=>{
       const txt = genererRecap(v);
