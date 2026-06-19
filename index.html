@@ -95,6 +95,11 @@
   table.mx td{border:1px solid var(--ligne); height:34px; vertical-align:top; padding:3px 4px; font-size:9.5px; line-height:1.2;}
   .matrice-bas{margin-top:10px;}
   .matrice-bas table.mx td{height:56px;}
+  #vue-calendrier .barre-nav{align-items:center;}
+  .cal-statut{font-size:12px; color:var(--label); margin-left:auto;}
+  .cal-zone{height:calc(100vh - 56px); width:100%;}
+  .cal-frame{width:100%; height:100%; border:0; background:#fff; display:block;}
+  .cal-message{padding:48px 24px; text-align:center; color:var(--label); font-size:15px; line-height:1.5;}
   table.mx td[contenteditable]:empty:focus{outline:2px solid var(--or);}
   .pied{margin-top:12px; padding-top:7px; border-top:1px solid var(--ligne); display:flex; justify-content:space-between; align-items:center; font-size:9px; color:var(--label); letter-spacing:.3px;}
   .pied .proprio{font-weight:700; color:#6f6f6a;}
@@ -313,6 +318,7 @@
       <button class="tuile" data-vue="cuisine"><span class="puce"></span><div class="t-titre">Liste pré-quart — Cuisine</div><div class="t-ss">Production · chartes · hygiène</div></button>
       <button class="tuile" data-vue="repartition"><span class="puce"></span><div class="t-titre">Plan de répartition</div><div class="t-ss">Positionnement de l'équipe · tâches et objectifs</div></button>
       <button class="tuile" data-vue="postquart"><span class="puce"></span><div class="t-titre">Liste post-quart</div><div class="t-ss">Clôture et passation</div></button>
+      <button class="tuile" data-vue="calendrier"><span class="puce"></span><div class="t-titre">Calendrier événementiel</div><div class="t-ss">Événements régionaux · impact achalandage · météo</div></button>
     </div>
     <button class="btn-verrou" onclick="verrouiller()">Verrouiller la session</button>
     <div class="filigrane-bas">Conçu et développé par Romuald Luce · © 2026 · Tous droits réservés</div>
@@ -597,6 +603,7 @@
             <label class="ligne"><span class="txt">Vestiaires employés et salles de bain</span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Chambres froides — réfrigérateurs et congélateurs <span>(boîtes fermées, rien au sol, rotation FIFO)</span></span><input type="checkbox" class="ck"></label>
             <label class="ligne"><span class="txt">Entrepôt sec <span>(boîtes coupées, rotation effectuée)</span></span><input type="checkbox" class="ck"></label>
+          </div>
           <div class="bloc">
             <div class="bloc-titre"><span>Sécurité</span><span class="fait-h">Fait</span></div>
             <label class="ligne"><span class="txt">Sols secs et sans risque de glissade <span>(pancarte posée si zone mouillée)</span></span><input type="checkbox" class="ck"></label>
@@ -1254,6 +1261,17 @@
 
     </section>
 
+    <section id="vue-calendrier" class="cache">
+      <div class="barre-nav no-print">
+        <button class="btn clair" onclick="retourMenu()">← Menu</button>
+        <button class="btn clair" id="cal-refresh">Actualiser</button>
+        <span class="cal-statut" id="cal-statut"></span>
+      </div>
+      <div class="cal-zone">
+        <div class="cal-message" id="cal-message">Chargement du calendrier…</div>
+        <iframe class="cal-frame" id="cal-frame" title="Calendrier événementiel St-Jovite" style="display:none"></iframe>
+      </div>
+    </section>
 <script>
   function sha256(ascii) {
     const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
@@ -1305,7 +1323,7 @@
   const elCode = document.getElementById('ecran-code');
   const elMenu = document.getElementById('menu');
   const vues = Array.from(document.querySelectorAll('.vue'));
-  const tousEcrans = [elCode, elMenu, ...vues, document.getElementById('vue-repartition')];
+  const tousEcrans = [elCode, elMenu, ...vues, document.getElementById('vue-repartition'), document.getElementById('vue-calendrier')];
 
   function montrer(el){
     tousEcrans.forEach(x => x.classList.add('cache'));
@@ -1342,6 +1360,48 @@
   document.querySelectorAll('.tuile[data-vue]').forEach(b => {
     b.addEventListener('click', () => montrer(document.getElementById('vue-' + b.dataset.vue)));
   });
+  // --- Calendrier événementiel : rechargé depuis le gist à chaque ouverture ---
+  const GIST_CAL = 'https://gist.githubusercontent.com/GhostQuebec-png/374f968ebf5ab9ea5279b8f33fecfffe/raw';
+  const GIST_API = 'https://api.github.com/gists/374f968ebf5ab9ea5279b8f33fecfffe';
+  async function chargerCalendrier(){
+    const frame = document.getElementById('cal-frame');
+    const msg = document.getElementById('cal-message');
+    const statut = document.getElementById('cal-statut');
+    if(!frame) return;
+    if(msg){ msg.style.display=''; msg.textContent='Chargement du calendrier…'; }
+    frame.style.display='none';
+    let html = null, err = '';
+    try{
+      const r = await fetch(GIST_CAL + '?t=' + Date.now());
+      if(r.ok) html = await r.text(); else err = 'raw ' + r.status;
+    }catch(e){ err = 'raw ' + (e.name || 'err'); }
+    if(!html){
+      try{
+        const r2 = await fetch(GIST_API);
+        if(r2.ok){
+          const j = await r2.json();
+          const vals = Object.values(j.files);
+          const f = vals.find(x => /\.html$/i.test(x.filename)) || vals[0];
+          if(f && f.content) html = f.content;
+          else err += ' | api vide';
+        } else { err += ' | api ' + r2.status; }
+      }catch(e){ err += ' | api ' + (e.name || 'err'); }
+    }
+    if(html){
+      frame.srcdoc = html;
+      frame.style.display='';
+      if(msg) msg.style.display='none';
+      if(statut) statut.textContent = 'Chargé à ' + new Date().toLocaleTimeString('fr-CA',{hour:'2-digit',minute:'2-digit'});
+    } else {
+      frame.style.display='none';
+      if(msg){ msg.style.display=''; msg.innerHTML='Impossible de charger le calendrier.<br>Vérifie ta connexion, puis touche « Actualiser ».<br><span style=\"font-size:11px;color:#999\">(' + err + ')</span>'; }
+      if(statut) statut.textContent='';
+    }
+  }
+  const tuileCal = document.querySelector('.tuile[data-vue="calendrier"]');
+  if(tuileCal) tuileCal.addEventListener('click', chargerCalendrier);
+  const btnCalRefresh = document.getElementById('cal-refresh');
+  if(btnCalRefresh) btnCalRefresh.addEventListener('click', chargerCalendrier);
   function retourMenu(){ montrer(elMenu); }
   function verrouiller(){ leaderActuel = null; document.getElementById('qui').textContent = '—'; montrer(elCode); input.focus(); }
 
