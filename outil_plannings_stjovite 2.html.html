@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outil plannings — McDonald's St-Jovite #22028</title>
+<style>
+  :root{
+    --bg:#f4f5f3;--panel:#fff;--ink:#1b1d1a;--ink-soft:#5c615a;
+    --line:#e2e4df;--line-strong:#cdd0c9;--slate:#23271f;
+    --amber:#e8a317;--amber-deep:#b97e07;--amber-bg:#fbf2dd;
+    --alert:#c0392b;--alert-bg:#fbeae8;--ok:#2e7d52;--ok-bg:#e7f3ec;
+    --info:#2f5d8a;--info-bg:#e8eef6;--radius:14px;--tap:44px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%;}
+  .num{font-variant-numeric:tabular-nums;}
+
+  /* header + onglets */
+  header{position:sticky;top:0;z-index:30;background:var(--slate);color:#f3f4f0;padding:14px 16px 0;box-shadow:0 2px 10px rgba(0,0,0,.12);}
+  .h-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .h-top h1{font-size:18px;font-weight:700;margin:0;letter-spacing:.2px;}
+  .badge-rest{font-size:11px;font-weight:700;letter-spacing:.5px;background:var(--amber);color:#241a02;padding:2px 8px;border-radius:6px;}
+  .h-sub{font-size:12.5px;color:#b9bdb2;margin-top:2px;}
+  .tabs{display:flex;gap:18px;margin-top:12px;}
+  .tab{background:transparent;border:0;color:#cfd2c8;border-bottom:2px solid transparent;padding:9px 2px;font-weight:600;font-size:14.5px;cursor:pointer;}
+  .tab.on{color:#fff;border-bottom-color:var(--amber);}
+
+  .vue{display:none;}
+  .vue.active{display:block;}
+
+  /* boutons (sur fond clair) */
+  .btn{appearance:none;border:0;cursor:pointer;min-height:var(--tap);padding:0 14px;border-radius:10px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:6px;background:#3a3f33;color:#eef0ea;}
+  .btn:active{transform:translateY(1px);}
+  .btn.primary{background:var(--amber);color:#241a02;}
+  .btn.light{background:#e7e9e3;color:var(--ink);}
+  .btn.danger{background:#fff;color:var(--alert);border:1px solid #e0c4c0;}
+
+  .toolbar{max-width:1100px;margin:14px auto 0;padding:0 16px;display:flex;gap:8px;flex-wrap:wrap;}
+
+  /* dashboard */
+  .dash{max-width:1100px;margin:14px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 12px 10px;}
+  .stat .n{font-size:26px;font-weight:800;line-height:1;}
+  .stat .l{font-size:11.5px;color:var(--ink-soft);margin-top:6px;text-transform:uppercase;letter-spacing:.4px;}
+  .stat.alert .n{color:var(--alert);}
+  .stat.todo{border-color:var(--amber);}
+  .stat.todo .n{color:var(--amber-deep);}
+  .dash-note{max-width:1100px;margin:8px auto 0;padding:0 16px;font-size:12.5px;color:var(--ink-soft);}
+
+  .controls{max-width:1100px;margin:16px auto 0;padding:0 16px;}
+  .search{width:100%;min-height:var(--tap);border:1px solid var(--line-strong);border-radius:10px;padding:0 14px;font-size:16px;background:#fff;color:var(--ink);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .chip{border:1px solid var(--line-strong);background:#fff;color:var(--ink-soft);min-height:38px;padding:0 13px;border-radius:999px;font-size:13.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .chip.on{background:var(--slate);color:#fff;border-color:var(--slate);}
+  .chip .c{font-variant-numeric:tabular-nums;opacity:.7;font-weight:700;}
+
+  .list{max-width:1100px;margin:14px auto 60px;padding:0 16px;display:flex;flex-direction:column;gap:10px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  .card.incomplete{border-left:4px solid var(--amber);}
+  .card.unsched{opacity:.62;}
+  .row{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;min-height:60px;}
+  .avatar{width:38px;height:38px;border-radius:10px;flex:0 0 auto;background:var(--slate);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;letter-spacing:.5px;}
+  .who{flex:1;min-width:0;}
+  .who .name{font-weight:700;font-size:15.5px;}
+  .who .meta{font-size:12.5px;color:var(--ink-soft);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center;}
+  .tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.3px;}
+  .tag.min{background:var(--alert-bg);color:var(--alert);}
+  .tag.min2{background:#fbe7d6;color:#b56a09;}
+  .tag.maj{background:var(--ok-bg);color:var(--ok);}
+  .tag.nr{background:#eef0ea;color:var(--ink-soft);}
+  .tag.tp{background:var(--info-bg);color:var(--info);}
+  .tag.tpart{background:#f3eede;color:var(--amber-deep);}
+  .caret{flex:0 0 auto;color:var(--ink-soft);font-size:18px;transition:transform .18s;}
+  .card.open .caret{transform:rotate(90deg);}
+  .edit{display:none;border-top:1px solid var(--line);padding:14px;background:#fafbf9;}
+  .card.open .edit{display:block;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field.full{grid-column:1 / -1;}
+  label{font-size:12px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;}
+  input[type=text],input[type=number],input[type=date],input[type=time],select,textarea{width:100%;min-height:var(--tap);border:1px solid var(--line-strong);border-radius:9px;padding:8px 11px;font-size:15px;background:#fff;color:var(--ink);font-family:inherit;}
+  textarea{min-height:64px;resize:vertical;line-height:1.4;}
+  .checks{display:flex;flex-wrap:wrap;gap:8px;}
+  .check{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line-strong);background:#fff;border-radius:9px;padding:8px 11px;font-size:14px;cursor:pointer;min-height:42px;user-select:none;}
+  .check.on{background:var(--slate);color:#fff;border-color:var(--slate);}
+  .check input{display:none;}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line-strong);border-radius:9px;padding:10px 12px;}
+  .switch-row .lbl{font-size:14px;font-weight:600;}
+  .sw{position:relative;width:50px;height:30px;flex:0 0 auto;}
+  .sw input{display:none;}
+  .sw .track{position:absolute;inset:0;background:#cdd0c9;border-radius:999px;transition:.18s;}
+  .sw .knob{position:absolute;top:3px;left:3px;width:24px;height:24px;background:#fff;border-radius:50%;transition:.18s;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+  .sw input:checked + .track{background:var(--ok);}
+  .sw input:checked + .track + .knob{left:23px;}
+  .legal-note{grid-column:1/-1;display:none;border-radius:9px;padding:9px 12px;font-size:13px;font-weight:600;line-height:1.4;}
+  .legal-note.ecole{background:var(--alert-bg);color:var(--alert);border:1px solid #e8c4bf;}
+  .legal-note.libre{background:#fbe7d6;color:#8a5208;border:1px solid #ecd3ad;}
+  .card.is-ecole .legal-note.ecole{display:block;}
+  .card.is-libre .legal-note.libre{display:block;}
+  .edit-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;}
+  .saved{font-size:12.5px;color:var(--ok);font-weight:600;opacity:0;transition:opacity .2s;}
+  .saved.show{opacity:1;}
+  .rm{background:transparent;border:1px solid #e0c4c0;color:var(--alert);border-radius:9px;min-height:40px;padding:0 14px;font-size:13.5px;font-weight:600;cursor:pointer;}
+  .modepick{display:flex;gap:8px;}
+  .modebtn{flex:1;min-height:42px;border:1px solid var(--line-strong);background:#fff;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--ink-soft);}
+  .modebtn.on{background:var(--slate);color:#fff;border-color:var(--slate);}
+  .rot-note{font-size:12.5px;color:var(--ink-soft);background:#f0ece0;border:1px solid #e6dcc4;border-radius:9px;padding:8px 11px;line-height:1.4;}
+  .empty{max-width:1100px;margin:30px auto;padding:0 16px;text-align:center;color:var(--ink-soft);}
+
+  /* vue règles */
+  .wrap{max-width:1000px;margin:0 auto;padding:0 16px;}
+  .disclaimer{max-width:1000px;margin:14px auto 0;padding:11px 14px;background:var(--amber-bg);border:1px solid #ecd8a6;border-radius:10px;font-size:12.5px;color:#6b5410;}
+  h2{font-size:15px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--ink-soft);margin:26px 0 12px;}
+  .rule{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+  .rule .rhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+  .rule .t{font-size:15.5px;font-weight:700;}
+  .rule .v{font-size:13.5px;margin-top:7px;}
+  .rule .src{font-size:11.5px;color:var(--ink-soft);margin-top:8px;}
+  .pill{font-size:10.5px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:6px;text-transform:uppercase;}
+  .pill.legal{background:var(--alert-bg);color:var(--alert);}
+  .pill.interne{background:var(--amber-bg);color:var(--amber-deep);}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;}
+  .ctl{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+  .ctl .f{display:flex;flex-direction:column;gap:5px;min-width:180px;flex:1;}
+  .school{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line-strong);border-radius:9px;padding:8px 12px;min-height:var(--tap);}
+  .empinfo{font-size:12.5px;color:var(--ink-soft);margin:8px 0 0;}
+  table{width:100%;border-collapse:collapse;margin-top:12px;}
+  th,td{padding:7px 6px;text-align:left;font-size:14px;border-bottom:1px solid var(--line);}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);}
+  td .day{font-weight:700;}
+  .reposcell{display:flex;align-items:center;gap:6px;}
+  .timecell{display:flex;gap:6px;align-items:center;}
+  .timecell input{min-width:96px;}
+  .results{margin-top:16px;display:none;}
+  .results.show{display:block;}
+  .summ{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .kpi{background:#f7f8f5;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;}
+  .kpi b{font-size:18px;display:block;}
+  .check-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;margin-bottom:8px;font-size:14px;line-height:1.4;}
+  .check-item .ic{font-weight:900;flex:0 0 auto;}
+  .ci-ok{background:var(--ok-bg);color:#1c5236;}
+  .ci-ko{background:var(--alert-bg);color:#8a241a;}
+  .ci-warn{background:var(--amber-bg);color:#6b5410;}
+  .verdict{font-size:16px;font-weight:800;padding:12px 14px;border-radius:10px;margin-bottom:14px;}
+  .verdict.pass{background:var(--ok-bg);color:#1c5236;}
+  .verdict.fail{background:var(--alert-bg);color:#8a241a;}
+  pre{background:#1d201a;color:#e8ebe2;border-radius:12px;padding:14px;overflow:auto;font-size:12px;line-height:1.5;}
+
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--slate);color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.22s;z-index:60;max-width:90%;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .foot{max-width:1000px;margin:24px auto 50px;padding:0 16px;font-size:12px;color:var(--ink-soft);}
+
+  @media (max-width:680px){.dash{grid-template-columns:repeat(2,1fr);}.grid{grid-template-columns:1fr;}.who .meta{white-space:normal;}.tags{max-width:120px;}}
+  input:focus,select:focus,textarea:focus,.btn:focus-visible,.chip:focus-visible,.tab:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="h-top"><h1>Outil plannings</h1><span class="badge-rest">St-Jovite #22028 · 24/7</span></div>
+  <div class="h-sub">Base employés + moteur de règles</div>
+  <div class="tabs">
+    <button class="tab on" data-vue="employes">Employés</button>
+    <button class="tab" data-vue="regles">Règles &amp; validateur</button>
+  </div>
+</header>
+
+<!-- ===================== VUE EMPLOYÉS ===================== -->
+<section class="vue active" id="vue-employes">
+  <div class="toolbar">
+    <button class="btn primary" id="btnAdd">+ Ajouter</button>
+    <button class="btn" id="btnExport">Exporter JSON</button>
+    <button class="btn light" id="btnCopy">Copier JSON</button>
+    <button class="btn light" id="btnImport">Importer JSON</button>
+    <button class="btn danger" id="btnReset">Réinitialiser</button>
+    <input type="file" id="fileInput" accept="application/json,.json" hidden>
+  </div>
+  <section class="dash" id="dash"></section>
+  <div class="dash-note" id="dashNote"></div>
+  <div class="controls">
+    <input class="search" id="search" type="text" placeholder="Rechercher un nom, un poste, une fonction…" autocomplete="off">
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="list" id="list"></div>
+  <div class="empty" id="empty" style="display:none">Aucun employé ne correspond à ce filtre.</div>
+</section>
+
+<!-- ===================== VUE RÈGLES ===================== -->
+<section class="vue" id="vue-regles">
+  <div class="disclaimer"><b>Référence opérationnelle, pas un avis juridique.</b> Seuils issus de la CNESST et de la Loi sur les normes du travail. En cas de doute (mineur, étalement, convention), valide auprès de la CNESST (1-844-838-0808).</div>
+  <div class="wrap">
+    <h2>Contraintes du moteur</h2>
+    <div id="reglesList"></div>
+
+    <h2>Validateur de semaine</h2>
+    <div class="panel">
+      <div class="ctl">
+        <div class="f"><label>Employé</label>
+          <select id="vEmploye"><option value="">— Choisir un employé —</option><option value="manual">— Tester un statut manuel —</option></select>
+        </div>
+        <div class="f" id="manualWrap" style="display:none"><label>Statut</label>
+          <select id="statut">
+            <option value="majeur">Majeur (18 ans et +)</option>
+            <option value="mineur_ecole">Mineur — tenu d'aller à l'école</option>
+            <option value="mineur_libre">Mineur — non tenu (diplômé)</option>
+          </select>
+        </div>
+        <div class="f" style="flex:0 0 auto"><label>Période</label>
+          <div class="school"><span style="font-size:14px;font-weight:600">Scolaire</span><label class="sw"><input type="checkbox" id="scolaire" checked><span class="track"></span><span class="knob"></span></label></div>
+        </div>
+        <div class="f" id="rotWrap" style="display:none;flex:0 0 auto"><label>Semaine (rotation)</label>
+          <select id="semaineRot"><option value="A">Semaine A</option><option value="B">Semaine B</option></select>
+        </div>
+      </div>
+      <div class="empinfo" id="empInfo" style="display:none"></div>
+      <table>
+        <thead><tr><th>Jour</th><th>Repos</th><th>Début → Fin</th></tr></thead>
+        <tbody id="grid"></tbody>
+      </table>
+      <div style="margin-top:14px">
+        <button class="btn primary" id="btnCheck">Vérifier la semaine</button>
+        <button class="btn light" id="btnClear" style="margin-left:8px">Vider la grille</button>
+      </div>
+      <div class="results" id="results"></div>
+    </div>
+
+    <h2>Règles figées (format machine)</h2>
+    <button class="btn light" id="copyJson" style="margin-bottom:10px">Copier le JSON des règles</button>
+    <pre id="jsonOut"></pre>
+  </div>
+  <div class="foot">Le validateur lit le statut et les jours de repos directement depuis la fiche employé. Prochaine étape : le générateur d'horaires s'appuiera sur ces mêmes données et règles pour produire les plannings automatiquement.</div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ======================= DONNÉES PARTAGÉES ======================= */
+const STORE_KEY="mcdo_22028_employes_v2";
+const POSTES=["Cuisine","Montage","Comptoir","Service au volant (SAV)","McCafé","Salle / Entretien","Leader d'équipe","Gérant de quart","Instructeur"];
+const JC=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+const JL=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+const STATUTS={nr:{court:"Statut ?",cls:"nr"},majeur:{court:"Majeur",cls:"maj"},mineur_ecole:{court:"MINEUR · école",cls:"min"},mineur_libre:{court:"Mineur",cls:"min2"}};
+
+function seed(){
+  const raw=[
+    ["Anouar","Zahira"],["Beaulne","Denis"],["Beauvais Bondu","Xavier"],
+    ["Berrezoug","Ayoub"],["Bouriche","Hamza"],["Brousseau-Fortin","Naomie"],["Brunet","Samuel"],
+    ["Camara","Issa"],["Campbell","Marie-Pier"],["Ceinor","Winie Christelle"],
+    ["Dagenais","Aube"],["Deraspe","Charles-Émile"],["Diny","Rania"],["Ducharme Ali-Khodja","Emil"],
+    ["Duplessis","Marie-Josée"],["El Bchir","Yassmine"],["El Ouagari","Mustapha"],["El-Khanchouf","Abdel Mounime"],
+    ["Etoundi Ndo","Benoit"],["Gaudreault","Malick"],["Guerrero","Damien"],
+    ["Jolicoeur","Emmy"],["Kouatcho","Romalie Ghisleine"],["Labelle Wagner","Louka"],["Labelle","Maxime"],
+    ["Labelle","Théo"],["Lachhab","Abderrazzak"],["Lamontagne","Patrick"],["Lapointe","Jimmy"],
+    ["Leduc","Thomas"],["Lévesque","Loïc"],["Luce","Romuald"],["Marou","Aissa"],
+    ["Mercier","Raymond"],["Mharzi","Fatima Ezzahra"],["Mouktani","Abderrahman"],["Moussadik","Zakaria"],
+    ["Nafi","Hamza"],["Ouassir","Bader"],["Poirier","Benjamin"],["Raherisoa","Irhisnat Estelle"],
+    ["Raymond","Valérie"],["Richer","Noah"],["Richer","Théo"],["Robert","Charles"],
+    ["Royer","Zachary"],["Saktiwy","Achraf"],["Tamayo Campano","Alessandro"],["Therrien","William"],
+    ["Togbui","Koffi Anselme"],["Ybanez","Michael"]
+  ];
+  const fonctions={
+    "Duplessis|Marie-Josée":{f:"1re assistante gérant (à vérifier)",pl:false,st:"majeur",rot:true},
+    "Guerrero|Damien":{f:"Gérant restaurant (à vérifier)",pl:false,st:"majeur",rot:true},
+    "Luce|Romuald":{f:"2e assistant gérant",pl:false,st:"majeur",rot:true},
+    "Lachhab|Abderrazzak":{f:"Gérant de quart (à vérifier)",pl:true}
+  };
+  return raw.map((r,i)=>{const pre=fonctions[r[0]+"|"+r[1]]||{};return{id:"e"+(i+1),nom:r[0],prenom:r[1],fonction:pre.f||"",planifiable:pre.pl===undefined?true:pre.pl,statut:pre.st||"nr",naissance:"",type:"nr",hMax:"",hMin:"",postes:[],reposMode:pre.rot?"rotation":"fixe",repos:pre.rot?["Jeu","Ven"]:[],reposB:pre.rot?["Sam","Dim"]:[],dispo:""};});
+}
+
+let data=load(),filter="all",query="";
+const openSet=new Set();
+function normalize(e){e.repos=Array.isArray(e.repos)?e.repos:[];e.reposB=Array.isArray(e.reposB)?e.reposB:[];e.reposMode=e.reposMode==="rotation"?"rotation":"fixe";return e;}
+function load(){try{const s=localStorage.getItem(STORE_KEY);if(s){const d=JSON.parse(s);if(Array.isArray(d)&&d.length)return d.map(normalize);}}catch(e){}return seed();}
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1800);}
+function initials(e){return ((e.prenom||" ").trim()[0]||"")+((e.nom||" ").trim()[0]||"");}
+function isMineur(e){return e.statut==="mineur_ecole"||e.statut==="mineur_libre";}
+function isIncomplete(e){if(!e.planifiable)return false;return e.statut==="nr"||e.type==="nr"||!e.hMax||e.postes.length===0;}
+function reposLabel(e){if(e.reposMode==="rotation"){const a=e.repos.length?e.repos.join("+"):"—",b=e.reposB.length?e.reposB.join("+"):"—";return `Repos rotation ${a} / ${b}`;}return e.repos.length?("Repos "+e.repos.join("+")):null;}
+
+/* ======================= VUE EMPLOYÉS ======================= */
+function renderDash(){
+  const p=data.filter(e=>e.planifiable);
+  const me=p.filter(e=>e.statut==="mineur_ecole").length,maj=p.filter(e=>e.statut==="majeur").length,nr=p.filter(e=>e.statut==="nr").length,inc=p.filter(isIncomplete).length;
+  const cells=[{n:p.length,l:"Planifiables",cls:""},{n:me,l:"Mineurs · école (nuit interdite)",cls:"alert"},{n:maj,l:"Majeurs",cls:""},{n:nr,l:"Statut à confirmer",cls:""},{n:inc,l:"Fiches incomplètes",cls:"todo"}];
+  document.getElementById("dash").innerHTML=cells.map(c=>`<div class="stat ${c.cls}"><div class="n num">${c.n}</div><div class="l">${c.l}</div></div>`).join("");
+  document.getElementById("dashNote").textContent=`${data.length} fiches au total · ${data.length-p.length} hors planification (direction/gérants). `+(inc>0?`${inc} fiche(s) à compléter avant de bâtir un horaire.`:`Toutes les fiches planifiables sont complètes.`);
+}
+function renderChips(){
+  const p=data.filter(e=>e.planifiable);
+  const defs=[{k:"all",label:"Tous",c:data.length},{k:"incomplete",label:"À compléter",c:p.filter(isIncomplete).length},{k:"mineur",label:"Mineurs",c:p.filter(isMineur).length},{k:"majeur",label:"Majeurs",c:p.filter(e=>e.statut==="majeur").length},{k:"plein",label:"Temps plein",c:p.filter(e=>e.type==="plein").length},{k:"partiel",label:"Temps partiel",c:p.filter(e=>e.type==="partiel").length},{k:"unsched",label:"Hors planif.",c:data.length-p.length}];
+  document.getElementById("chips").innerHTML=defs.map(d=>`<button class="chip ${filter===d.k?'on':''}" data-k="${d.k}">${d.label} <span class="c">${d.c}</span></button>`).join("");
+  document.querySelectorAll("#chips .chip").forEach(ch=>ch.onclick=()=>{filter=ch.dataset.k;renderChips();renderList();});
+}
+function passes(e){
+  if(filter==="incomplete"&&!isIncomplete(e))return false;
+  else if(filter==="mineur"&&!isMineur(e))return false;
+  else if(filter==="majeur"&&e.statut!=="majeur")return false;
+  else if(filter==="plein"&&e.type!=="plein")return false;
+  else if(filter==="partiel"&&e.type!=="partiel")return false;
+  else if(filter==="unsched"&&e.planifiable)return false;
+  if(query){const hay=(e.prenom+" "+e.nom+" "+e.fonction+" "+e.postes.join(" ")).toLowerCase();if(!hay.includes(query))return false;}
+  return true;
+}
+function statTag(e){const s=STATUTS[e.statut]||STATUTS.nr;return `<span class="tag ${s.cls}">${s.court}</span>`;}
+function typeTag(e){return e.type==="plein"?`<span class="tag tp">TP</span>`:e.type==="partiel"?`<span class="tag tpart">T.part</span>`:``;}
+function renderList(){
+  const list=document.getElementById("list"),shown=data.filter(passes);
+  document.getElementById("empty").style.display=shown.length?"none":"block";
+  list.innerHTML=shown.map(cardHTML).join("");
+  shown.forEach(wireCard);
+}
+function cardHTML(e){
+  const open=openSet.has(e.id),inc=isIncomplete(e);
+  const cls=["card",open?"open":"",inc?"incomplete":"",!e.planifiable?"unsched":"",e.statut==="mineur_ecole"?"is-ecole":"",e.statut==="mineur_libre"?"is-libre":""].join(" ").trim();
+  const bits=[];
+  if(e.fonction)bits.push(e.fonction);
+  if(e.hMax)bits.push(e.hMax+" h/sem max");
+  if(e.postes.length)bits.push(e.postes.length+" poste(s)");
+  if(!e.planifiable)bits.unshift("Hors planification");
+  const rl=reposLabel(e);if(rl)bits.push(rl);
+  return `<div class="${cls}" data-id="${e.id}"><div class="row" data-toggle><div class="avatar">${esc(initials(e).toUpperCase())}</div><div class="who"><div class="name">${esc(e.prenom)} ${esc(e.nom)}</div><div class="meta">${esc(bits.length?bits.join(" · "):"À compléter")}</div></div><div class="tags">${statTag(e)}${typeTag(e)}</div><div class="caret">›</div></div><div class="edit">${editHTML(e)}</div></div>`;
+}
+function editHTML(e){
+  const posteChecks=POSTES.map(p=>{const on=e.postes.includes(p);return `<label class="check ${on?'on':''}" data-poste="${esc(p)}"><input type="checkbox" ${on?'checked':''}>${esc(p)}</label>`;}).join("");
+  const reposA=JC.map(j=>`<label class="check ${e.repos.includes(j)?'on':''}" data-repos="${j}"><input type="checkbox" ${e.repos.includes(j)?'checked':''}>${j}</label>`).join("");
+  const reposBchk=JC.map(j=>`<label class="check ${e.reposB.includes(j)?'on':''}" data-reposb="${j}"><input type="checkbox" ${e.reposB.includes(j)?'checked':''}>${j}</label>`).join("");
+  const rot=e.reposMode==="rotation";
+  return `<div class="grid">
+    <div class="field"><label>Prénom</label><input type="text" data-f="prenom" value="${esc(e.prenom)}"></div>
+    <div class="field"><label>Nom</label><input type="text" data-f="nom" value="${esc(e.nom)}"></div>
+    <div class="field full"><label>Fonction</label><input type="text" data-f="fonction" placeholder="Équipier, leader, gérant de quart, instructeur…" value="${esc(e.fonction)}"></div>
+    <div class="field full"><div class="switch-row"><span class="lbl">Inclure dans la planification</span><label class="sw"><input type="checkbox" data-f="planifiable" ${e.planifiable?'checked':''}><span class="track"></span><span class="knob"></span></label></div></div>
+    <div class="field full"><label>Statut</label><select data-f="statut">
+      <option value="nr" ${e.statut==="nr"?"selected":""}>Non renseigné</option>
+      <option value="majeur" ${e.statut==="majeur"?"selected":""}>Majeur (18 ans et +)</option>
+      <option value="mineur_ecole" ${e.statut==="mineur_ecole"?"selected":""}>Mineur — tenu d'aller à l'école</option>
+      <option value="mineur_libre" ${e.statut==="mineur_libre"?"selected":""}>Mineur — non tenu (diplômé / fin d'obligation)</option>
+    </select></div>
+    <div class="field"><label>Date de naissance (option)</label><input type="date" data-f="naissance" value="${esc(e.naissance)}"></div>
+    <div class="legal-note ecole">Tenu d'aller à l'école : doit être chez lui entre 23 h et 6 h (aucun quart de nuit), max 17 h/sem et 10 h du lun. au ven. en période scolaire, jamais pendant les heures de classe.</div>
+    <div class="legal-note libre">Mineur non tenu à l'école : pas de couvre-feu ni de plafond légal, mais reste un mineur (vigilance SST). Vérifie qu'il a bien terminé son obligation scolaire avant de le mettre de nuit.</div>
+    <div class="field"><label>Type d'emploi</label><select data-f="type">
+      <option value="nr" ${e.type==="nr"?"selected":""}>Non renseigné</option>
+      <option value="plein" ${e.type==="plein"?"selected":""}>Temps plein</option>
+      <option value="partiel" ${e.type==="partiel"?"selected":""}>Temps partiel</option>
+    </select></div>
+    <div class="field"><label>Heures max / semaine</label><input type="number" inputmode="numeric" min="0" max="80" data-f="hMax" value="${esc(e.hMax)}"></div>
+    <div class="field full"><label>Heures min / semaine (option)</label><input type="number" inputmode="numeric" min="0" max="80" data-f="hMin" value="${esc(e.hMin)}"></div>
+    <div class="field full"><label>Postes possibles</label><div class="checks" data-group="postes">${posteChecks}</div></div>
+    <div class="field full"><label>Repos</label><div class="modepick"><button type="button" class="modebtn ${!rot?'on':''}" data-mode="fixe">Repos fixe</button><button type="button" class="modebtn ${rot?'on':''}" data-mode="rotation">Alternance 2 semaines</button></div></div>
+    <div class="field full"><label class="lblrepos">${rot?'Semaine A — jours de repos':'Jours de repos'}</label><div class="checks" data-group="repos">${reposA}</div></div>
+    <div class="field full repos-rot" style="${rot?'':'display:none'}"><label>Semaine B — jours de repos</label><div class="checks" data-group="reposb">${reposBchk}</div></div>
+    <div class="field full repos-rot" style="${rot?'':'display:none'}"><div class="rot-note">L'alternance bascule chaque semaine entre A et B. Le validateur permet de tester l'une ou l'autre.</div></div>
+    <div class="field full"><label>Disponibilités / contraintes</label><textarea data-f="dispo" placeholder="Ex. : étudiant, dispo soir et weekend seulement ; pas avant 16 h les jours d'école ; etc.">${esc(e.dispo)}</textarea></div>
+  </div>
+  <div class="edit-foot"><button class="rm" data-rm>Supprimer cette fiche</button><span class="saved" data-saved>Enregistré</span></div>`;
+}
+function wireCard(e){
+  const el=document.querySelector(`#list .card[data-id="${e.id}"]`);if(!el)return;
+  el.querySelector("[data-toggle]").addEventListener("click",()=>{if(openSet.has(e.id))openSet.delete(e.id);else openSet.add(e.id);el.classList.toggle("open");});
+  const flash=()=>{const s=el.querySelector("[data-saved]");if(s){s.classList.add("show");clearTimeout(s._t);s._t=setTimeout(()=>s.classList.remove("show"),1100);}};
+  const touch=()=>{save();renderDash();flash();refreshSummary(e,el);};
+  el.querySelectorAll("[data-f]").forEach(inp=>{
+    const f=inp.dataset.f,evt=(inp.type==="checkbox"||inp.tagName==="SELECT")?"change":"input";
+    inp.addEventListener(evt,()=>{
+      if(inp.type==="checkbox")e[f]=inp.checked;else e[f]=inp.value;
+      if(f==="statut"){el.classList.toggle("is-ecole",e.statut==="mineur_ecole");el.classList.toggle("is-libre",e.statut==="mineur_libre");}
+      if(f==="planifiable")el.classList.toggle("unsched",!e.planifiable);
+      touch();
+    });
+  });
+  el.querySelectorAll('[data-group="postes"] .check').forEach(c=>c.addEventListener("click",ev=>{ev.preventDefault();const p=c.dataset.poste,i=e.postes.indexOf(p);if(i>=0)e.postes.splice(i,1);else e.postes.push(p);c.classList.toggle("on");touch();}));
+  el.querySelectorAll('[data-group="repos"] .check').forEach(c=>c.addEventListener("click",ev=>{ev.preventDefault();const j=c.dataset.repos,i=e.repos.indexOf(j);if(i>=0)e.repos.splice(i,1);else e.repos.push(j);c.classList.toggle("on");touch();}));
+  el.querySelectorAll('[data-group="reposb"] .check').forEach(c=>c.addEventListener("click",ev=>{ev.preventDefault();const j=c.dataset.reposb,i=e.reposB.indexOf(j);if(i>=0)e.reposB.splice(i,1);else e.reposB.push(j);c.classList.toggle("on");touch();}));
+  el.querySelectorAll('.modebtn').forEach(b=>b.addEventListener("click",()=>{e.reposMode=b.dataset.mode;el.querySelectorAll('.modebtn').forEach(x=>x.classList.toggle('on',x.dataset.mode===e.reposMode));const r=e.reposMode==='rotation';el.querySelectorAll('.repos-rot').forEach(x=>x.style.display=r?'':'none');const lr=el.querySelector('.lblrepos');if(lr)lr.textContent=r?'Semaine A — jours de repos':'Jours de repos';touch();}));
+  el.querySelector("[data-rm]").addEventListener("click",()=>{if(confirm(`Supprimer la fiche de ${e.prenom} ${e.nom} ?`)){data=data.filter(x=>x.id!==e.id);openSet.delete(e.id);save();renderAll();toast("Fiche supprimée");}});
+}
+function refreshSummary(e,el){
+  el.classList.toggle("incomplete",isIncomplete(e));
+  const bits=[];
+  if(e.fonction)bits.push(e.fonction);
+  if(e.hMax)bits.push(e.hMax+" h/sem max");
+  if(e.postes.length)bits.push(e.postes.length+" poste(s)");
+  if(!e.planifiable)bits.unshift("Hors planification");
+  const rl=reposLabel(e);if(rl)bits.push(rl);
+  el.querySelector(".meta").textContent=bits.length?bits.join(" · "):"À compléter";
+  el.querySelector(".name").textContent=`${e.prenom} ${e.nom}`;
+  el.querySelector(".avatar").textContent=initials(e).toUpperCase();
+  el.querySelector(".tags").innerHTML=statTag(e)+typeTag(e);
+}
+function renderAll(){renderDash();renderChips();renderList();}
+function addEmp(){const e={id:"e"+Date.now(),nom:"",prenom:"Nouvel employé",fonction:"",planifiable:true,statut:"nr",naissance:"",type:"nr",hMax:"",hMin:"",postes:[],reposMode:"fixe",repos:[],reposB:[],dispo:""};data.unshift(e);openSet.add(e.id);filter="all";query="";document.getElementById("search").value="";save();renderAll();window.scrollTo({top:0,behavior:"smooth"});}
+function payload(){return{restaurant:"McDonald's St-Jovite #22028",exporte_le:new Date().toISOString(),version:2,employes:data};}
+function exportJSON(){const blob=new Blob([JSON.stringify(payload(),null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="employes_stjovite_"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast("Fichier JSON exporté");}
+async function copyJSON(){const txt=JSON.stringify(payload(),null,2);try{await navigator.clipboard.writeText(txt);toast("JSON copié");}catch(e){const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("JSON copié");}catch(_){toast("Copie impossible — utilise Exporter");}ta.remove();}}
+function importJSON(file){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);const arr=Array.isArray(d)?d:(d.employes||null);if(!Array.isArray(arr))throw 0;data=arr.map((e,i)=>({id:e.id||("e"+i+Date.now()),nom:e.nom||"",prenom:e.prenom||"",fonction:e.fonction||"",planifiable:e.planifiable!==false,statut:e.statut||"nr",naissance:e.naissance||"",type:e.type||"nr",hMax:e.hMax||"",hMin:e.hMin||"",postes:Array.isArray(e.postes)?e.postes:[],reposMode:e.reposMode==="rotation"?"rotation":"fixe",repos:Array.isArray(e.repos)?e.repos:[],reposB:Array.isArray(e.reposB)?e.reposB:[],dispo:e.dispo||""}));openSet.clear();save();renderAll();toast("Données importées ("+data.length+" fiches)");}catch(err){toast("Fichier JSON invalide");}};r.readAsText(file);}
+function resetAll(){if(confirm("Réinitialiser la base sur les 51 fiches d'origine ? Toutes tes modifications seront perdues.")){data=seed();openSet.clear();save();renderAll();toast("Base réinitialisée");}}
+
+document.getElementById("btnAdd").onclick=addEmp;
+document.getElementById("btnExport").onclick=exportJSON;
+document.getElementById("btnCopy").onclick=copyJSON;
+document.getElementById("btnReset").onclick=resetAll;
+document.getElementById("btnImport").onclick=()=>document.getElementById("fileInput").click();
+document.getElementById("fileInput").onchange=e=>{if(e.target.files[0])importJSON(e.target.files[0]);e.target.value="";};
+document.getElementById("search").addEventListener("input",e=>{query=e.target.value.trim().toLowerCase();renderList();});
+
+/* ======================= MOTEUR DE RÈGLES ======================= */
+const REGLES={
+  meta:{restaurant:"McDonald's St-Jovite #22028",ouverture:"24/7",verifie_le:"2026-06-23"},
+  legal:{
+    age_minimal:{valeur:14,note:"Moins de 14 ans : seulement emplois d'exception + consentement parental écrit (formulaire CNESST).",source:"CNESST – Travail des jeunes"},
+    mineur_ecole_couvre_feu:{debut:"23:00",fin:"06:00",note:"Le jeune tenu d'aller à l'école doit être chez lui entre 23 h et 6 h, même l'été, les fins de semaine et les congés. Aucun quart de nuit.",source:"CNESST – Fréquentation scolaire et horaire de travail"},
+    mineur_ecole_heures_periode_scolaire:{max_semaine:17,max_lun_ven:10,note:"Ne s'applique pas durant les congés de plus de 7 jours consécutifs (été, relâche, Fêtes).",source:"LNT / Loi sur l'encadrement du travail des enfants (1er sept. 2023)"},
+    repos_hebdomadaire_h:{valeur:32,note:"Au moins 32 h consécutives de repos par semaine.",source:"LNT art. 78"},
+    pause_repas_min:{apres_h:5,duree_min:30,note:"Pause-repas de 30 min après 5 h consécutives ; payée si l'employé doit rester à son poste.",source:"LNT art. 79"},
+    semaine_normale_h:{valeur:40,note:"Au-delà : heures supplémentaires à 1,5×.",source:"LNT"},
+    droit_refus_h_semaine:{valeur:50,note:"L'employé peut refuser au-delà de 50 h/sem ou plus de 14 h par 24 h.",source:"LNT"},
+    preavis_horaire_jours:{valeur:5,note:"Modification d'horaire : préavis d'au moins 5 jours, sinon indemnité.",source:"LNT"},
+    amendes:{base:"600 $ à 6 000 $",recidive:"1 200 $ à 12 000 $",source:"LNT – travail des enfants"}
+  },
+  interne:{
+    repos_entre_quarts_h:{valeur:10,note:"Règle interne (non exigée par la LNT) : au moins 10 h entre la fin d'un quart et le début du suivant.",source:"Politique restaurant"},
+    jours_repos_consecutifs:{valeur:2,note:"Règle interne : au moins 2 jours de repos consécutifs par semaine. Plus stricte que le 32 h légal, donc le couvre déjà.",source:"Politique restaurant"}
+  }
+};
+function ruleCard(t,v,src,type){return `<div class="rule"><div class="rhead"><span class="t">${t}</span><span class="pill ${type}">${type==='legal'?'Obligation légale':'Règle interne'}</span></div><div class="v">${v}</div><div class="src">${src}</div></div>`;}
+function renderRegles(){
+  const L=REGLES.legal,I=REGLES.interne;
+  document.getElementById("reglesList").innerHTML=[
+    ruleCard("Âge minimal : 14 ans",L.age_minimal.note,L.age_minimal.source,"legal"),
+    ruleCard("Mineur école — couvre-feu 23 h à 6 h",L.mineur_ecole_couvre_feu.note,L.mineur_ecole_couvre_feu.source,"legal"),
+    ruleCard("Mineur école — max 17 h/sem, 10 h lun-ven",L.mineur_ecole_heures_periode_scolaire.note,L.mineur_ecole_heures_periode_scolaire.source,"legal"),
+    ruleCard("Repos hebdomadaire — 32 h consécutives",L.repos_hebdomadaire_h.note,L.repos_hebdomadaire_h.source,"legal"),
+    ruleCard("Pause-repas — 30 min après 5 h",L.pause_repas_min.note,L.pause_repas_min.source,"legal"),
+    ruleCard("Heures supplémentaires — au-delà de 40 h",L.semaine_normale_h.note,L.semaine_normale_h.source,"legal"),
+    ruleCard("Préavis de modification d'horaire — 5 jours",L.preavis_horaire_jours.note,L.preavis_horaire_jours.source,"legal"),
+    ruleCard("10 h de récupération entre deux quarts",I.repos_entre_quarts_h.note,I.repos_entre_quarts_h.source,"interne"),
+    ruleCard("2 jours de repos consécutifs",I.jours_repos_consecutifs.note,I.jours_repos_consecutifs.source,"interne")
+  ].join("");
+}
+function renderGrid(){
+  document.getElementById("grid").innerHTML=JL.map((j,i)=>`<tr data-d="${i}"><td class="day">${j}</td><td><div class="reposcell"><input type="checkbox" data-repos style="width:22px;height:22px"></div></td><td><div class="timecell"><input type="time" data-start><span>→</span><input type="time" data-end></div></td></tr>`).join("");
+  document.querySelectorAll('#grid [data-repos]').forEach(cb=>cb.addEventListener("change",e=>{const tr=e.target.closest("tr"),on=e.target.checked;tr.querySelector("[data-start]").disabled=on;tr.querySelector("[data-end]").disabled=on;if(on){tr.querySelector("[data-start]").value="";tr.querySelector("[data-end]").value="";}}));
+}
+function populateEmployes(){
+  const sel=document.getElementById("vEmploye");
+  const cur=sel.value;
+  const planif=data.filter(e=>e.planifiable).sort((a,b)=>(a.nom+a.prenom).localeCompare(b.nom+b.prenom));
+  const gestion=data.filter(e=>!e.planifiable&&e.reposMode==="rotation").sort((a,b)=>(a.nom+a.prenom).localeCompare(b.nom+b.prenom));
+  let html=`<option value="">— Choisir un employé —</option><option value="manual">— Tester un statut manuel —</option>`;
+  html+=`<optgroup label="Équipiers">`+planif.map(e=>`<option value="${e.id}">${esc(e.nom)}, ${esc(e.prenom)}</option>`).join("")+`</optgroup>`;
+  if(gestion.length)html+=`<optgroup label="Gestion (repos en rotation)">`+gestion.map(e=>`<option value="${e.id}">${esc(e.nom)}, ${esc(e.prenom)}</option>`).join("")+`</optgroup>`;
+  sel.innerHTML=html;
+  if([...sel.options].some(o=>o.value===cur))sel.value=cur;
+}
+function reposJoursFor(emp){
+  if(!emp)return [];
+  if(emp.reposMode==="rotation")return document.getElementById("semaineRot").value==="B"?emp.reposB:emp.repos;
+  return emp.repos;
+}
+function applyReposFromEmp(emp){
+  const jours=reposJoursFor(emp);
+  document.querySelectorAll("#grid tr").forEach(tr=>{
+    const i=+tr.dataset.d,cb=tr.querySelector("[data-repos]"),s=tr.querySelector("[data-start]"),en=tr.querySelector("[data-end]");
+    const repos=jours.includes(JC[i]);
+    cb.checked=!!repos;s.disabled=!!repos;en.disabled=!!repos;
+    if(repos){s.value="";en.value="";}
+  });
+}
+function onSelectEmploye(){
+  const v=document.getElementById("vEmploye").value;
+  const manualWrap=document.getElementById("manualWrap");
+  const info=document.getElementById("empInfo");
+  const rotWrap=document.getElementById("rotWrap");
+  if(v==="manual"){manualWrap.style.display="";info.style.display="none";rotWrap.style.display="none";return;}
+  if(v===""){manualWrap.style.display="none";info.style.display="none";rotWrap.style.display="none";applyReposFromEmp(null);return;}
+  const emp=data.find(x=>x.id===v);if(!emp)return;
+  rotWrap.style.display=emp.reposMode==="rotation"?"":"none";
+  applyReposFromEmp(emp);
+  const lib={majeur:"Majeur (18 ans +)",mineur_ecole:"Mineur tenu d'aller à l'école — couvre-feu 23 h-6 h",mineur_libre:"Mineur non tenu (diplômé)",nr:"Statut non renseigné"}[emp.statut];
+  if(emp.statut==="nr"){
+    manualWrap.style.display="";
+    info.style.display="";info.innerHTML=`<b>${esc(emp.prenom)} ${esc(emp.nom)}</b> — statut non renseigné dans sa fiche. Choisis-le ci-dessus pour ce test (et pense à le compléter dans l'onglet Employés).`;
+  }else{
+    manualWrap.style.display="none";
+    const h=emp.hMax?` · max ${emp.hMax} h/sem`:"";
+    const r=emp.reposMode==="rotation"?" · repos en rotation A/B":"";
+    info.style.display="";info.innerHTML=`<b>${esc(emp.prenom)} ${esc(emp.nom)}</b> — ${lib}${h}${r}. Jours de repos de la fiche pré-cochés.`;
+  }
+}
+function resolveStatut(){
+  const v=document.getElementById("vEmploye").value;
+  if(v&&v!=="manual"){const e=data.find(x=>x.id===v);if(e&&e.statut!=="nr")return e.statut;}
+  return document.getElementById("statut").value;
+}
+function toMin(t){if(!t)return null;const[p,q]=t.split(":").map(Number);return p*60+q;}
+function lireSemaine(){
+  const quarts=[],erreursSaisie=[],joursTravailles=new Set();
+  document.querySelectorAll("#grid tr").forEach(tr=>{
+    const d=+tr.dataset.d;
+    if(tr.querySelector("[data-repos]").checked)return;
+    const s=toMin(tr.querySelector("[data-start]").value),e=toMin(tr.querySelector("[data-end]").value);
+    if(s===null&&e===null)return;
+    if(s===null||e===null){erreursSaisie.push(JL[d]);return;}
+    let absS=d*1440+s,absE=d*1440+e;if(absE<=absS)absE+=1440;
+    quarts.push({d,s,e,absS,absE,dur:absE-absS});joursTravailles.add(d);
+  });
+  return{quarts,erreursSaisie,joursTravailles};
+}
+function intersecte(a1,a2,b1,b2){return Math.max(a1,b1)<Math.min(a2,b2);}
+function valider(){
+  if(document.getElementById("vEmploye").value===""){toast("Choisis un employé ou « statut manuel »");return;}
+  const statut=resolveStatut();
+  const scolaire=document.getElementById("scolaire").checked;
+  const {quarts,erreursSaisie,joursTravailles}=lireSemaine();
+  const items=[];const push=(t,txt)=>items.push({type:t,txt});
+  if(erreursSaisie.length)push("warn",`Saisie incomplète (début ou fin manquant) : ${erreursSaisie.join(", ")}. Ces jours sont ignorés.`);
+  const totalMin=quarts.reduce((a,q)=>a+q.dur,0),totalH=+(totalMin/60).toFixed(2);
+  const lunVenH=+(quarts.filter(q=>q.d<=4).reduce((a,q)=>a+q.dur,0)/60).toFixed(2);
+  if(statut==="mineur_ecole"){
+    const forb=[];for(let d=0;d<=7;d++){forb.push([d*1440,d*1440+360]);forb.push([d*1440+1380,d*1440+1440]);}
+    let viol=[];quarts.forEach(q=>{if(forb.some(f=>intersecte(q.absS,q.absE,f[0],f[1])))viol.push(JL[q.d]);});
+    if(viol.length)push("ko",`Couvre-feu 23 h-6 h non respecté (mineur tenu d'aller à l'école) : ${[...new Set(viol)].join(", ")}. Aucun quart ne peut chevaucher la nuit.`);
+    else if(quarts.length)push("ok","Couvre-feu de nuit (23 h-6 h) respecté.");
+  }
+  if(statut==="mineur_ecole"&&scolaire){
+    if(totalH>17)push("ko",`Plafond hebdomadaire dépassé : ${totalH} h pour un maximum de 17 h en période scolaire.`);else push("ok",`Heures hebdomadaires : ${totalH} h / 17 h max.`);
+    if(lunVenH>10)push("ko",`Plafond lun-ven dépassé : ${lunVenH} h pour un maximum de 10 h.`);else push("ok",`Heures lun-ven : ${lunVenH} h / 10 h max.`);
+  }
+  if(statut==="mineur_ecole"&&!scolaire)push("warn","Hors période scolaire : plafonds 17 h/10 h levés, mais le couvre-feu 23 h-6 h reste en vigueur.");
+  const tri=[...quarts].sort((a,b)=>a.absS-b.absS);let gapKO=[];
+  for(let i=1;i<tri.length;i++){const gap=tri[i].absS-tri[i-1].absE;if(gap<600)gapKO.push(`${JL[tri[i-1].d]}→${JL[tri[i].d]} (${(gap/60).toFixed(1)} h)`);}
+  if(gapKO.length)push("ko",`Moins de 10 h entre deux quarts : ${gapKO.join(", ")}.`);else if(tri.length>1)push("ok","Au moins 10 h entre chaque quart (règle interne).");
+  const off=[0,1,2,3,4,5,6].filter(d=>!joursTravailles.has(d));let deux=false;
+  for(let i=0;i<off.length-1;i++)if(off[i+1]===off[i]+1)deux=true;
+  if(deux)push("ok","2 jours de repos consécutifs présents.");else push("ko",`Pas de 2 jours de repos consécutifs. Jours off : ${off.length?off.map(d=>JL[d]).join(", "):"aucun"}.`);
+  let plusGrand=0;
+  if(quarts.length===0)plusGrand=10080;else{let prev=0;tri.forEach(q=>{plusGrand=Math.max(plusGrand,q.absS-prev);prev=Math.max(prev,q.absE);});plusGrand=Math.max(plusGrand,10080-prev);}
+  const pgH=+(plusGrand/60).toFixed(1);
+  if(plusGrand>=1920)push("ok",`Repos hebdomadaire le plus long : ${pgH} h (≥ 32 h légal).`);else push("ko",`Repos hebdomadaire insuffisant : plus long bloc de ${pgH} h pour un minimum légal de 32 h.`);
+  const longs=quarts.filter(q=>q.dur>300);
+  if(longs.length)push("warn",`Quart(s) de plus de 5 h : pause-repas de 30 min obligatoire — ${longs.map(q=>JL[q.d]).join(", ")}.`);
+  if(totalH>50)push("warn",`${totalH} h : au-delà de 50 h, l'employé peut refuser les heures.`);else if(totalH>40)push("warn",`${totalH} h : au-delà de 40 h, heures supplémentaires à 1,5×.`);
+  const long24=quarts.filter(q=>q.dur>840);
+  if(long24.length)push("ko",`Quart de plus de 14 h : ${long24.map(q=>JL[q.d]).join(", ")}.`);
+  rendreResultats(items,{totalH,pgH,nb:quarts.length,off:off.length});
+}
+function rendreResultats(items,k){
+  const fail=items.some(i=>i.type==="ko");
+  const verdict=`<div class="verdict ${fail?'fail':'pass'}">${fail?'Planning NON conforme — corrige les points en rouge':'Planning conforme aux règles vérifiées'}</div>`;
+  const summ=`<div class="summ"><div class="kpi"><b class="num">${k.totalH} h</b>Total semaine</div><div class="kpi"><b class="num">${k.nb}</b>Quarts</div><div class="kpi"><b class="num">${k.off}</b>Jours off</div><div class="kpi"><b class="num">${k.pgH} h</b>Plus long repos</div></div>`;
+  const ic={ok:"✓",ko:"✕",warn:"!"},cl={ok:"ci-ok",ko:"ci-ko",warn:"ci-warn"};
+  const list=items.map(i=>`<div class="check-item ${cl[i.type]}"><span class="ic">${ic[i.type]}</span><span>${i.txt}</span></div>`).join("");
+  const box=document.getElementById("results");box.innerHTML=verdict+summ+list;box.classList.add("show");box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function clearGrid(){
+  document.querySelectorAll("#grid tr").forEach(tr=>{const s=tr.querySelector("[data-start]"),e=tr.querySelector("[data-end]");tr.querySelector("[data-repos]").checked=false;s.disabled=false;e.disabled=false;s.value="";e.value="";});
+  document.getElementById("results").classList.remove("show");
+}
+document.getElementById("vEmploye").addEventListener("change",onSelectEmploye);
+document.getElementById("semaineRot").addEventListener("change",()=>{const v=document.getElementById("vEmploye").value;if(v&&v!=="manual"){const e=data.find(x=>x.id===v);if(e)applyReposFromEmp(e);}});
+document.getElementById("btnCheck").onclick=valider;
+document.getElementById("btnClear").onclick=clearGrid;
+document.getElementById("copyJson").onclick=async()=>{const txt=JSON.stringify(REGLES,null,2);try{await navigator.clipboard.writeText(txt);toast("JSON des règles copié");}catch(e){const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("Copié");}catch(_){toast("Copie impossible");}ta.remove();}};
+
+/* ======================= ONGLETS ======================= */
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll(".vue").forEach(v=>v.classList.remove("active"));
+  t.classList.add("on");
+  document.getElementById("vue-"+t.dataset.vue).classList.add("active");
+  if(t.dataset.vue==="regles")populateEmployes();
+  window.scrollTo({top:0,behavior:"smooth"});
+}));
+
+/* ======================= INIT ======================= */
+renderAll();
+renderRegles();
+renderGrid();
+populateEmployes();
+document.getElementById("jsonOut").textContent=JSON.stringify(REGLES,null,2);
+</script>
+</body>
+</html>
