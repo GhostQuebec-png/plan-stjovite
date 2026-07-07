@@ -269,12 +269,12 @@ function seed(){
     "Luce|Romuald":{f:"2e assistant gérant",pl:false,st:"majeur",rot:true},
     "Lachhab|Abderrazzak":{f:"Gérant de quart (à vérifier)",pl:true}
   };
-  return raw.map((r,i)=>{const pre=fonctions[r[0]+"|"+r[1]]||{};return{id:"e"+(i+1),nom:r[0],prenom:r[1],fonction:pre.f||"",planifiable:pre.pl===undefined?true:pre.pl,statut:pre.st||"nr",naissance:"",type:"nr",hMax:"",hMin:"",postes:[],reposMode:pre.rot?"rotation":"fixe",repos:pre.rot?["Jeu","Ven"]:[],reposB:pre.rot?["Sam","Dim"]:[],dispo:""};});
+  return raw.map((r,i)=>{const pre=fonctions[r[0]+"|"+r[1]]||{};return{id:"e"+(i+1),code:"",nom:r[0],prenom:r[1],fonction:pre.f||"",planifiable:pre.pl===undefined?true:pre.pl,statut:pre.st||"nr",naissance:"",type:"nr",hMax:"",hMin:"",postes:[],reposMode:pre.rot?"rotation":"fixe",repos:pre.rot?["Jeu","Ven"]:[],reposB:pre.rot?["Sam","Dim"]:[],dispo:""};});
 }
 
 let data=load(),filter="all",query="";
 const openSet=new Set();
-function normalize(e){e.repos=Array.isArray(e.repos)?e.repos:[];e.reposB=Array.isArray(e.reposB)?e.reposB:[];e.reposMode=e.reposMode==="rotation"?"rotation":"fixe";return e;}
+function normalize(e){e.repos=Array.isArray(e.repos)?e.repos:[];e.reposB=Array.isArray(e.reposB)?e.reposB:[];e.reposMode=e.reposMode==="rotation"?"rotation":"fixe";e.code=e.code||"";return e;}
 function load(){try{const s=localStorage.getItem(STORE_KEY);if(s){const d=JSON.parse(s);if(Array.isArray(d)&&d.length)return d.map(normalize);}}catch(e){}return seed();}
 function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));}catch(e){}}
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
@@ -320,6 +320,7 @@ function cardHTML(e){
   const open=openSet.has(e.id),inc=isIncomplete(e);
   const cls=["card",open?"open":"",inc?"incomplete":"",!e.planifiable?"unsched":"",e.statut==="mineur_ecole"?"is-ecole":"",e.statut==="mineur_libre"?"is-libre":""].join(" ").trim();
   const bits=[];
+  if(e.code)bits.push("Code "+e.code);
   if(e.fonction)bits.push(e.fonction);
   if(e.hMax)bits.push(e.hMax+" h/sem max");
   if(e.postes.length)bits.push(e.postes.length+" poste(s)");
@@ -335,6 +336,7 @@ function editHTML(e){
   return `<div class="grid">
     <div class="field"><label>Prénom</label><input type="text" data-f="prenom" value="${esc(e.prenom)}"></div>
     <div class="field"><label>Nom</label><input type="text" data-f="nom" value="${esc(e.nom)}"></div>
+    <div class="field"><label>Code employé</label><input type="text" inputmode="numeric" data-f="code" placeholder="Ex. matricule caisse" value="${esc(e.code)}"></div>
     <div class="field full"><label>Fonction</label><input type="text" data-f="fonction" placeholder="Équipier, leader, gérant de quart, instructeur…" value="${esc(e.fonction)}"></div>
     <div class="field full"><div class="switch-row"><span class="lbl">Inclure dans la planification</span><label class="sw"><input type="checkbox" data-f="planifiable" ${e.planifiable?'checked':''}><span class="track"></span><span class="knob"></span></label></div></div>
     <div class="field full"><label>Statut</label><select data-f="statut">
@@ -385,6 +387,7 @@ function wireCard(e){
 function refreshSummary(e,el){
   el.classList.toggle("incomplete",isIncomplete(e));
   const bits=[];
+  if(e.code)bits.push("Code "+e.code);
   if(e.fonction)bits.push(e.fonction);
   if(e.hMax)bits.push(e.hMax+" h/sem max");
   if(e.postes.length)bits.push(e.postes.length+" poste(s)");
@@ -396,11 +399,11 @@ function refreshSummary(e,el){
   el.querySelector(".tags").innerHTML=statTag(e)+typeTag(e);
 }
 function renderAll(){renderDash();renderChips();renderList();}
-function addEmp(){const e={id:"e"+Date.now(),nom:"",prenom:"Nouvel employé",fonction:"",planifiable:true,statut:"nr",naissance:"",type:"nr",hMax:"",hMin:"",postes:[],reposMode:"fixe",repos:[],reposB:[],dispo:""};data.unshift(e);openSet.add(e.id);filter="all";query="";document.getElementById("search").value="";save();renderAll();window.scrollTo({top:0,behavior:"smooth"});}
+function addEmp(){const e={id:"e"+Date.now(),code:"",nom:"",prenom:"Nouvel employé",fonction:"",planifiable:true,statut:"nr",naissance:"",type:"nr",hMax:"",hMin:"",postes:[],reposMode:"fixe",repos:[],reposB:[],dispo:""};data.unshift(e);openSet.add(e.id);filter="all";query="";document.getElementById("search").value="";save();renderAll();window.scrollTo({top:0,behavior:"smooth"});}
 function payload(){return{restaurant:"McDonald's St-Jovite #22028",exporte_le:new Date().toISOString(),version:2,employes:data};}
 function exportJSON(){const blob=new Blob([JSON.stringify(payload(),null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="employes_stjovite_"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast("Fichier JSON exporté");}
 async function copyJSON(){const txt=JSON.stringify(payload(),null,2);try{await navigator.clipboard.writeText(txt);toast("JSON copié");}catch(e){const ta=document.createElement("textarea");ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("JSON copié");}catch(_){toast("Copie impossible — utilise Exporter");}ta.remove();}}
-function importJSON(file){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);const arr=Array.isArray(d)?d:(d.employes||null);if(!Array.isArray(arr))throw 0;data=arr.map((e,i)=>({id:e.id||("e"+i+Date.now()),nom:e.nom||"",prenom:e.prenom||"",fonction:e.fonction||"",planifiable:e.planifiable!==false,statut:e.statut||"nr",naissance:e.naissance||"",type:e.type||"nr",hMax:e.hMax||"",hMin:e.hMin||"",postes:Array.isArray(e.postes)?e.postes:[],reposMode:e.reposMode==="rotation"?"rotation":"fixe",repos:Array.isArray(e.repos)?e.repos:[],reposB:Array.isArray(e.reposB)?e.reposB:[],dispo:e.dispo||""}));openSet.clear();save();renderAll();toast("Données importées ("+data.length+" fiches)");}catch(err){toast("Fichier JSON invalide");}};r.readAsText(file);}
+function importJSON(file){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);const arr=Array.isArray(d)?d:(d.employes||null);if(!Array.isArray(arr))throw 0;data=arr.map((e,i)=>({id:e.id||("e"+i+Date.now()),code:e.code||"",nom:e.nom||"",prenom:e.prenom||"",fonction:e.fonction||"",planifiable:e.planifiable!==false,statut:e.statut||"nr",naissance:e.naissance||"",type:e.type||"nr",hMax:e.hMax||"",hMin:e.hMin||"",postes:Array.isArray(e.postes)?e.postes:[],reposMode:e.reposMode==="rotation"?"rotation":"fixe",repos:Array.isArray(e.repos)?e.repos:[],reposB:Array.isArray(e.reposB)?e.reposB:[],dispo:e.dispo||""}));openSet.clear();save();renderAll();toast("Données importées ("+data.length+" fiches)");}catch(err){toast("Fichier JSON invalide");}};r.readAsText(file);}
 function resetAll(){if(confirm("Réinitialiser la base sur les 51 fiches d'origine ? Toutes tes modifications seront perdues.")){data=seed();openSet.clear();save();renderAll();toast("Base réinitialisée");}}
 
 document.getElementById("btnAdd").onclick=addEmp;
