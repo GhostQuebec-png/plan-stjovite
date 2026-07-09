@@ -322,8 +322,8 @@ async function apiGist(method, url, body){
   const r = await fetch(url,{method,headers:{
     "Authorization":"token "+cfg.token,"Accept":"application/vnd.github+json",
     ...(body?{"Content-Type":"application/json"}:{})
-  },body:body?JSON.stringify(body):undefined});
-  if(!r.ok){throw new Error("GitHub "+r.status);}
+  },body:body?JSON.stringify(body):undefined}).catch(()=>{throw new Error("RESEAU");});
+  if(!r.ok){throw new Error("HTTP"+r.status);}
   return r.json();
 }
 async function lireGist(){
@@ -667,7 +667,7 @@ function modeEspace(m){cfgMode=m;
     :"<b>Rejoindre l'espace :</b> colle ici l'identifiant fourni par le premier appareil, puis entre le même code d'accès.";}
 async function lancerConfig(){
   const err=$("cfgErr");err.textContent="";
-  const token=$("cfgToken").value.trim(), pin=$("cfgPin").value.trim(), gid=$("cfgGistId").value.trim();
+  const token=$("cfgToken").value.replace(/\s+/g,""), pin=$("cfgPin").value.trim(), gid=$("cfgGistId").value.replace(/\s+/g,"");
   if(!cfgIdentite){err.textContent="Choisis ton identité.";return;}
   if(!token.startsWith("gh")){err.textContent="Token GitHub invalide.";return;}
   if(pin.length<4){err.textContent="Code d'accès : minimum 4 caractères.";return;}
@@ -689,7 +689,13 @@ async function lancerConfig(){
       localStorage.setItem(LS_KEY,JSON.stringify(cfg));
     }
     demarrerApp();
-  }catch(e){console.error(e);err.textContent="Échec : vérifie le token"+(cfgMode==="joindre"?" et l'identifiant d'espace.":".");
+  }catch(e){console.error(e);
+    let msg="Échec : "+e.message;
+    if(e.message==="RESEAU") msg="Connexion à GitHub bloquée. Ouvre cette page depuis ghostquebec-png.github.io (pas depuis un aperçu ni un fichier local).";
+    else if(e.message==="HTTP401") msg="GitHub refuse le token (401). Le token est incorrect, expiré ou mal copié. Régénère-en un et recolle-le.";
+    else if(e.message==="HTTP403") msg="GitHub refuse l'action (403). Le token n'a probablement pas la portée « gist » (case « essentiel »).";
+    else if(e.message==="HTTP404") msg=cfgMode==="joindre"?"Espace introuvable (404) : vérifie l'identifiant collé, ou le token n'a pas la portée « gist ».":"Erreur 404 : le token n'a probablement pas la portée « gist ».";
+    err.textContent=msg;
     $("btnConfig").disabled=false;$("btnConfig").textContent="Valider la configuration";}
 }
 async function verifierPin(){
