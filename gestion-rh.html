@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<!--
+  GESTION DU PERSONNEL — McDonald's St-Jovite #22028
+  Espace partagé Romuald / Damien
+  Outil conçu et développé par Romuald Luce.
+  © 2026 Romuald Luce. Tous droits réservés.
+  Toute reproduction, modification ou réutilisation sans autorisation écrite est interdite.
+-->
+<html lang="fr">
+<head>
+<meta name="author" content="Romuald Luce">
+<meta name="copyright" content="© 2026 Romuald Luce — Tous droits réservés">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion du personnel — St-Jovite #22028</title>
+<style>
+:root{
+  --rouge:#DA291C; --rouge-fonce:#B11E14; --noir:#1D1D1B; --bar:#2B2B2B;
+  --ligne:#C9C9C4; --label:#5F5F5A; --or:#FFC72C; --papier:#FFFFFF; --fond:#E9E9E2;
+  --vert:#1E7B34; --bleu:#1B5FA8; --orange:#C46A00;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--fond);color:var(--noir);}
+.cache{display:none !important;}
+
+/* ---------- Écrans plein écran (code / config) ---------- */
+.ecran{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(120% 120% at 50% 0%, #3a3a38 0%, #232321 55%, #191917 100%);background-color:#222220;padding:24px;position:relative;}
+.carte-code{background:#fff;border-radius:16px;padding:34px 30px 26px;width:100%;max-width:420px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.45);}
+.carte-code .badge-rond{display:inline-block;background:var(--rouge);color:#fff;font-weight:800;font-size:13px;letter-spacing:.5px;padding:7px 16px;border-radius:30px;box-shadow:0 2px 0 var(--rouge-fonce);margin-bottom:16px;}
+.carte-code h1{font-size:18px;font-weight:800;margin:0 0 4px;letter-spacing:.2px;}
+.carte-code p{font-size:13px;color:#666;margin:0 0 18px;}
+.carte-code input,.carte-code select{width:100%;font-size:16px;font-weight:600;padding:12px;border:2px solid var(--ligne);border-radius:10px;outline:none;font-family:inherit;margin-bottom:10px;background:#fff;}
+.carte-code input.pin{text-align:center;font-size:20px;font-weight:700;letter-spacing:4px;}
+.carte-code input:focus,.carte-code select:focus{border-color:var(--rouge);}
+.btn-entrer{width:100%;margin-top:8px;background:var(--noir);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-entrer:active{transform:translateY(1px);}
+.btn-sec{width:100%;margin-top:8px;background:#fff;color:var(--noir);border:2px solid var(--ligne);border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+.err{color:var(--rouge);font-size:13px;font-weight:600;min-height:18px;margin-top:10px;}
+.filigrane-bas{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#8b8b87;font-size:11px;font-weight:600;letter-spacing:.4px;}
+.aide{font-size:12px;color:#666;text-align:left;background:#F6F6F2;border:1px solid var(--ligne);border-radius:10px;padding:10px 12px;margin:6px 0 12px;line-height:1.5;}
+.aide b{color:var(--noir);}
+.choix2{display:flex;gap:8px;margin-bottom:10px;}
+.choix2 button{flex:1;padding:12px 6px;border:2px solid var(--ligne);border-radius:10px;background:#fff;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;}
+.choix2 button.actif{border-color:var(--rouge);background:#FDECEA;color:var(--rouge-fonce);}
+
+/* ---------- Application ---------- */
+#app{display:none;min-height:100vh;}
+.entete{background:var(--noir);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50;}
+.entete .logo{background:var(--rouge);color:#fff;font-weight:800;font-size:12px;padding:6px 12px;border-radius:20px;white-space:nowrap;}
+.entete h2{font-size:15px;margin:0;font-weight:800;flex:1;letter-spacing:.2px;}
+.entete .qui{font-size:12px;font-weight:700;color:var(--or);white-space:nowrap;}
+.sync-dot{width:10px;height:10px;border-radius:50%;background:#888;flex:none;}
+.sync-dot.ok{background:#3BB55D;} .sync-dot.err{background:var(--rouge);} .sync-dot.busy{background:var(--or);}
+
+.nav{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--bar);position:sticky;top:52px;z-index:49;-webkit-overflow-scrolling:touch;}
+.nav button{flex:none;background:#3a3a38;color:#ddd;border:none;border-radius:20px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;position:relative;}
+.nav button.actif{background:var(--rouge);color:#fff;}
+.nav .pastille{position:absolute;top:-4px;right:-2px;background:var(--or);color:var(--noir);font-size:10px;font-weight:800;border-radius:10px;padding:1px 6px;min-width:16px;}
+
+.bandeau-rappel{background:var(--or);color:var(--noir);padding:10px 14px;font-size:13px;font-weight:700;display:flex;align-items:flex-start;gap:10px;}
+.bandeau-rappel .fermer{margin-left:auto;background:none;border:none;font-size:16px;font-weight:800;cursor:pointer;color:var(--noir);padding:0 4px;flex:none;}
+.bandeau-rappel ul{margin:4px 0 0;padding-left:18px;font-weight:600;}
+
+.contenu{padding:14px;max-width:960px;margin:0 auto;}
+.section-titre{display:flex;align-items:center;gap:10px;margin:6px 0 12px;}
+.section-titre h3{margin:0;font-size:17px;font-weight:800;flex:1;}
+.btn-ajout{background:var(--rouge);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 0 var(--rouge-fonce);}
+.btn-ajout:active{transform:translateY(1px);}
+
+.carte{background:var(--papier);border:1px solid var(--ligne);border-radius:12px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.carte .titre-ligne{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.carte .titre-ligne b{font-size:15px;}
+.carte .meta{font-size:12.5px;color:var(--label);margin-top:4px;line-height:1.5;}
+.carte .actions{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
+.mini-btn{background:#fff;border:1.5px solid var(--ligne);border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--noir);}
+.mini-btn.danger{color:var(--rouge);border-color:#E9B2AE;}
+.mini-btn.plein{background:var(--noir);color:#fff;border-color:var(--noir);}
+.etiquette{font-size:11px;font-weight:800;padding:3px 9px;border-radius:12px;background:#EFEFEA;color:var(--label);letter-spacing:.3px;}
+.etiquette.rouge{background:#FBE3E1;color:var(--rouge-fonce);}
+.etiquette.vert{background:#DFF2E4;color:var(--vert);}
+.etiquette.or{background:#FFF1C7;color:#8a6400;}
+.etiquette.bleu{background:#E1ECF8;color:var(--bleu);}
+.etiquette.orange{background:#FBEBD6;color:var(--orange);}
+.vide{text-align:center;color:var(--label);font-size:13.5px;padding:28px 10px;}
+
+/* Formulaire modal */
+.voile{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-start;justify-content:center;padding:24px 14px;z-index:100;overflow-y:auto;}
+.modal{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:520px;box-shadow:0 18px 50px rgba(0,0,0,.4);}
+.modal h4{margin:0 0 14px;font-size:16px;font-weight:800;}
+.champ{margin-bottom:12px;}
+.champ label{display:block;font-size:12px;font-weight:800;color:var(--label);letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px;}
+.champ input,.champ select,.champ textarea{width:100%;font-size:15px;padding:10px 12px;border:2px solid var(--ligne);border-radius:10px;font-family:inherit;background:#fff;}
+.champ textarea{min-height:70px;resize:vertical;}
+.champ input:focus,.champ select:focus,.champ textarea:focus{border-color:var(--rouge);outline:none;}
+.modal .rangee-btn{display:flex;gap:10px;margin-top:16px;}
+.modal .rangee-btn button{flex:1;}
+
+/* Calendrier */
+.cal-tete{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.cal-tete b{flex:1;text-align:center;font-size:16px;text-transform:capitalize;}
+.cal-nav{background:#fff;border:1.5px solid var(--ligne);border-radius:8px;padding:6px 14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
+.cal-grille{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:var(--papier);border:1px solid var(--ligne);border-radius:12px;padding:10px;}
+.cal-jour-nom{font-size:11px;font-weight:800;color:var(--label);text-align:center;padding:4px 0;text-transform:uppercase;}
+.cal-case{min-height:52px;border-radius:8px;padding:4px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid transparent;background:#F6F6F2;position:relative;}
+.cal-case.hors{opacity:.35;}
+.cal-case.aujourdhui{border-color:var(--rouge);}
+.cal-case.choisi{background:#FDECEA;border-color:var(--rouge);}
+.cal-points{display:flex;gap:2px;flex-wrap:wrap;margin-top:3px;}
+.pt{width:7px;height:7px;border-radius:50%;}
+.pt.rouge{background:var(--rouge);} .pt.bleu{background:var(--bleu);} .pt.vert{background:var(--vert);} .pt.or{background:var(--or);} .pt.orange{background:var(--orange);} .pt.noir{background:var(--noir);}
+.legende{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;font-weight:700;color:var(--label);margin:10px 2px;}
+.legende span{display:flex;align-items:center;gap:5px;}
+
+/* Messagerie */
+.fil{display:flex;flex-direction:column;gap:8px;padding:6px 0 12px;min-height:200px;}
+.msg{max-width:78%;padding:9px 13px;border-radius:14px;font-size:14px;line-height:1.45;}
+.msg .m-meta{font-size:10.5px;font-weight:700;opacity:.65;margin-top:3px;}
+.msg.moi{align-self:flex-end;background:var(--noir);color:#fff;border-bottom-right-radius:4px;}
+.msg.lui{align-self:flex-start;background:#fff;border:1px solid var(--ligne);border-bottom-left-radius:4px;}
+.zone-envoi{display:flex;gap:8px;position:sticky;bottom:0;background:var(--fond);padding:8px 0;}
+.zone-envoi textarea{flex:1;font-size:15px;padding:10px 12px;border:2px solid var(--ligne);border-radius:12px;font-family:inherit;resize:none;min-height:44px;max-height:120px;}
+.zone-envoi button{background:var(--rouge);color:#fff;border:none;border-radius:12px;padding:0 20px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;}
+
+/* Tableau de bord */
+.tb-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;}
+.tb-carte{background:var(--papier);border:1px solid var(--ligne);border-radius:12px;padding:14px;}
+.tb-carte h5{margin:0 0 8px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--label);}
+.tb-carte .gros{font-size:26px;font-weight:800;}
+.tb-ligne{font-size:13px;padding:5px 0;border-bottom:1px dashed #E4E4DE;display:flex;gap:8px;align-items:baseline;}
+.tb-ligne:last-child{border-bottom:none;}
+.tb-ligne .d{font-weight:800;color:var(--rouge-fonce);white-space:nowrap;font-size:12px;}
+@media(max-width:520px){.contenu{padding:10px;}}
+</style>
+</head>
+<body>
+
+<!-- ============ ÉCRAN CODE D'ACCÈS ============ -->
+<div class="ecran" id="ecranPin">
+  <div class="carte-code">
+    <span class="badge-rond">ST-JOVITE #22028</span>
+    <h1>Gestion du personnel</h1>
+    <p>Espace réservé — Romuald &amp; Damien</p>
+    <input type="password" inputmode="numeric" class="pin" id="pinEntree" placeholder="Code d'accès" maxlength="12">
+    <button class="btn-entrer" onclick="verifierPin()">Entrer</button>
+    <div class="err" id="pinErr"></div>
+    <button class="btn-sec" onclick="reconfigurer()" style="margin-top:14px;font-size:12px;">Réinitialiser la configuration de cet appareil</button>
+  </div>
+  <div class="filigrane-bas">© 2026 Romuald Luce — Tous droits réservés</div>
+</div>
+
+<!-- ============ ÉCRAN CONFIGURATION ============ -->
+<div class="ecran cache" id="ecranConfig">
+  <div class="carte-code" style="max-width:470px;text-align:left;">
+    <div style="text-align:center;"><span class="badge-rond">CONFIGURATION</span></div>
+    <h1 style="text-align:center;">Première installation sur cet appareil</h1>
+    <p style="text-align:center;">3 étapes — environ 3 minutes</p>
+
+    <div class="champ"><label>1. Qui es-tu ?</label>
+      <div class="choix2">
+        <button id="chxR" onclick="choisirIdentite('Romuald')">Romuald</button>
+        <button id="chxD" onclick="choisirIdentite('Damien')">Damien</button>
+      </div>
+    </div>
+
+    <div class="champ"><label>2. Token GitHub (portée « gist »)</label>
+      <input type="password" id="cfgToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+      <div class="aide"><b>Pour créer un token :</b> github.com → photo de profil → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Tokens (classic)</b> → <b>Generate new token (classic)</b> → coche uniquement la case <b>gist</b> → Generate. Copie le code « ghp_… » ici. Il reste enregistré sur cet appareil seulement.</div>
+    </div>
+
+    <div class="champ"><label>3. Espace partagé</label>
+      <div class="choix2">
+        <button id="chxNouveau" onclick="modeEspace('nouveau')">Créer l'espace</button>
+        <button id="chxJoindre" onclick="modeEspace('joindre')">Rejoindre l'espace</button>
+      </div>
+      <input type="text" id="cfgGistId" class="cache" placeholder="Identifiant de l'espace (fourni par l'autre appareil)" autocomplete="off">
+      <input type="password" inputmode="numeric" id="cfgPin" class="pin" placeholder="Code d'accès à définir" maxlength="12">
+      <div class="aide" id="aideEspace"><b>Créer l'espace :</b> à faire une seule fois, sur le premier appareil. Un identifiant d'espace te sera donné à transmettre à Damien avec le code d'accès.</div>
+    </div>
+
+    <button class="btn-entrer" id="btnConfig" onclick="lancerConfig()">Valider la configuration</button>
+    <div class="err" id="cfgErr"></div>
+  </div>
+  <div class="filigrane-bas">© 2026 Romuald Luce — Tous droits réservés</div>
+</div>
+
+<!-- ============ APPLICATION ============ -->
+<div id="app">
+  <div class="entete">
+    <span class="logo">ST-JOVITE #22028</span>
+    <h2>Gestion du personnel</h2>
+    <span class="qui" id="quiSuisJe"></span>
+    <div class="sync-dot" id="syncDot" title="Synchronisation"></div>
+  </div>
+  <div class="nav" id="navBarre"></div>
+  <div id="zoneBandeau"></div>
+  <div class="contenu" id="zoneContenu"></div>
+</div>
+
+<div id="zoneModal"></div>
+
+<script>
+"use strict";
+/* ================= CONFIG LOCALE ================= */
+const LS_KEY = "mcdo_22028_gestion_cfg_v1";
+let cfg = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+let data = null;               // document partagé (Gist)
+let baseline = 0;              // updatedAt chargé
+let ongletActif = "tableau";
+let calMois = new Date();      // mois affiché
+let calJourChoisi = null;
+let bandeauFerme = false;
+let fileSauvegarde = Promise.resolve();
+
+const PERSONNES = ["Romuald","Damien"];
+const MENTORS = ["Malick","Marie-Pier","Abderrahman","Fatima","Autre"];
+
+/* ================= DÉFINITION DES MODULES ================= */
+const MODULES = {
+  tableau:  {label:"Tableau de bord"},
+  calendrier:{label:"Calendrier", array:"calendrier",
+    fields:[
+      {k:"titre",label:"Titre",type:"text",req:1},
+      {k:"date",label:"Date",type:"date",req:1},
+      {k:"type",label:"Type",type:"select",options:["Échéance","Évaluation","Réunion","Formation","Employé du mois","Autre"]},
+      {k:"notes",label:"Notes",type:"textarea"},
+      {k:"fait",label:"Fait",type:"checkbox"}
+    ]},
+  mentorats:{label:"Mentorats", array:"mentorats", custom:true,
+    fields:[
+      {k:"equipier",label:"Équipier",type:"text",req:1},
+      {k:"embauche",label:"Date d'embauche",type:"date",req:1},
+      {k:"mentor",label:"Mentor",type:"select",options:MENTORS},
+      {k:"r30",label:"Rencontre J30 complétée",type:"checkbox"},
+      {k:"f30",label:"FRED J30 complété",type:"checkbox"},
+      {k:"r60",label:"Rencontre J60 complétée",type:"checkbox"},
+      {k:"f60",label:"FRED J60 complété",type:"checkbox"},
+      {k:"r90",label:"Rencontre J90 complétée",type:"checkbox"},
+      {k:"f90",label:"FRED J90 complété",type:"checkbox"},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  evaluations:{label:"Évaluations", array:"evaluations",
+    fields:[
+      {k:"employe",label:"Employé",type:"text",req:1},
+      {k:"type",label:"Type",type:"select",options:["Équipier","Instructeur / Leader d'équipe","Leader de quart","Maintenance","Probation","Point de contact 30 j","Point de contact 60 j","Point de contact 90 j"]},
+      {k:"date",label:"Date prévue",type:"date",req:1},
+      {k:"statut",label:"Statut",type:"select",options:["À planifier","Planifiée","Faite","Signée"]},
+      {k:"resp",label:"Responsable",type:"select",options:PERSONNES},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  videos:{label:"Vidéos formation", array:"videos",
+    fields:[
+      {k:"titre",label:"Titre",type:"text",req:1},
+      {k:"url",label:"Lien (URL)",type:"url",req:1},
+      {k:"categorie",label:"Catégorie",type:"select",options:["Cuisine","Comptoir","McDrive","SAV / Salle","McCafé","Hygiène","Encadrement","Autre"]},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  metiers:{label:"Métiers de service", array:"metiers",
+    fields:[
+      {k:"employe",label:"Employé",type:"text",req:1},
+      {k:"poste",label:"Poste / métier",type:"select",options:["Comptoir","McDrive — prise de commande","McDrive — présentation","Cuisine — initiation","Grill","Frites","SAV","Salle","McCafé","Autre"]},
+      {k:"statut",label:"Statut",type:"select",options:["En formation","Validé","À revalider"]},
+      {k:"date",label:"Date visée / validée",type:"date"},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  anniversaires:{label:"Anniversaires", array:"anniversaires",
+    fields:[
+      {k:"nom",label:"Nom",type:"text",req:1},
+      {k:"date",label:"Date de naissance (l'année peut être approximative)",type:"date",req:1},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  punchs:{label:"Punchs", array:"punchs",
+    fields:[
+      {k:"employe",label:"Employé",type:"text",req:1},
+      {k:"date",label:"Date du punch à corriger",type:"date",req:1},
+      {k:"motif",label:"Motif",type:"text",req:1},
+      {k:"statut",label:"Statut",type:"select",options:["À corriger","Corrigé"]},
+      {k:"resp",label:"Traité par",type:"select",options:PERSONNES},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  employeMois:{label:"Employé du mois", array:"employeMois",
+    fields:[
+      {k:"mois",label:"Mois (AAAA-MM)",type:"month",req:1},
+      {k:"nom",label:"Employé proposé / retenu",type:"text",req:1},
+      {k:"motif",label:"Justification",type:"textarea"},
+      {k:"statut",label:"Statut",type:"select",options:["Proposé","Validé","Affiché"]}
+    ]},
+  documents:{label:"Documents", array:"documents",
+    fields:[
+      {k:"titre",label:"Titre",type:"text",req:1},
+      {k:"url",label:"Lien (Drive, GitHub, autre)",type:"url",req:1},
+      {k:"categorie",label:"Catégorie",type:"select",options:["Évaluations","Mentorat","Formation","RH","Communication","Autre"]},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  messages:{label:"Messages", custom:true},
+  reglages:{label:"Réglages", custom:true}
+};
+const ARRAYS = ["calendrier","mentorats","evaluations","videos","metiers","anniversaires","punchs","employeMois","documents","messages"];
+
+/* ================= OUTILS ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+async function sha256(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+function fmtDate(iso){if(!iso)return "—";const [a,m,j]=iso.split("-");const M=["janv","févr","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"];return `${+j} ${M[+m-1]} ${a}`;}
+function aujISO(){const d=new Date();return d.toISOString().slice(0,10);}
+function plusJours(iso,n){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
+function joursEntre(a,b){return Math.round((new Date(b+"T12:00")-new Date(a+"T12:00"))/86400000);}
+
+function docVide(pinHash){
+  return {version:1, updatedAt:Date.now(),
+    meta:{pinHash, lastRead:{Romuald:0,Damien:0}, delaiRappel:7, ts:Date.now()},
+    deleted:[],
+    calendrier:[],mentorats:[],evaluations:[],videos:[],metiers:[],
+    anniversaires:[],punchs:[],employeMois:[],documents:[],messages:[]};
+}
+
+/* ================= API GIST ================= */
+const FICHIER = "gestion-rh-22028.json";
+async function apiGist(method, url, body){
+  const r = await fetch(url,{method,headers:{
+    "Authorization":"token "+cfg.token,"Accept":"application/vnd.github+json",
+    ...(body?{"Content-Type":"application/json"}:{})
+  },body:body?JSON.stringify(body):undefined});
+  if(!r.ok){throw new Error("GitHub "+r.status);}
+  return r.json();
+}
+async function lireGist(){
+  const g = await apiGist("GET","https://api.github.com/gists/"+cfg.gistId+"?t="+Date.now());
+  const f = g.files[FICHIER];
+  if(!f) throw new Error("Fichier introuvable dans l'espace");
+  let contenu = f.content;
+  if(f.truncated){const r=await fetch(f.raw_url);contenu=await r.text();}
+  return JSON.parse(contenu);
+}
+async function ecrireGist(doc){
+  await apiGist("PATCH","https://api.github.com/gists/"+cfg.gistId,
+    {files:{[FICHIER]:{content:JSON.stringify(doc)}}});
+}
+async function creerGist(doc){
+  const g = await apiGist("POST","https://api.github.com/gists",
+    {description:"Gestion du personnel — St-Jovite #22028 (espace privé)",public:false,
+     files:{[FICHIER]:{content:JSON.stringify(doc)}}});
+  return g.id;
+}
+
+/* ---- Fusion : conserve l'élément le plus récent par id, tombstones pour suppressions ---- */
+function fusionner(local, distant){
+  const out = docVide("");
+  out.deleted = [...new Set([...(local.deleted||[]),...(distant.deleted||[])])];
+  out.meta = (local.meta.ts>=distant.meta.ts)?{...distant.meta,...local.meta}:{...local.meta,...distant.meta};
+  out.meta.lastRead = {
+    Romuald:Math.max(local.meta.lastRead?.Romuald||0,distant.meta.lastRead?.Romuald||0),
+    Damien:Math.max(local.meta.lastRead?.Damien||0,distant.meta.lastRead?.Damien||0)};
+  const del = new Set(out.deleted);
+  for(const k of ARRAYS){
+    const map = new Map();
+    for(const it of (distant[k]||[])) map.set(it.id,it);
+    for(const it of (local[k]||[])){const d=map.get(it.id);if(!d||(it.ts||0)>=(d.ts||0))map.set(it.id,it);}
+    out[k] = [...map.values()].filter(it=>!del.has(it.id));
+  }
+  out.updatedAt = Date.now();
+  return out;
+}
+
+function majSync(etat){const d=$("syncDot");d.className="sync-dot "+etat;}
+function sauvegarder(){
+  fileSauvegarde = fileSauvegarde.then(async ()=>{
+    majSync("busy");
+    try{
+      const distant = await lireGist();
+      data = fusionner(data, distant);
+      data.updatedAt = Date.now();
+      await ecrireGist(data);
+      baseline = data.updatedAt;
+      majSync("ok");
+    }catch(e){console.error(e);majSync("err");}
+  });
+  return fileSauvegarde;
+}
+async function rafraichir(silencieux){
+  try{
+    majSync("busy");
+    const distant = await lireGist();
+    if(distant.updatedAt !== baseline){
+      data = fusionner(data||docVide(""), distant);
+      baseline = distant.updatedAt;
+      rendre();
+    }
+    majSync("ok");
+  }catch(e){console.error(e);majSync("err");if(!silencieux)alert("Synchronisation impossible. Vérifie la connexion ou le token.");}
+}
+
+/* ================= ÉCHÉANCES / RAPPELS ================= */
+function prochaineEtapeMentorat(m){
+  const j30=plusJours(m.embauche,30), j60=plusJours(m.embauche,60), j90=plusJours(m.embauche,90);
+  if(!(m.r30&&m.f30)) return {etape:"J30",date:j30,manque:[!m.r30&&"rencontre",!m.f30&&"FRED"].filter(Boolean)};
+  if(!(m.r60&&m.f60)) return {etape:"J60",date:j60,manque:[!m.r60&&"rencontre",!m.f60&&"FRED"].filter(Boolean)};
+  if(!(m.r90&&m.f90)) return {etape:"J90",date:j90,manque:[!m.r90&&"rencontre",!m.f90&&"FRED"].filter(Boolean)};
+  return null;
+}
+function prochainAnniv(iso){
+  const auj=new Date();auj.setHours(12,0,0,0);
+  const [,m,j]=iso.split("-").map(Number);
+  let d=new Date(auj.getFullYear(),m-1,j,12);
+  if(d<auj) d=new Date(auj.getFullYear()+1,m-1,j,12);
+  return d.toISOString().slice(0,10);
+}
+function collecterEcheances(){
+  const delai = data.meta.delaiRappel ?? 7;
+  const auj = aujISO(); const lim = plusJours(auj, delai);
+  const out = [];
+  for(const e of data.calendrier) if(!e.fait && e.date<=lim) out.push({date:e.date,txt:`${e.titre} (calendrier${e.type?" — "+e.type:""})`,retard:e.date<auj});
+  for(const e of data.evaluations) if(e.statut!=="Faite"&&e.statut!=="Signée"&&e.date<=lim) out.push({date:e.date,txt:`Évaluation ${e.employe} — ${e.type||""}`,retard:e.date<auj});
+  for(const m of data.mentorats){const p=prochaineEtapeMentorat(m);if(p&&p.date<=lim)out.push({date:p.date,txt:`Mentorat ${m.equipier} — ${p.etape} (${p.manque.join(" + ")})`,retard:p.date<auj});}
+  for(const a of data.anniversaires){const d=prochainAnniv(a.date);if(d<=lim)out.push({date:d,txt:`Anniversaire de ${a.nom}`,retard:false});}
+  for(const p of data.punchs) if(p.statut!=="Corrigé") out.push({date:p.date,txt:`Punch à corriger — ${p.employe} (${p.motif})`,retard:p.date<auj});
+  out.sort((a,b)=>a.date.localeCompare(b.date));
+  return out;
+}
+
+/* ================= RENDU ================= */
+function rendre(){
+  $("quiSuisJe").textContent = cfg.identite;
+  rendreNav(); rendreBandeau();
+  const z = $("zoneContenu");
+  if(ongletActif==="tableau") z.innerHTML = htmlTableau();
+  else if(ongletActif==="calendrier") z.innerHTML = htmlCalendrier();
+  else if(ongletActif==="mentorats") z.innerHTML = htmlMentorats();
+  else if(ongletActif==="messages"){z.innerHTML = htmlMessages(); marquerLu(); const f=$("filMsgs"); if(f) f.scrollTop=f.scrollHeight;}
+  else if(ongletActif==="reglages") z.innerHTML = htmlReglages();
+  else z.innerHTML = htmlListe(ongletActif);
+}
+function nbNonLus(){
+  const lu = data.meta.lastRead?.[cfg.identite]||0;
+  return data.messages.filter(m=>m.de!==cfg.identite && m.ts>lu).length;
+}
+function rendreNav(){
+  const n = $("navBarre"); n.innerHTML="";
+  for(const [k,mod] of Object.entries(MODULES)){
+    const b=document.createElement("button");
+    b.textContent=mod.label; if(k===ongletActif)b.classList.add("actif");
+    let badge=0;
+    if(k==="messages")badge=nbNonLus();
+    if(k==="punchs")badge=data.punchs.filter(p=>p.statut!=="Corrigé").length;
+    if(badge>0){const s=document.createElement("span");s.className="pastille";s.textContent=badge;b.appendChild(s);}
+    b.onclick=()=>{ongletActif=k;calJourChoisi=null;rendre();};
+    n.appendChild(b);
+  }
+}
+function rendreBandeau(){
+  const z=$("zoneBandeau");
+  const ech = collecterEcheances();
+  if(bandeauFerme || !ech.length){z.innerHTML="";return;}
+  const items = ech.slice(0,6).map(e=>`<li>${e.retard?"<b style='color:var(--rouge-fonce)'>EN RETARD — </b>":""}${esc(e.txt)} · ${fmtDate(e.date)}</li>`).join("");
+  z.innerHTML = `<div class="bandeau-rappel"><div><b>Rappels — ${ech.length} échéance${ech.length>1?"s":""} à surveiller</b><ul>${items}</ul></div><button class="fermer" onclick="bandeauFerme=true;rendreBandeau()">×</button></div>`;
+}
+
+/* ---- Tableau de bord ---- */
+function htmlTableau(){
+  const ech = collecterEcheances();
+  const punchsOuverts = data.punchs.filter(p=>p.statut!=="Corrigé").length;
+  const mentoratsActifs = data.mentorats.filter(m=>prochaineEtapeMentorat(m)).length;
+  const evalsAVenir = data.evaluations.filter(e=>e.statut!=="Faite"&&e.statut!=="Signée").length;
+  const lignes = ech.slice(0,10).map(e=>`<div class="tb-ligne"><span class="d">${fmtDate(e.date)}</span><span>${e.retard?"<b style='color:var(--rouge-fonce)'>EN RETARD — </b>":""}${esc(e.txt)}</span></div>`).join("")||`<div class="vide">Aucune échéance dans les ${data.meta.delaiRappel??7} prochains jours.</div>`;
+  return `<div class="section-titre"><h3>Tableau de bord</h3></div>
+  <div class="tb-grille">
+    <div class="tb-carte"><h5>Punchs à corriger</h5><div class="gros" style="color:${punchsOuverts?"var(--rouge)":"var(--vert)"}">${punchsOuverts}</div></div>
+    <div class="tb-carte"><h5>Mentorats en cours</h5><div class="gros">${mentoratsActifs}</div></div>
+    <div class="tb-carte"><h5>Évaluations à venir</h5><div class="gros">${evalsAVenir}</div></div>
+    <div class="tb-carte"><h5>Messages non lus</h5><div class="gros" style="color:${nbNonLus()?"var(--rouge)":"inherit"}">${nbNonLus()}</div></div>
+  </div>
+  <div class="tb-carte" style="margin-top:12px;"><h5>Prochaines échéances</h5>${lignes}</div>`;
+}
+
+/* ---- Calendrier ---- */
+function evenementsDuJour(iso){
+  const out=[];
+  for(const e of data.calendrier) if(e.date===iso) out.push({c:"rouge",t:`${e.titre}${e.fait?" (fait)":""}`,mod:"calendrier",id:e.id});
+  for(const e of data.evaluations) if(e.date===iso) out.push({c:"bleu",t:`Évaluation ${e.employe} — ${e.statut||""}`,mod:"evaluations",id:e.id});
+  for(const m of data.mentorats){const p=prochaineEtapeMentorat(m);["30","60","90"].forEach(n=>{if(plusJours(m.embauche,+n)===iso)out.push({c:"vert",t:`Mentorat ${m.equipier} — J${n}`,mod:"mentorats",id:m.id});});}
+  for(const a of data.anniversaires){if(a.date.slice(5)===iso.slice(5))out.push({c:"or",t:`Anniversaire de ${a.nom}`,mod:"anniversaires",id:a.id});}
+  for(const p of data.punchs) if(p.date===iso&&p.statut!=="Corrigé") out.push({c:"orange",t:`Punch à corriger — ${p.employe}`,mod:"punchs",id:p.id});
+  for(const e of data.employeMois){if(e.mois && iso===e.mois+"-01")out.push({c:"noir",t:`Employé du mois : ${e.nom} (${e.statut||"Proposé"})`,mod:"employeMois",id:e.id});}
+  return out;
+}
+function htmlCalendrier(){
+  const a=calMois.getFullYear(), m=calMois.getMonth();
+  const nomMois = calMois.toLocaleDateString("fr-CA",{month:"long",year:"numeric"});
+  const premier = new Date(a,m,1); const decal=(premier.getDay()+6)%7; // lundi=0
+  const nbJours = new Date(a,m+1,0).getDate();
+  const noms=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(n=>`<div class="cal-jour-nom">${n}</div>`).join("");
+  let cases="";
+  for(let i=0;i<decal;i++) cases+=`<div class="cal-case hors"></div>`;
+  for(let j=1;j<=nbJours;j++){
+    const iso=`${a}-${String(m+1).padStart(2,"0")}-${String(j).padStart(2,"0")}`;
+    const evs=evenementsDuJour(iso);
+    const pts=evs.slice(0,5).map(e=>`<span class="pt ${e.c}"></span>`).join("");
+    const cls=["cal-case",iso===aujISO()?"aujourdhui":"",iso===calJourChoisi?"choisi":""].join(" ");
+    cases+=`<div class="${cls}" onclick="calJourChoisi='${iso}';rendre()">${j}<div class="cal-points">${pts}</div></div>`;
+  }
+  let detail="";
+  if(calJourChoisi){
+    const evs=evenementsDuJour(calJourChoisi);
+    detail=`<div class="carte" style="margin-top:12px;"><div class="titre-ligne"><b>${fmtDate(calJourChoisi)}</b>
+      <button class="mini-btn plein" style="margin-left:auto" onclick="ouvrirForm('calendrier',null,'${calJourChoisi}')">+ Ajouter à cette date</button></div>
+      ${evs.length?evs.map(e=>`<div class="tb-ligne"><span class="pt ${e.c}" style="flex:none;margin-top:4px;"></span><span>${esc(e.t)}</span></div>`).join(""):`<div class="meta">Rien à cette date.</div>`}</div>`;
+  }
+  return `<div class="section-titre"><h3>Calendrier</h3><button class="btn-ajout" onclick="ouvrirForm('calendrier')">+ Ajouter</button></div>
+  <div class="cal-tete"><button class="cal-nav" onclick="calMois=new Date(${a},${m-1},1);rendre()">‹</button><b>${nomMois}</b><button class="cal-nav" onclick="calMois=new Date(${a},${m+1},1);rendre()">›</button></div>
+  <div class="cal-grille">${noms}${cases}</div>
+  <div class="legende"><span><span class="pt rouge"></span>Calendrier</span><span><span class="pt bleu"></span>Évaluations</span><span><span class="pt vert"></span>Mentorats</span><span><span class="pt or"></span>Anniversaires</span><span><span class="pt orange"></span>Punchs</span><span><span class="pt noir"></span>Employé du mois</span></div>
+  ${detail}`;
+}
+
+/* ---- Listes génériques ---- */
+function etiquetteStatut(v){
+  if(!v)return "";
+  const map={"Corrigé":"vert","Validé":"vert","Faite":"vert","Signée":"vert","Affiché":"vert",
+    "À corriger":"rouge","Retard":"rouge","À revalider":"orange","En formation":"bleu",
+    "Planifiée":"bleu","À planifier":"or","Proposé":"or","Validé ":"vert"};
+  return `<span class="etiquette ${map[v]||""}">${esc(v)}</span>`;
+}
+function htmlListe(cle){
+  const mod=MODULES[cle];
+  const items=[...data[mod.array]];
+  const champDate = mod.fields.find(f=>f.type==="date"||f.type==="month");
+  if(champDate) items.sort((x,y)=>String(x[champDate.k]||"").localeCompare(String(y[champDate.k]||"")));
+  const cartes = items.map(it=>{
+    const titreChamp = mod.fields[0].k;
+    const lignes = mod.fields.slice(1).filter(f=>f.type!=="checkbox"&&it[f.k]).map(f=>{
+      if(f.type==="url") return `<a href="${esc(it[f.k])}" target="_blank" rel="noopener">${esc(it[f.k])}</a>`;
+      if(f.k==="statut") return "";
+      if(f.type==="date") return `${f.label} : ${fmtDate(it[f.k])}`;
+      return `${f.label} : ${esc(it[f.k])}`;
+    }).filter(Boolean).join(" · ");
+    return `<div class="carte"><div class="titre-ligne"><b>${esc(it[titreChamp])}</b>${it.statut?etiquetteStatut(it.statut):""}${it.fait?`<span class="etiquette vert">Fait</span>`:""}</div>
+      <div class="meta">${lignes||""}</div>
+      <div class="actions">
+        ${cle==="punchs"&&it.statut!=="Corrigé"?`<button class="mini-btn plein" onclick="marquerPunch('${it.id}')">Marquer corrigé</button>`:""}
+        ${cle==="calendrier"&&!it.fait?`<button class="mini-btn plein" onclick="marquerFait('${it.id}')">Marquer fait</button>`:""}
+        <button class="mini-btn" onclick="ouvrirForm('${cle}','${it.id}')">Modifier</button>
+        <button class="mini-btn danger" onclick="supprimer('${cle}','${it.id}')">Supprimer</button>
+      </div></div>`;
+  }).join("")||`<div class="vide">Rien pour l'instant. Utilise « + Ajouter ».</div>`;
+  return `<div class="section-titre"><h3>${mod.label}</h3><button class="btn-ajout" onclick="ouvrirForm('${cle}')">+ Ajouter</button></div>${cartes}`;
+}
+
+/* ---- Mentorats (rendu spécifique J30/J60/J90) ---- */
+function htmlMentorats(){
+  const items=[...data.mentorats].sort((a,b)=>String(a.embauche).localeCompare(String(b.embauche)));
+  const cartes=items.map(m=>{
+    const p=prochaineEtapeMentorat(m);
+    const statut = p ? (p.date<aujISO()?`<span class="etiquette rouge">Retard ${p.etape}</span>`:`<span class="etiquette bleu">En attente ${p.etape}</span>`) : `<span class="etiquette vert">Complété</span>`;
+    const etapes=["30","60","90"].map(n=>{
+      const d=plusJours(m.embauche,+n);
+      const r=m["r"+n],f=m["f"+n];
+      return `<div class="tb-ligne"><span class="d">J${n} · ${fmtDate(d)}</span>
+        <label style="font-weight:600;"><input type="checkbox" ${r?"checked":""} onchange="cocherMentorat('${m.id}','r${n}',this.checked)"> Rencontre</label>
+        <label style="font-weight:600;"><input type="checkbox" ${f?"checked":""} onchange="cocherMentorat('${m.id}','f${n}',this.checked)"> FRED</label></div>`;
+    }).join("");
+    return `<div class="carte"><div class="titre-ligne"><b>${esc(m.equipier)}</b>${statut}<span class="etiquette">Mentor : ${esc(m.mentor||"—")}</span></div>
+      <div class="meta">Embauche : ${fmtDate(m.embauche)}${m.notes?" · "+esc(m.notes):""}</div>
+      ${etapes}
+      <div class="actions"><button class="mini-btn" onclick="ouvrirForm('mentorats','${m.id}')">Modifier</button>
+      <button class="mini-btn danger" onclick="supprimer('mentorats','${m.id}')">Supprimer</button></div></div>`;
+  }).join("")||`<div class="vide">Aucun mentorat en cours. Utilise « + Ajouter ».</div>`;
+  return `<div class="section-titre"><h3>Mentorats — J30 / J60 / J90</h3><button class="btn-ajout" onclick="ouvrirForm('mentorats')">+ Ajouter</button></div>${cartes}`;
+}
+function cocherMentorat(id,champ,val){
+  const m=data.mentorats.find(x=>x.id===id); if(!m)return;
+  m[champ]=val; m.ts=Date.now(); sauvegarder(); rendre();
+}
+function marquerPunch(id){const p=data.punchs.find(x=>x.id===id);if(!p)return;p.statut="Corrigé";p.resp=cfg.identite;p.ts=Date.now();sauvegarder();rendre();}
+function marquerFait(id){const e=data.calendrier.find(x=>x.id===id);if(!e)return;e.fait=true;e.ts=Date.now();sauvegarder();rendre();}
+
+/* ---- Messagerie ---- */
+function htmlMessages(){
+  const msgs=[...data.messages].sort((a,b)=>a.ts-b.ts);
+  const fil=msgs.map(m=>`<div class="msg ${m.de===cfg.identite?"moi":"lui"}">${esc(m.texte)}<div class="m-meta">${esc(m.de)} · ${new Date(m.ts).toLocaleString("fr-CA",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div>`).join("")||`<div class="vide">Aucun message. Écris le premier.</div>`;
+  return `<div class="section-titre"><h3>Messages — Romuald / Damien</h3><button class="mini-btn" onclick="rafraichir()">Actualiser</button></div>
+  <div class="fil" id="filMsgs" style="max-height:55vh;overflow-y:auto;">${fil}</div>
+  <div class="zone-envoi"><textarea id="msgTexte" placeholder="Écrire un message…"></textarea><button onclick="envoyerMsg()">Envoyer</button></div>`;
+}
+function envoyerMsg(){
+  const t=$("msgTexte").value.trim(); if(!t)return;
+  data.messages.push({id:uid(),de:cfg.identite,texte:t,ts:Date.now()});
+  data.meta.lastRead[cfg.identite]=Date.now(); data.meta.ts=Date.now();
+  $("msgTexte").value=""; sauvegarder(); rendre();
+}
+function marquerLu(){
+  const avant=data.meta.lastRead[cfg.identite]||0;
+  const dernier=Math.max(0,...data.messages.map(m=>m.ts));
+  if(dernier>avant){data.meta.lastRead[cfg.identite]=Date.now();data.meta.ts=Date.now();sauvegarder();}
+}
+
+/* ---- Réglages ---- */
+function htmlReglages(){
+  return `<div class="section-titre"><h3>Réglages</h3></div>
+  <div class="carte"><b>Rappels</b><div class="meta">Afficher les échéances qui arrivent dans les prochains jours :</div>
+    <div class="champ" style="max-width:200px;margin-top:8px;"><input type="number" id="regDelai" min="1" max="60" value="${data.meta.delaiRappel??7}"></div>
+    <button class="mini-btn plein" onclick="majDelai()">Enregistrer</button></div>
+  <div class="carte"><b>Code d'accès</b><div class="meta">Le nouveau code s'appliquera aux deux appareils.</div>
+    <div class="champ" style="max-width:260px;margin-top:8px;"><input type="password" id="regPin" placeholder="Nouveau code"></div>
+    <button class="mini-btn plein" onclick="majPin()">Changer le code</button></div>
+  <div class="carte"><b>Espace partagé</b>
+    <div class="meta">Identifiant de l'espace (à transmettre à l'autre appareil avec le code d'accès) :<br><code style="font-size:13px;word-break:break-all;">${esc(cfg.gistId)}</code></div>
+    <div class="actions"><button class="mini-btn" onclick="rafraichir()">Forcer la synchronisation</button>
+    <button class="mini-btn danger" onclick="reconfigurer()">Réinitialiser cet appareil</button></div></div>`;
+}
+async function majDelai(){data.meta.delaiRappel=Math.max(1,Math.min(60,+$("regDelai").value||7));data.meta.ts=Date.now();await sauvegarder();rendre();}
+async function majPin(){
+  const p=$("regPin").value.trim(); if(p.length<4){alert("Minimum 4 caractères.");return;}
+  data.meta.pinHash=await sha256(p);data.meta.ts=Date.now();
+  localStorage.setItem(LS_KEY,JSON.stringify({...cfg,pinHash:data.meta.pinHash}));cfg.pinHash=data.meta.pinHash;
+  await sauvegarder();alert("Code changé.");rendre();
+}
+
+/* ---- Formulaire générique ---- */
+function ouvrirForm(cle,id,datePre){
+  const mod=MODULES[cle]; const it=id?data[mod.array].find(x=>x.id===id):null;
+  const champs=mod.fields.map(f=>{
+    const v=it?(it[f.k]??""):(f.type==="date"&&datePre?datePre:"");
+    if(f.type==="select") return `<div class="champ"><label>${f.label}</label><select id="f_${f.k}">${f.options.map(o=>`<option ${v===o?"selected":""}>${o}</option>`).join("")}</select></div>`;
+    if(f.type==="textarea") return `<div class="champ"><label>${f.label}</label><textarea id="f_${f.k}">${esc(v)}</textarea></div>`;
+    if(f.type==="checkbox") return `<div class="champ"><label style="display:flex;align-items:center;gap:8px;text-transform:none;"><input type="checkbox" id="f_${f.k}" ${v?"checked":""} style="width:auto;"> ${f.label}</label></div>`;
+    const type=f.type==="month"?"month":(f.type==="url"?"url":f.type);
+    return `<div class="champ"><label>${f.label}${f.req?" *":""}</label><input type="${type}" id="f_${f.k}" value="${esc(v)}"></div>`;
+  }).join("");
+  $("zoneModal").innerHTML=`<div class="voile" onclick="if(event.target===this)fermerForm()"><div class="modal">
+    <h4>${it?"Modifier":"Ajouter"} — ${mod.label}</h4>${champs}
+    <div class="rangee-btn"><button class="btn-sec" style="margin:0;" onclick="fermerForm()">Annuler</button>
+    <button class="btn-entrer" style="margin:0;" onclick="validerForm('${cle}','${id||""}')">Enregistrer</button></div></div></div>`;
+}
+function fermerForm(){$("zoneModal").innerHTML="";}
+function validerForm(cle,id){
+  const mod=MODULES[cle];
+  const it = id?data[mod.array].find(x=>x.id===id):{id:uid()};
+  for(const f of mod.fields){
+    const el=$("f_"+f.k);
+    const v=f.type==="checkbox"?el.checked:el.value.trim();
+    if(f.req&&!v){alert(`Le champ « ${f.label} » est obligatoire.`);return;}
+    it[f.k]=v;
+  }
+  it.ts=Date.now(); it.par=cfg.identite;
+  if(!id) data[mod.array].push(it);
+  fermerForm(); sauvegarder(); rendre();
+}
+function supprimer(cle,id){
+  if(!confirm("Supprimer cet élément ?"))return;
+  const mod=MODULES[cle];
+  data[mod.array]=data[mod.array].filter(x=>x.id!==id);
+  data.deleted.push(id);
+  sauvegarder(); rendre();
+}
+
+/* ================= DÉMARRAGE / CONFIG ================= */
+let cfgIdentite=null, cfgMode=null;
+function choisirIdentite(q){cfgIdentite=q;$("chxR").classList.toggle("actif",q==="Romuald");$("chxD").classList.toggle("actif",q==="Damien");}
+function modeEspace(m){cfgMode=m;
+  $("chxNouveau").classList.toggle("actif",m==="nouveau");$("chxJoindre").classList.toggle("actif",m==="joindre");
+  $("cfgGistId").classList.toggle("cache",m!=="joindre");
+  $("cfgPin").placeholder = m==="nouveau"?"Code d'accès à définir":"Code d'accès de l'espace";
+  $("aideEspace").innerHTML = m==="nouveau"
+    ?"<b>Créer l'espace :</b> à faire une seule fois, sur le premier appareil. Un identifiant d'espace te sera donné à transmettre à Damien avec le code d'accès."
+    :"<b>Rejoindre l'espace :</b> colle ici l'identifiant fourni par le premier appareil, puis entre le même code d'accès.";}
+async function lancerConfig(){
+  const err=$("cfgErr");err.textContent="";
+  const token=$("cfgToken").value.trim(), pin=$("cfgPin").value.trim(), gid=$("cfgGistId").value.trim();
+  if(!cfgIdentite){err.textContent="Choisis ton identité.";return;}
+  if(!token.startsWith("gh")){err.textContent="Token GitHub invalide.";return;}
+  if(pin.length<4){err.textContent="Code d'accès : minimum 4 caractères.";return;}
+  if(!cfgMode){err.textContent="Choisis : créer ou rejoindre l'espace.";return;}
+  if(cfgMode==="joindre"&&!gid){err.textContent="Colle l'identifiant de l'espace.";return;}
+  $("btnConfig").disabled=true;$("btnConfig").textContent="Connexion…";
+  try{
+    cfg={identite:cfgIdentite,token,gistId:gid,pinHash:await sha256(pin)};
+    if(cfgMode==="nouveau"){
+      const doc=docVide(cfg.pinHash);
+      cfg.gistId=await creerGist(doc);
+      data=doc;baseline=doc.updatedAt;
+      localStorage.setItem(LS_KEY,JSON.stringify(cfg));
+      alert("Espace créé.\n\nIdentifiant à transmettre à Damien :\n"+cfg.gistId+"\n\n(aussi visible dans Réglages)");
+    }else{
+      data=await lireGist();
+      if(data.meta.pinHash!==cfg.pinHash){err.textContent="Code d'accès incorrect pour cet espace.";$("btnConfig").disabled=false;$("btnConfig").textContent="Valider la configuration";return;}
+      baseline=data.updatedAt;
+      localStorage.setItem(LS_KEY,JSON.stringify(cfg));
+    }
+    demarrerApp();
+  }catch(e){console.error(e);err.textContent="Échec : vérifie le token"+(cfgMode==="joindre"?" et l'identifiant d'espace.":".");
+    $("btnConfig").disabled=false;$("btnConfig").textContent="Valider la configuration";}
+}
+async function verifierPin(){
+  const p=$("pinEntree").value.trim();
+  if(await sha256(p)===cfg.pinHash){
+    $("pinErr").textContent="";
+    try{data=await lireGist();baseline=data.updatedAt;
+      if(data.meta.pinHash&&data.meta.pinHash!==cfg.pinHash){cfg.pinHash=data.meta.pinHash;localStorage.setItem(LS_KEY,JSON.stringify(cfg));
+        if(await sha256(p)!==cfg.pinHash){$("pinErr").textContent="Le code a été changé. Entre le nouveau code.";return;}}
+    }catch(e){console.error(e);$("pinErr").textContent="Connexion à l'espace impossible. Réessaie.";return;}
+    demarrerApp();
+  }else $("pinErr").textContent="Code incorrect.";
+}
+function reconfigurer(){
+  if(!confirm("Réinitialiser la configuration de cet appareil ? (les données partagées dans l'espace ne sont pas effacées)"))return;
+  localStorage.removeItem(LS_KEY);location.reload();
+}
+function demarrerApp(){
+  $("ecranPin").classList.add("cache");$("ecranConfig").classList.add("cache");
+  $("app").style.display="block";
+  majSync("ok"); rendre();
+  setInterval(()=>rafraichir(true), 45000);
+}
+(function init(){
+  if(cfg&&cfg.token&&cfg.gistId&&cfg.pinHash){ $("ecranPin").classList.remove("cache"); }
+  else{ $("ecranPin").classList.add("cache"); $("ecranConfig").classList.remove("cache"); }
+})();
+</script>
+</body>
+</html>
