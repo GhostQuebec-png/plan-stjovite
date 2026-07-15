@@ -249,6 +249,37 @@ const MODULES = {
       {k:"resp",label:"Responsable",type:"select",options:PERSONNES},
       {k:"notes",label:"Notes",type:"textarea"}
     ]},
+  fichesRole:{label:"Fiches de rôle", custom:true},
+  bulletinsDepartement:{label:"Bulletins de département", array:"bulletins",
+    fields:[
+      {k:"mois",label:"Mois (AAAA-MM)",type:"month",req:1},
+      {k:"resp",label:"Responsable",type:"select",options:PERSONNES},
+      {k:"tauxRoulement",label:"1. Taux de roulement — résultat (cible 45 %)",type:"text"},
+      {k:"formationsRetard",label:"1. Formations en retard (FCP/FRED)",type:"text"},
+      {k:"mentoratsAJour",label:"1. Mentorats à jour (J30/J60/J90)",type:"text"},
+      {k:"santeSecurite",label:"1. Rencontres santé/sécurité",type:"text"},
+      {k:"punchsAttente",label:"1. Corrections de punchs en attente",type:"text"},
+      {k:"horairesPauses",label:"1. Horaires / feuilles de pause manquants",type:"text"},
+      {k:"evaluationsRealisees",label:"2. Évaluations réalisées",type:"textarea"},
+      {k:"evaluationsAPlanifier",label:"2. Évaluations à planifier",type:"textarea"},
+      {k:"pointsContact",label:"2. Points de contact J30/J60/J90 réalisés",type:"textarea"},
+      {k:"devAssistants",label:"3. Développement — Assistants",type:"textarea"},
+      {k:"devGerantsQuart",label:"3. Développement — Gérants de quart",type:"textarea"},
+      {k:"devLeadersEquipe",label:"3. Développement — Leaders d'équipe",type:"textarea"},
+      {k:"devInstructeurs",label:"3. Développement — Instructeurs",type:"textarea"},
+      {k:"devEquipiers",label:"3. Développement — Équipiers",type:"textarea"},
+      {k:"meritesService",label:"4. Mérites de service",type:"textarea"},
+      {k:"petitsPlaisirs",label:"4. Petits plaisirs / motivation",type:"textarea"},
+      {k:"employeDuMoisTxt",label:"4. Employé du mois",type:"text"},
+      {k:"activiteEquipe",label:"4. Activité d'équipe",type:"textarea"},
+      {k:"contribASurveiller",label:"5. Contributions — à surveiller",type:"textarea"},
+      {k:"contribASouligner",label:"5. Contributions — à souligner",type:"textarea"},
+      {k:"forces",label:"6. Forces du département",type:"textarea"},
+      {k:"occasionsAmelioration",label:"6. Occasions d'amélioration",type:"textarea"},
+      {k:"plan1",label:"7. Action 1",type:"text"},
+      {k:"plan2",label:"7. Action 2",type:"text"},
+      {k:"plan3",label:"7. Action 3",type:"text"}
+    ]},
   videos:{label:"Vidéos formation", array:"videos",
     fields:[
       {k:"titre",label:"Titre",type:"text",req:1},
@@ -290,13 +321,13 @@ const MODULES = {
     fields:[
       {k:"titre",label:"Titre",type:"text",req:1},
       {k:"url",label:"Lien (Drive, GitHub, autre)",type:"url",req:1},
-      {k:"categorie",label:"Catégorie",type:"select",options:["Évaluations","Mentorat","Formation","RH","Communication","Autre"]},
+      {k:"categorie",label:"Catégorie",type:"select",options:["Évaluations","Mentorat","Formation","RH","Communication","Fiches de rôle","Autre"]},
       {k:"notes",label:"Notes",type:"textarea"}
     ]},
   messages:{label:"Messages", custom:true},
   reglages:{label:"Réglages", custom:true}
 };
-const ARRAYS = ["calendrier","mentorats","evaluations","videos","metiers","anniversaires","punchs","employeMois","documents","messages"];
+const ARRAYS = ["calendrier","mentorats","evaluations","bulletins","videos","metiers","anniversaires","punchs","employeMois","documents","messages"];
 
 /* ================= OUTILS ================= */
 const $ = id => document.getElementById(id);
@@ -312,7 +343,7 @@ function docVide(pinHash){
   return {version:1, updatedAt:Date.now(),
     meta:{pinHash, lastRead:{Romuald:0,Damien:0}, delaiRappel:7, ts:Date.now()},
     deleted:[],
-    calendrier:[],mentorats:[],evaluations:[],videos:[],metiers:[],
+    calendrier:[],mentorats:[],evaluations:[],bulletins:[],videos:[],metiers:[],
     anniversaires:[],punchs:[],employeMois:[],documents:[],messages:[]};
 }
 
@@ -428,6 +459,8 @@ function rendre(){
   if(ongletActif==="tableau") z.innerHTML = htmlTableau();
   else if(ongletActif==="calendrier") z.innerHTML = htmlCalendrier();
   else if(ongletActif==="mentorats") z.innerHTML = htmlMentorats();
+  else if(ongletActif==="fichesRole") z.innerHTML = htmlFichesRole();
+  else if(ongletActif==="bulletinsDepartement") z.innerHTML = htmlBulletins();
   else if(ongletActif==="messages"){z.innerHTML = htmlMessages(); marquerLu(); const f=$("filMsgs"); if(f) f.scrollTop=f.scrollHeight;}
   else if(ongletActif==="reglages") z.innerHTML = htmlReglages();
   else z.innerHTML = htmlListe(ongletActif);
@@ -444,6 +477,7 @@ function rendreNav(){
     let badge=0;
     if(k==="messages")badge=nbNonLus();
     if(k==="punchs")badge=data.punchs.filter(p=>p.statut!=="Corrigé").length;
+    if(k==="bulletinsDepartement"){const moisAct=new Date().toISOString().slice(0,7);badge=(data.bulletins||[]).some(b=>b.mois===moisAct)?0:1;}
     if(badge>0){const s=document.createElement("span");s.className="pastille";s.textContent=badge;b.appendChild(s);}
     b.onclick=()=>{ongletActif=k;calJourChoisi=null;rendre();};
     n.appendChild(b);
@@ -571,6 +605,93 @@ function htmlMentorats(){
 function cocherMentorat(id,champ,val){
   const m=data.mentorats.find(x=>x.id===id); if(!m)return;
   m[champ]=val; m.ts=Date.now(); sauvegarder(); rendre();
+}
+/* ---- Fiches de rôle (contenu statique de référence) ---- */
+function htmlFichesRole(){
+  const fiche=(titre,niveau,sections,citation)=>`<div class="carte">
+    <div class="titre-ligne"><b>${titre}</b><span class="etiquette bleu">${niveau}</span></div>
+    ${sections.map(s=>`<div style="margin-top:10px;"><b style="color:var(--rouge-fonce);font-size:12.5px;text-transform:uppercase;letter-spacing:.3px;">${s.titre}</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">${s.items.map(i=>`<li style="margin-bottom:5px;line-height:1.45;font-size:14px;">${i}</li>`).join("")}</ul></div>`).join("")}
+    ${citation?`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--ligne);font-weight:700;font-size:13.5px;text-align:center;">${citation}</div>`:""}
+  </div>`;
+
+  const salarie=fiche("Leader de quart salarié","Assistant gérant",[
+    {titre:"Responsabilités principales",items:[
+      "Superviser les opérations du restaurant pendant son quart de travail",
+      "Soutenir le leader de restaurant dans la gestion globale",
+      "Assurer une excellente expérience-client",
+      "Encadrer et développer les employés",
+      "Pourrait être responsable d'un département",
+      "Fait le suivi des objectifs avec les autres membres de la gestion : quintiles, OPH, coût des aliments",
+      "S'assurer que les employés appliquent les bonnes marches à suivre"]},
+    {titre:"Gestion d'équipe",items:["Encadrer l'équipe, participer à l'embauche et à la formation","Donner de la rétroaction en lien avec les procédures","Gérer les conflits et maintenir un bon climat"]},
+    {titre:"Opérations",items:["S'assurer que les normes (qualité, rapidité, propreté) sont respectées","Gérer les périodes de fort achalandage","Superviser les ouvertures et fermetures","Vérifier les inventaires et les commandes"]},
+    {titre:"Gestion administrative",items:["Suivi des coûts (main-d'œuvre, pertes alimentaires)","Analyser les performances du restaurant","Participation à la planification des horaires"]},
+    {titre:"Expérience-client",items:["Gérer les plaintes des clients","S'assurer que le service soit rapide et chaleureux","Maintenir les normes de satisfaction"]},
+    {titre:"Qualités clés",items:["Meneur naturel","Gestion du stress","Sens des responsabilités","Bon communicateur","Esprit d'analyse"]},
+    {titre:"Compétences clés",items:["Gestion des priorités","Prise de décisions rapides","Formation et développement d'équipe","Organisation et rigueur","Orientation résultats"]},
+    {titre:"Attitudes",items:["Proactif","Présent sur le plancher (diriger efficacement)","Positif","Énergique","Axé sur les solutions"]}
+  ]);
+
+  const quart=fiche("Leader de quart","Gérant de quart",[
+    {titre:"Responsabilités principales",items:[
+      "Superviser l'équipe (cuisine, comptoir, volant) : bras droit de l'équipe salariale",
+      "Assurer la rapidité et la qualité du service : parle des quintiles et de l'OPH",
+      "Gérer les priorités en temps réel (rush, manque de personnel, imprévus) : complète sa liste pré-quart",
+      "S'assurer du respect des normes (propreté, sécurité alimentaire, procédures)",
+      "Motive les employés, maintient une bonne ambiance, donne de la rétroaction et du soutien, délègue pour donner confiance",
+      "Gère certaines situations avec les clients (plaintes, demandes spéciales)",
+      "Fait des tâches administratives de base (argent, inventaire, assignation des postes), fait partie d'un département"]},
+    {titre:"Qualités clés",items:["Meneur naturel : décisions rapides, guide son équipe","Communique clairement, consignes simples","Reste calme en période de pointe","Proactif (anticipe les problèmes)","Esprit d'équipe, met la main à la pâte"]},
+    {titre:"Comportements exemplaires",items:["Accueille les clients avec énergie et sourire","Intervient rapidement en cas de problème client","Encourage son équipe (rétroaction positive, encadrement)","Montre l'exemple (ponctualité, professionnalisme)"]}
+  ],"« Un excellent leader de quart exemplaire fait en sorte que le client reparte avec une expérience rapide, agréable et sans problème. »");
+
+  return `<div class="section-titre"><h3>Fiches de rôle</h3></div>
+    <div class="meta" style="margin-bottom:12px;">Fiches officielles affichées en restaurant. Toujours utiliser la bonne fiche selon le destinataire.</div>
+    ${salarie}${quart}`;
+}
+
+/* ---- Bulletins de département (rendu spécifique, formulaire générique) ---- */
+function htmlBulletins(){
+  const items=[...(data.bulletins||[])].sort((a,b)=>String(b.mois||"").localeCompare(String(a.mois||"")));
+  const M=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  const moisTxt=m=>{if(!m)return "—";const [a,mo]=m.split("-");return `${M[+mo-1]} ${a}`;};
+  const cartes=items.map(b=>{
+    const resume=[
+      b.tauxRoulement?`Roulement : ${esc(b.tauxRoulement)}`:"",
+      b.formationsRetard?`Formations en retard : ${esc(b.formationsRetard)}`:"",
+      b.punchsAttente?`Punchs en attente : ${esc(b.punchsAttente)}`:""
+    ].filter(Boolean).join(" · ");
+    return `<div class="carte">
+      <div class="titre-ligne"><b>Bulletin — ${moisTxt(b.mois)}</b>${b.resp?`<span class="etiquette">${esc(b.resp)}</span>`:""}</div>
+      <div class="meta">${resume||"Aucun indicateur renseigné."}</div>
+      <div class="actions">
+        <button class="mini-btn" onclick="toggleBulletin('${b.id}')">Voir le détail</button>
+        <button class="mini-btn" onclick="ouvrirForm('bulletinsDepartement','${b.id}')">Modifier</button>
+        <button class="mini-btn danger" onclick="supprimer('bulletinsDepartement','${b.id}')">Supprimer</button>
+      </div>
+      <div id="detail_${b.id}" class="cache" style="margin-top:12px;border-top:1px solid var(--ligne);padding-top:12px;">${detailBulletin(b)}</div>
+    </div>`;
+  }).join("")||`<div class="vide">Aucun bulletin. Utilise « + Ajouter » pour créer celui du mois.</div>`;
+  return `<div class="section-titre"><h3>Bulletins de département</h3><button class="btn-ajout" onclick="ouvrirForm('bulletinsDepartement')">+ Ajouter</button></div>${cartes}`;
+}
+function toggleBulletin(id){const d=$("detail_"+id);if(d)d.classList.toggle("cache");}
+function detailBulletin(b){
+  const l=(label,val)=>val?`<div style="margin-bottom:6px;font-size:13.5px;"><b>${esc(label)} :</b> ${esc(val)}</div>`:"";
+  return [
+    l("Taux de roulement",b.tauxRoulement),l("Formations en retard",b.formationsRetard),
+    l("Mentorats à jour",b.mentoratsAJour),l("Santé/sécurité",b.santeSecurite),
+    l("Punchs en attente",b.punchsAttente),l("Horaires/pauses manquants",b.horairesPauses),
+    l("Évaluations réalisées",b.evaluationsRealisees),l("Évaluations à planifier",b.evaluationsAPlanifier),
+    l("Points de contact",b.pointsContact),l("Développement — Assistants",b.devAssistants),
+    l("Développement — Gérants de quart",b.devGerantsQuart),l("Développement — Leaders d'équipe",b.devLeadersEquipe),
+    l("Développement — Instructeurs",b.devInstructeurs),l("Développement — Équipiers",b.devEquipiers),
+    l("Mérites de service",b.meritesService),l("Petits plaisirs",b.petitsPlaisirs),
+    l("Employé du mois",b.employeDuMoisTxt),l("Activité d'équipe",b.activiteEquipe),
+    l("Contributions — à surveiller",b.contribASurveiller),l("Contributions — à souligner",b.contribASouligner),
+    l("Forces",b.forces),l("Occasions d'amélioration",b.occasionsAmelioration),
+    l("Action 1",b.plan1),l("Action 2",b.plan2),l("Action 3",b.plan3)
+  ].join("");
 }
 function marquerPunch(id){const p=data.punchs.find(x=>x.id===id);if(!p)return;p.statut="Corrigé";p.resp=cfg.identite;p.ts=Date.now();sauvegarder();rendre();}
 function marquerFait(id){const e=data.calendrier.find(x=>x.id===id);if(!e)return;e.fait=true;e.ts=Date.now();sauvegarder();rendre();}
