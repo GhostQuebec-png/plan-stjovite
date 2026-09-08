@@ -3001,11 +3001,39 @@ function htmlCalendrierUnifie(){
     ${corps||'<div class="vide">Rien à venir.</div>'}`;
 }
 
-/* ---------- Accès ---------- */
+/* ---------- Filet de securite ---------- */
+function signaler(e, ou){
+  console.error(ou, e);
+  const z = document.getElementById('page'); if(!z) return;
+  const msg = (e && e.message) ? e.message : String(e);
+  const d = document.createElement('div');
+  d.className = 'rappel';
+  d.style.borderLeftColor = 'var(--action)';
+  d.innerHTML = '<div><b>Un probleme est survenu (' + ou + ').</b></div>' +
+    '<div>' + msg.replace(/</g,'&lt;') + '</div>' +
+    '<div>Le reste de loutil continue de fonctionner. Signale ce message pour correction.</div>';
+  z.prepend(d);
+}
+window.addEventListener('error', function(ev){
+  const c = document.getElementById('corps');
+  if(c && c.classList.contains('cache')){
+    document.getElementById('rail').classList.remove('cache');
+    c.classList.remove('cache');
+    document.getElementById('ecran-code').classList.add('cache');
+  }
+  signaler(ev.error || ev.message, 'execution');
+});
+window.addEventListener('unhandledrejection', function(ev){ signaler(ev.reason, 'tache de fond'); });
+
+/* ---------- Acces ---------- */
 function tenterAcces(){
-  tenter();
+  try{ tenter(); }catch(e){ signaler(e,"code dacces"); return; }
   const nom = (document.getElementById('qui')||{}).textContent || "";
-  if(nom && nom !== "22028"){ demarrerOutil(); }
+  if(nom && nom !== "22028"){
+    demarrerOutil().catch(function(e){ signaler(e,"demarrage"); });
+  }else{
+    document.getElementById('ecran-code').classList.remove('cache');
+  }
 }
 document.addEventListener('keydown', e=>{
   if(e.key==='Enter' && !document.getElementById('ecran-code').classList.contains('cache')) tenterAcces();
@@ -3013,14 +3041,14 @@ document.addEventListener('keydown', e=>{
 
 /* ---------- Démarrage ---------- */
 async function demarrerOutil(){
-  if(typeof initPlan==="function"){ try{ await initPlan(); }catch(e){ console.warn(e); } }
+  // l'interface s'affiche d'abord : une erreur ne doit jamais laisser un écran vide
   document.getElementById('ecran-code').classList.add('cache');
   document.getElementById('rail').classList.remove('cache');
   document.getElementById('corps').classList.remove('cache');
   document.getElementById('page').innerHTML =
-    '<h1 class="t">Ma journée</h1><p class="st">Chargement des données…</p>';
-  // Données du personnel : espace privé, jamais dans ce fichier
+    '<h1 class="t">Ma journee</h1><p class="st">Chargement des donnees...</p>';
   if(!data) data = docVide("");
+  if(typeof initPlan==="function"){ try{ await initPlan(); }catch(e){ signaler(e,"plan de quart"); } }
   if(cfg && cfg.token && cfg.gistId){
     try{
       const distant = await lireGist();
@@ -3028,14 +3056,12 @@ async function demarrerOutil(){
       baseline = distant.updatedAt;
       majSync("ok");
       setInterval(()=>rafraichir(true), 45000);
-    }catch(e){
-      console.warn(e); majSync("err");
-    }
+    }catch(e){ signaler(e,"chargement des donnees"); majSync("err"); }
   }else{
     majSync("err");
   }
-  if(typeof majRoster==="function"){ try{ await majRoster(); }catch(e){ console.warn(e); } }
-  aller("journee");
+  if(typeof majRoster==="function"){ try{ await majRoster(); }catch(e){ signaler(e,"liste demployes"); } }
+  try{ aller("journee"); }catch(e){ signaler(e,"affichage"); }
 }
 document.querySelectorAll('#rail button[data-v]').forEach(b=>
   b.addEventListener('click',()=>aller(b.dataset.v)));
