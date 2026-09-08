@@ -1,137 +1,177 @@
 <!DOCTYPE html>
-<!--
-  PRÉPARATION DES QUARTS — McDonald's St-Jovite #22028
-  Outil conçu et développé par Romuald Luce.
-  © 2026 Romuald Luce. Tous droits réservés.
-  Toute reproduction, modification ou réutilisation sans autorisation écrite est interdite.
--->
 <html lang="fr">
 <head>
-<meta name="author" content="Romuald Luce">
-<meta name="copyright" content="© 2026 Romuald Luce — Tous droits réservés">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Préparation des quarts — St-Jovite #22028</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
-<style>  :root{
-    --rouge:#DA291C; --rouge-fonce:#B11E14; --noir:#1D1D1B; --bar:#2B2B2B;
-    --ligne:#C9C9C4; --label:#5F5F5A; --or:#FFC72C; --papier:#FFFFFF; --fond:#E9E9E2;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--fond); color:var(--noir); -webkit-print-color-adjust:exact; print-color-adjust:exact;}
-  .cache{display:none !important;}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>St-Jovite 22028</title>
+<style>
+/* ===================== SOCLE ===================== */
+:root{
+  --papier:#FFFFFF; --surface:#F1F2F3; --encre:#16181A; --sourd:#6E757C;
+  --filet:#DDE0E2; --action:#DA291C; --signal:#FFC72C; --fait:#157F4C;
+  --rouge:#DA291C; --rouge-fonce:#B01F14; --or:#FFC72C; --noir:#16181A;
+  --ligne:#DDE0E2; --label:#6E757C; --vert:#157F4C;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--surface); color:var(--encre);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:16px; line-height:1.4; -webkit-font-smoothing:antialiased; display:flex;
+}
+.cache{display:none !important;}
 
-  /* ----- Écran de code & menu (plein écran sombre) ----- */
+/* ---------- Écran de code ---------- */
+#ecran-code{
+  position:fixed; inset:0; background:var(--encre); color:#fff; z-index:100;
+  display:grid; place-items:center; padding:24px;
+}
+#ecran-code .boite{width:100%; max-width:330px; text-align:center;}
+#ecranCode h1{font-size:24px; margin:0 0 6px; letter-spacing:-.4px;}
+#ecranCode p{color:#9AA0A6; font-size:14px; margin:0 0 22px;}
+#ecranCode input{
+  width:100%; font:inherit; font-size:19px; text-align:center; letter-spacing:3px;
+  padding:13px; border:1px solid #3A3F44; background:#1F2225; color:#fff; margin-bottom:12px;
+}
+#ecranCode input:focus{outline:2px solid var(--action); outline-offset:-1px;}
+#ecranCode button{
+  width:100%; font:inherit; font-size:16px; font-weight:600; padding:13px;
+  background:var(--action); color:#fff; border:0; cursor:pointer;
+}
+#ecran-code .err{color:#FF8A80; font-size:13.5px; min-height:19px; margin-top:10px;}
+
+/* ---------- Navigation ---------- */
+nav{
+  width:196px; flex:0 0 196px; background:var(--encre); color:#fff;
+  display:flex; flex-direction:column; padding:18px 0 12px;
+  position:sticky; top:0; height:100vh;
+}
+.marque{padding:0 18px 20px; display:flex; align-items:baseline; gap:9px;}
+.marque b{font-size:17px; letter-spacing:-.2px;}
+.marque span{font-size:12px; color:#9AA0A6;}
+nav button{
+  appearance:none; background:none; border:0; color:#C9CDD1; font:inherit; font-size:15px;
+  text-align:left; padding:11px 18px; cursor:pointer; display:flex; align-items:center;
+  gap:11px; border-left:3px solid transparent;
+}
+nav button.actif{color:#fff; background:rgba(255,255,255,.07); border-left-color:var(--action);}
+nav .pastille{
+  margin-left:auto; background:var(--action); color:#fff; font-size:11px; font-weight:700;
+  min-width:19px; height:19px; border-radius:10px; display:grid; place-items:center; padding:0 5px;
+}
+nav .bas{margin-top:auto; padding:14px 18px 0; font-size:11px; color:#71787E;}
+nav .bas button{padding:6px 0; font-size:11.5px; color:#71787E; border:0;}
+
+main{flex:1; min-width:0; overflow-y:auto; height:100vh;}
+.page{max-width:800px; padding:26px 30px 80px;}
+h1.t{font-size:27px; margin:0 0 3px; letter-spacing:-.5px; font-weight:700;}
+p.st{color:var(--sourd); font-size:14px; margin:0 0 22px;}
+
+/* ---------- Composants ---------- */
+.tete{background:var(--papier); border:1px solid var(--filet); padding:20px 22px; margin-bottom:16px;}
+.tete.urgent{border-left:5px solid var(--action);}
+.tete .quoi{font-size:12.5px; color:var(--sourd); margin-bottom:5px;}
+.tete .grand{font-size:29px; font-weight:700; letter-spacing:-.7px; line-height:1.14;}
+.tete .quand{margin-top:7px; font-size:14px; color:var(--sourd);}
+.rappel{background:#FFF8E1; border-left:5px solid var(--signal); padding:12px 16px;
+  margin-bottom:16px; font-size:14.5px;}
+.rappel div+div{margin-top:5px;}
+.bloc{background:var(--papier); border:1px solid var(--filet); margin-bottom:16px;}
+.bloc>h2{margin:0; font-size:13px; font-weight:600; color:var(--sourd); padding:11px 16px;
+  border-bottom:1px solid var(--filet); display:flex; align-items:center; background:#FAFBFB;}
+.bloc>h2 em{margin-left:auto; font-style:normal; font-weight:400;}
+.rangee{display:flex; gap:14px; align-items:baseline; padding:12px 16px;
+  border-bottom:1px solid #EDEFF0; font-size:15px;}
+.rangee:last-child{border-bottom:0;}
+.rangee .date{flex:0 0 66px; color:var(--sourd); font-size:13.5px;}
+.rangee .quoi{flex:1; min-width:0;}
+.rangee .qui{font-weight:600;}
+.rangee .prec{display:block; font-size:12.5px; color:var(--sourd); margin-top:2px;}
+.rangee.tard .date,.rangee.tard .qui{color:var(--action);}
+.rangee.tard .date{font-weight:700;}
+.vide{padding:22px 16px; color:var(--sourd); font-size:14.5px;}
+.note{display:flex; align-items:center; gap:11px; padding:11px 16px; border-bottom:1px solid #EDEFF0;}
+.note input{width:21px; height:21px; margin:0; accent-color:var(--fait);}
+.note label{flex:1; font-size:15px;}
+.ajout{display:flex; gap:9px; padding:12px 16px;}
+.ajout input[type=text]{flex:1; font:inherit; font-size:15px; padding:9px 11px;
+  border:1px solid var(--filet); background:var(--papier); color:var(--encre);}
+.bt{appearance:none; font:inherit; font-size:14px; font-weight:600; padding:9px 15px;
+  border:1px solid var(--encre); background:var(--papier); color:var(--encre); cursor:pointer;}
+.bt.plein{background:var(--encre); color:#fff;}
+.bt.rouge{background:var(--action); border-color:var(--action); color:#fff;}
+.bt.mini{font-size:13px; padding:6px 11px;}
+.actions{display:flex; gap:8px; padding:11px 16px; flex-wrap:wrap;}
+.sous{display:flex; gap:2px; margin-bottom:16px; border-bottom:1px solid var(--filet); overflow-x:auto;}
+.sous button{appearance:none; background:none; border:0; border-bottom:3px solid transparent;
+  font:inherit; font-size:14.5px; color:var(--sourd); padding:9px 14px; cursor:pointer; white-space:nowrap;}
+.sous button.actif{color:var(--encre); font-weight:600; border-bottom-color:var(--action);}
+.et{font-size:11.5px; font-weight:700; padding:3px 8px; white-space:nowrap;}
+.et.tard{background:#FDECEA; color:var(--action);}
+.et.ok{background:#E7F4ED; color:var(--fait);}
+.et.att{background:#FFF8E1; color:#8A6400;}
+.mesures{display:flex; gap:26px; padding:16px; flex-wrap:wrap;}
+.mesure b{display:block; font-size:26px; font-weight:700; line-height:1;}
+.mesure span{font-size:12.5px; color:var(--sourd);}
+.grille{display:grid; grid-template-columns:repeat(auto-fill,minmax(178px,1fr));
+  gap:1px; background:var(--filet); border:1px solid var(--filet);}
+.case{background:var(--papier); padding:17px 15px; text-align:left; border:0;
+  font:inherit; cursor:pointer; color:var(--encre);}
+.case b{display:block; font-size:15.5px; margin-bottom:3px;}
+.case span{font-size:12.5px; color:var(--sourd);}
+.retour{margin-bottom:14px;}
+/* le châssis fournit le retour : on masque les barres de navigation héritées */
+#heritage .barre-nav{display:none !important;}
+#heritage .vue-h{background:transparent;}
+.champ{padding:0 16px 12px;}
+.champ label{display:block; font-size:12.5px; color:var(--sourd); margin-bottom:4px;}
+.champ input,.champ select,.champ textarea{
+  width:100%; font:inherit; font-size:15px; padding:9px 11px;
+  border:1px solid var(--filet); background:var(--papier); color:var(--encre);}
+.aide{font-size:13px; color:var(--sourd); padding:10px 16px; background:#FAFBFB;
+  border:1px solid var(--filet); margin-bottom:16px;}
+
+@media (max-width:820px){
+  body{flex-direction:column;}
+  nav{width:100%; flex:0 0 auto; height:auto; position:fixed; bottom:0; top:auto;
+    flex-direction:row; padding:0; z-index:40; overflow-x:auto;
+    padding-bottom:env(safe-area-inset-bottom);}
+  .marque,nav .bas{display:none;}
+  nav button{flex-direction:column; gap:3px; font-size:11px; padding:9px 12px;
+    border-left:0; border-top:3px solid transparent; flex:1 0 auto;
+    text-align:center; align-items:center;}
+  nav button.actif{border-left:0; border-top-color:var(--action);}
+  nav .pastille{margin:0; position:absolute; transform:translate(17px,-7px);}
+  main{height:auto; padding-bottom:70px;}
+  .page{padding:20px 15px 40px;}
+  h1.t{font-size:23px;}
+  .tete .grand{font-size:24px;}
+}
+@media print{
+  nav{display:none;} main{height:auto; overflow:visible;} .page{padding:0; max-width:none;}
+}
+
+/* ============ CSS hérité : vues de quart ============ */
+  :root{
+    --rouge:#DA291C; --rouge-fonce:#B01F14; --noir:#16181A; --bar:#2B2B2B;
+    --ligne:#DDE0E2; --label:#6E757C; --or:#FFC72C; --papier:#FFFFFF; --fond:#E9E9E2;
+  }#heritage{box-sizing:border-box;}#heritage, #heritage{margin:0;padding:0;}#heritage{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; background:var(--fond); color:var(--noir); -webkit-print-color-adjust:exact; print-color-adjust:exact;}#heritage .cache{display:none !important;}#heritage /* ----- Écran de code & menu (plein écran sombre) ----- */
   .ecran{min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    background:radial-gradient(120% 120% at 50% 0%, #3a3a38 0%, #232321 55%, #191917 100%); background-color:#222220; padding:24px; position:relative;}
-  .carte-code{background:#fff; border-radius:16px; padding:34px 30px 26px; width:100%; max-width:380px; text-align:center; box-shadow:0 18px 50px rgba(0,0,0,.45);}
-  .carte-code .badge-rond{display:inline-block; background:var(--rouge); color:#fff; font-weight:800; font-size:13px; letter-spacing:.5px; padding:7px 16px; border-radius:30px; box-shadow:0 2px 0 var(--rouge-fonce); margin-bottom:16px;}
-  .carte-code h1{font-size:18px; font-weight:800; margin:0 0 4px; letter-spacing:.2px;}
-  .carte-code p{font-size:13px; color:#666; margin:0 0 18px;}
-  .carte-code input{width:100%; text-align:center; font-size:20px; font-weight:700; letter-spacing:4px; text-transform:uppercase; padding:12px; border:2px solid var(--ligne); border-radius:10px; outline:none; font-family:inherit;}
-  .carte-code input:focus{border-color:var(--rouge);}
-  .carte-code .btn-entrer{width:100%; margin-top:14px; background:var(--noir); color:#fff; border:none; border-radius:10px; padding:13px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;}
-  .carte-code .btn-entrer:active{transform:translateY(1px);}
-  .err{color:var(--rouge); font-size:13px; font-weight:600; min-height:18px; margin-top:10px;}
-  .filigrane-bas{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#8b8b87; font-size:11px; font-weight:600; letter-spacing:.4px;}
-
-  /* Menu */
-  #menu .entete-menu{color:#fff; text-align:center; margin-bottom:22px;}
-  #menu .entete-menu .badge-rond{display:inline-block; background:var(--rouge); color:#fff; font-weight:800; font-size:12px; padding:6px 14px; border-radius:30px; box-shadow:0 2px 0 var(--rouge-fonce); margin-bottom:12px;}
-  #menu .entete-menu h2{font-size:22px; margin:0 0 4px; font-weight:800;}
-  #menu .entete-menu .bienv{font-size:14px; color:#d9d9d4;}
-  #menu .entete-menu .bienv b{color:var(--or);}
-  .grille-menu{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; width:100%; max-width:760px;}
-  .tuile{background:#fff; border:none; border-radius:14px; padding:22px 20px; text-align:left; cursor:pointer; font-family:inherit; box-shadow:0 8px 24px rgba(0,0,0,.3); transition:transform .12s;}
-  .tuile:hover{transform:translateY(-3px);}
-  .tuile .t-titre{font-size:16px; font-weight:800; color:var(--noir);}
-  .tuile .t-ss{font-size:12px; color:#777; margin-top:3px;}
-  .tuile .puce{display:inline-block; width:34px; height:6px; border-radius:4px; background:var(--rouge); margin-bottom:12px;}
-  .tuile.bientot{opacity:.5; cursor:not-allowed; box-shadow:none; outline:1px dashed #777; background:#2c2c2a;}
-  .tuile.bientot .t-titre{color:#cfcfca;} .tuile.bientot .t-ss{color:#9a9a95;} .tuile.bientot .puce{background:#6a6a66;}
-  .btn-verrou{margin-top:24px; background:transparent; color:#cfcfca; border:1px solid #555; border-radius:10px; padding:10px 22px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;}
-
-  /* ----- Barre de navigation des vues ----- */
-  .barre-nav{max-width:820px; margin:16px auto 6px; padding:0 14px; display:flex; flex-wrap:wrap; align-items:center; gap:8px;}
-  .barre-nav .compteur{margin-left:auto; font-size:13px; color:#444; font-weight:600; background:#fff; border:1px solid var(--ligne); border-radius:20px; padding:6px 14px;}
-  .btn{font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; border:none; border-radius:8px; padding:9px 16px; color:#fff; background:var(--noir);}
-  .btn.rouge{background:var(--rouge);} .btn.clair{background:#fff; color:var(--noir); border:1px solid var(--ligne);}
-  .btn:active{transform:translateY(1px);}
-
-  /* ----- Feuille A4 ----- */
-  .feuille{width:794px; min-height:1123px; margin:0 auto 40px; background:var(--papier); box-shadow:0 6px 26px rgba(0,0,0,.18); padding:14mm 12mm 10mm; position:relative; display:flex; flex-direction:column;}
-  .entete{display:flex; align-items:flex-start; justify-content:space-between; gap:14px;}
-  .titre h1{font-size:21px; font-weight:800; letter-spacing:.4px; margin:0; text-transform:uppercase;}
-  .titre .ss{font-size:11px; color:var(--label); margin-top:2px; letter-spacing:.5px;}
-  .badge{background:var(--rouge); color:#fff; text-align:center; border-radius:7px; padding:8px 14px; font-weight:800; line-height:1.1; font-size:13px; white-space:nowrap; box-shadow:0 2px 0 var(--rouge-fonce);}
-  .badge small{display:block; font-size:11px; font-weight:700; opacity:.92;}
-  .ancrage{background:#FFF7E0; border:1px solid var(--or); border-radius:8px; padding:7px 12px; margin-bottom:11px; font-size:9.5px; line-height:1.4; color:#6b5a16;}
-  .regle-or{height:3px; background:var(--or); border-radius:2px; margin:10px 0 12px;}
-  .meta{display:grid; grid-template-columns:0.9fr 1.2fr 1fr; gap:10px; margin-bottom:12px;}
-  .champ{border:1px solid var(--ligne); border-radius:6px; padding:5px 9px; background:#fcfcfb;}
-  .champ label{display:block; font-size:9px; font-weight:700; color:var(--label); text-transform:uppercase; letter-spacing:.6px; margin-bottom:2px;}
-  .champ input,.champ select{width:100%; border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:600; color:var(--noir); padding:1px 0; outline:none;}
-  .champ select{cursor:pointer;}
-  .corps{display:grid; grid-template-columns:1.28fr 1fr; gap:14px; flex:1;}
-  .col{display:flex; flex-direction:column; gap:12px;}
-  .bloc{border:1px solid var(--noir); border-radius:7px; overflow:hidden;}
-  .bloc-titre{background:var(--bar); color:#fff; font-size:11px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; padding:5px 10px; display:flex; justify-content:space-between; align-items:center;}
-  .bloc-titre .fait-h{font-size:9px; font-weight:700; opacity:.85; letter-spacing:.5px;}
-  .ligne{display:flex; align-items:center; gap:8px; padding:4px 10px; border-top:1px solid var(--ligne); font-size:10.5px; line-height:1.25; cursor:pointer; user-select:none;}
-  .bloc-titre + .ligne{border-top:none;}
-  .ligne:hover{background:#faf7f2;}
-  .ligne .txt{flex:1;} .ligne .txt span{color:var(--label);}
-  .ck{appearance:none; -webkit-appearance:none; flex:0 0 auto; width:15px; height:15px; border:1.6px solid #8a8a85; border-radius:3px; background:#fff; cursor:pointer; position:relative;}
-  .ck:checked{background:var(--rouge); border-color:var(--rouge);}
-  .ck:checked::after{content:"\2713"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:900;}
-  .matrice{border:1px solid var(--noir); border-radius:7px; overflow:hidden;}
-  .matrice-titre{background:#fff; color:var(--noir); text-align:center; font-size:10px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; padding:5px; border-bottom:1px solid var(--noir);}
-  table.mx{width:100%; border-collapse:collapse; table-layout:fixed;}
-  table.mx th{background:var(--bar); color:#fff; font-size:8.5px; font-weight:700; padding:4px 3px; text-align:center; line-height:1.15; border-right:1px solid #4a4a4a; vertical-align:middle;}
-  table.mx th:last-child{border-right:none;}
-  table.mx td{border:1px solid var(--ligne); height:34px; vertical-align:top; padding:3px 4px; font-size:9.5px; line-height:1.2;}
-  .matrice-bas{margin-top:10px;}
-  .matrice-bas table.mx td{height:56px;}
-  #vue-calendrier .barre-nav{align-items:center;}
-  .cal-statut{font-size:12px; color:var(--label); margin-left:auto;}
-  .cal-zone{height:calc(100vh - 56px); width:100%;}
-  .cal-frame{width:100%; height:100%; border:0; background:#fff; display:block;}
-  .cal-message{padding:48px 24px; text-align:center; color:var(--label); font-size:15px; line-height:1.5;}
-  table.mx td[contenteditable]:empty:focus{outline:2px solid var(--or);}
-  .pied{margin-top:12px; padding-top:7px; border-top:1px solid var(--ligne); display:flex; justify-content:space-between; align-items:center; font-size:9px; color:var(--label); letter-spacing:.3px;}
-  .pied .proprio{font-weight:700; color:#6f6f6a;}
+    background:radial-gradient(120% 120% at 50% 0%, #3a3a38 0%, #232321 55%, #191917 100%); background-color:#222220; padding:24px; position:relative;}#heritage .carte-code{background:#fff; border-radius:16px; padding:34px 30px 26px; width:100%; max-width:380px; text-align:center; box-shadow:0 18px 50px rgba(0,0,0,.45);}#heritage .carte-code .badge-rond{display:inline-block; background:var(--rouge); color:#fff; font-weight:800; font-size:13px; letter-spacing:.5px; padding:7px 16px; border-radius:30px; box-shadow:0 2px 0 var(--rouge-fonce); margin-bottom:16px;}#heritage .carte-code h1{font-size:18px; font-weight:800; margin:0 0 4px; letter-spacing:.2px;}#heritage .carte-code p{font-size:13px; color:#666; margin:0 0 18px;}#heritage .carte-code input{width:100%; text-align:center; font-size:20px; font-weight:700; letter-spacing:4px; text-transform:uppercase; padding:12px; border:2px solid var(--ligne); border-radius:10px; outline:none; font-family:inherit;}#heritage .carte-code input:focus{border-color:var(--rouge);}#heritage .carte-code .btn-entrer{width:100%; margin-top:14px; background:var(--noir); color:#fff; border:none; border-radius:10px; padding:13px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;}#heritage .carte-code .btn-entrer:active{transform:translateY(1px);}#heritage .err{color:var(--rouge); font-size:13px; font-weight:600; min-height:18px; margin-top:10px;}#heritage .filigrane-bas{position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#8b8b87; font-size:11px; font-weight:600; letter-spacing:.4px;}#heritage /* Menu */
+  #menu .entete-menu{color:#fff; text-align:center; margin-bottom:22px;}#heritage #menu .entete-menu .badge-rond{display:inline-block; background:var(--rouge); color:#fff; font-weight:800; font-size:12px; padding:6px 14px; border-radius:30px; box-shadow:0 2px 0 var(--rouge-fonce); margin-bottom:12px;}#heritage #menu .entete-menu h2{font-size:22px; margin:0 0 4px; font-weight:800;}#heritage #menu .entete-menu .bienv{font-size:14px; color:#d9d9d4;}#heritage #menu .entete-menu .bienv b{color:var(--or);}#heritage .grille-menu{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; width:100%; max-width:760px;}#heritage .tuile{background:#fff; border:none; border-radius:14px; padding:22px 20px; text-align:left; cursor:pointer; font-family:inherit; box-shadow:0 8px 24px rgba(0,0,0,.3); transition:transform .12s;}#heritage .tuile:hover{transform:translateY(-3px);}#heritage .tuile .t-titre{font-size:16px; font-weight:800; color:var(--noir);}#heritage .tuile .t-ss{font-size:12px; color:#777; margin-top:3px;}#heritage .tuile .puce{display:inline-block; width:34px; height:6px; border-radius:4px; background:var(--rouge); margin-bottom:12px;}#heritage .tuile.bientot{opacity:.5; cursor:not-allowed; box-shadow:none; outline:1px dashed #777; background:#2c2c2a;}#heritage .tuile.bientot .t-titre{color:#cfcfca;}#heritage .tuile.bientot .t-ss{color:#9a9a95;}#heritage .tuile.bientot .puce{background:#6a6a66;}#heritage .btn-verrou{margin-top:24px; background:transparent; color:#cfcfca; border:1px solid #555; border-radius:10px; padding:10px 22px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;}#heritage /* ----- Barre de navigation des vues ----- */
+  .barre-nav{max-width:820px; margin:16px auto 6px; padding:0 14px; display:flex; flex-wrap:wrap; align-items:center; gap:8px;}#heritage .barre-nav .compteur{margin-left:auto; font-size:13px; color:#444; font-weight:600; background:#fff; border:1px solid var(--ligne); border-radius:20px; padding:6px 14px;}#heritage .btn{font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; border:none; border-radius:8px; padding:9px 16px; color:#fff; background:var(--noir);}#heritage .btn.rouge{background:var(--rouge);}#heritage .btn.clair{background:#fff; color:var(--noir); border:1px solid var(--ligne);}#heritage .btn:active{transform:translateY(1px);}#heritage /* ----- Feuille A4 ----- */
+  .feuille{width:794px; min-height:1123px; margin:0 auto 40px; background:var(--papier); box-shadow:0 6px 26px rgba(0,0,0,.18); padding:14mm 12mm 10mm; position:relative; display:flex; flex-direction:column;}#heritage .entete{display:flex; align-items:flex-start; justify-content:space-between; gap:14px;}#heritage .titre h1{font-size:21px; font-weight:800; letter-spacing:.4px; margin:0; text-transform:uppercase;}#heritage .titre .ss{font-size:11px; color:var(--label); margin-top:2px; letter-spacing:.5px;}#heritage .badge{background:var(--rouge); color:#fff; text-align:center; border-radius:7px; padding:8px 14px; font-weight:800; line-height:1.1; font-size:13px; white-space:nowrap; box-shadow:0 2px 0 var(--rouge-fonce);}#heritage .badge small{display:block; font-size:11px; font-weight:700; opacity:.92;}#heritage .ancrage{background:#FFF7E0; border:1px solid var(--or); border-radius:8px; padding:7px 12px; margin-bottom:11px; font-size:9.5px; line-height:1.4; color:#6b5a16;}#heritage .regle-or{height:3px; background:var(--or); border-radius:2px; margin:10px 0 12px;}#heritage .meta{display:grid; grid-template-columns:0.9fr 1.2fr 1fr; gap:10px; margin-bottom:12px;}#heritage .champ{border:1px solid var(--ligne); border-radius:6px; padding:5px 9px; background:#fcfcfb;}#heritage .champ label{display:block; font-size:9px; font-weight:700; color:var(--label); text-transform:uppercase; letter-spacing:.6px; margin-bottom:2px;}#heritage .champ input, #heritage .champ select{width:100%; border:none; background:transparent; font-family:inherit; font-size:13px; font-weight:600; color:var(--noir); padding:1px 0; outline:none;}#heritage .champ select{cursor:pointer;}#heritage .corps{display:grid; grid-template-columns:1.28fr 1fr; gap:14px; flex:1;}#heritage .col{display:flex; flex-direction:column; gap:12px;}#heritage .bloc{border:1px solid var(--noir); border-radius:7px; overflow:hidden;}#heritage .bloc-titre{background:var(--bar); color:#fff; font-size:11px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; padding:5px 10px; display:flex; justify-content:space-between; align-items:center;}#heritage .bloc-titre .fait-h{font-size:9px; font-weight:700; opacity:.85; letter-spacing:.5px;}#heritage .ligne{display:flex; align-items:center; gap:8px; padding:4px 10px; border-top:1px solid var(--ligne); font-size:10.5px; line-height:1.25; cursor:pointer; user-select:none;}#heritage .bloc-titre + .ligne{border-top:none;}#heritage .ligne:hover{background:#faf7f2;}#heritage .ligne .txt{flex:1;}#heritage .ligne .txt span{color:var(--label);}#heritage .ck{appearance:none; -webkit-appearance:none; flex:0 0 auto; width:15px; height:15px; border:1.6px solid #8a8a85; border-radius:3px; background:#fff; cursor:pointer; position:relative;}#heritage .ck:checked{background:var(--rouge); border-color:var(--rouge);}#heritage .ck:checked::after{content:"\2713"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:900;}#heritage .matrice{border:1px solid var(--noir); border-radius:7px; overflow:hidden;}#heritage .matrice-titre{background:#fff; color:var(--noir); text-align:center; font-size:10px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; padding:5px; border-bottom:1px solid var(--noir);}#heritage table.mx{width:100%; border-collapse:collapse; table-layout:fixed;}#heritage table.mx th{background:var(--bar); color:#fff; font-size:8.5px; font-weight:700; padding:4px 3px; text-align:center; line-height:1.15; border-right:1px solid #4a4a4a; vertical-align:middle;}#heritage table.mx th:last-child{border-right:none;}#heritage table.mx td{border:1px solid var(--ligne); height:34px; vertical-align:top; padding:3px 4px; font-size:9.5px; line-height:1.2;}#heritage .matrice-bas{margin-top:10px;}#heritage .matrice-bas table.mx td{height:56px;}#heritage #vue-calendrier .barre-nav{align-items:center;}#heritage .cal-statut{font-size:12px; color:var(--label); margin-left:auto;}#heritage .cal-zone{height:calc(100vh - 56px); width:100%;}#heritage .cal-frame{width:100%; height:100%; border:0; background:#fff; display:block;}#heritage .cal-message{padding:48px 24px; text-align:center; color:var(--label); font-size:15px; line-height:1.5;}#heritage table.mx td[contenteditable]:empty:focus{outline:2px solid var(--or);}#heritage .pied{margin-top:12px; padding-top:7px; border-top:1px solid var(--ligne); display:flex; justify-content:space-between; align-items:center; font-size:9px; color:var(--label); letter-spacing:.3px;}#heritage .pied .proprio{font-weight:700; color:#6f6f6a;}
 
   @page{size:A4 portrait; margin:0;}
-  @media print{
-    body{background:#fff;}
-    .no-print,.barre-nav{display:none !important;}
-    .feuille{box-shadow:none; margin:0; width:auto; min-height:auto; padding:5mm 9mm;}
-    .ligne:hover,.ligne{background:transparent;}
-    /* Compactage pour viser une page par fiche, tout en restant lisible */
-    .ligne{padding:1.4px 8px; font-size:9.5px; line-height:1.1;}
-    .bloc-titre{padding:2.5px 9px; font-size:10.5px;}
-    .col{gap:6px;} .corps{gap:10px;}
-    .meta{margin-bottom:5px;} .meta .champ{padding:3px 9px;} .regle-or{margin:4px 0 5px;}
-    .ancrage{margin-bottom:5px; padding:5px 11px;}
-    table.mx td{height:20px;} table.mx th{padding:2.5px;}
-    .matrice-bas table.mx td{height:44px;}
-    .pied{margin-top:3px; padding-top:3px; font-size:8.5px;}
-    /* Coupures propres : ne jamais scinder un bloc, une ligne ou la matrice */
-    .bloc, .matrice{break-inside:avoid; page-break-inside:avoid;}
-    .ligne{break-inside:avoid; page-break-inside:avoid;}
+  @media print{#heritage{background:#fff;}#heritage .no-print, #heritage .barre-nav{display:none !important;}#heritage .feuille{box-shadow:none; margin:0; width:auto; min-height:auto; padding:5mm 9mm;}#heritage .ligne:hover, #heritage .ligne{background:transparent;}#heritage /* Compactage pour viser une page par fiche, #heritage tout en restant lisible */
+    .ligne{padding:1.4px 8px; font-size:9.5px; line-height:1.1;}#heritage .bloc-titre{padding:2.5px 9px; font-size:10.5px;}#heritage .col{gap:6px;}#heritage .corps{gap:10px;}#heritage .meta{margin-bottom:5px;}#heritage .meta .champ{padding:3px 9px;}#heritage .regle-or{margin:4px 0 5px;}#heritage .ancrage{margin-bottom:5px; padding:5px 11px;}#heritage table.mx td{height:20px;}#heritage table.mx th{padding:2.5px;}#heritage .matrice-bas table.mx td{height:44px;}#heritage .pied{margin-top:3px; padding-top:3px; font-size:8.5px;}#heritage /* Coupures propres : ne jamais scinder un bloc, #heritage une ligne ou la matrice */
+    .bloc, #heritage .matrice{break-inside:avoid; page-break-inside:avoid;}#heritage .ligne{break-inside:avoid; page-break-inside:avoid;}
   }
-  @media (max-width:840px){
-    .feuille{width:100%; min-height:auto; padding:18px 14px 26px;}
-    .corps{grid-template-columns:1fr;} .meta{grid-template-columns:1fr;}
-  }
-</style>
-<style>
-/* ===== Styles du Plan de répartition — confinés à #vue-repartition ===== */
-#vue-repartition{min-height:100vh;}
-  #vue-repartition{
+  @media (max-width:840px){#heritage .feuille{width:100%; min-height:auto; padding:18px 14px 26px;}#heritage .corps{grid-template-columns:1fr;}#heritage .meta{grid-template-columns:1fr;}
+  }#heritage /* ===== Styles du Plan de répartition — confinés à #h-repartition ===== */
+#h-repartition{min-height:100vh;}#heritage #h-repartition{
     --plateau:#F7F5F0;
     --cadre:#1D1D1B;
     --encre:#1D1D1B;
@@ -141,206 +181,208 @@
     --jaune:#FFC72C;
     --rouge:#DA291C;
     --bleu:#3B6FA8;
-    --vert:#3E8E5A;
+    --vert:#157F4C;
     --violet:#8B7BB5;
     --feutre:#1B4FA0;
-  }
-  #vue-repartition *{box-sizing:border-box;margin:0;padding:0}
-  #vue-repartition{font-family:"Barlow Condensed","Segoe UI",system-ui,sans-serif;background:#E9E9E2;padding:14px;color:var(--encre)}
-  #vue-repartition .page{max-width:1260px;margin:0 auto}
-  #vue-repartition h1{font-size:1.25rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cadre);margin-bottom:10px;font-weight:700}
-  #vue-repartition h1 small{display:block;font-size:.72rem;color:#7A746A;letter-spacing:.16em;font-weight:600}
-
-  /* ── barre équipe ── */
-  #vue-repartition .equipe{background:#fff;border:1.5px solid var(--trait);border-radius:10px;padding:12px 14px;margin-bottom:12px}
-  #vue-repartition .equipe-titre{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
-    background:var(--cadre);color:#fff;display:inline-block;padding:4px 14px;border-radius:4px;margin-bottom:10px}
-  #vue-repartition .equipe-saisie{display:flex;gap:8px;margin-bottom:10px}
-  #vue-repartition .equipe-saisie input{flex:1;font-family:"Segoe UI",system-ui,sans-serif;font-size:.9rem;padding:8px 12px;border:1.5px solid var(--gris-doux);border-radius:6px}
-  #vue-repartition .equipe-saisie button{font:inherit;font-size:.95rem;font-weight:700;letter-spacing:.04em;padding:8px 18px;border:none;border-radius:6px;
-    background:var(--rouge);color:#fff;cursor:pointer}
-  #vue-repartition .equipe-saisie button:hover{filter:brightness(.92)}
-  #vue-repartition .jetons{display:flex;flex-wrap:wrap;gap:8px}
-  #vue-repartition .jeton{display:inline-flex;align-items:center;gap:6px;background:var(--jaune);border:1.5px solid var(--cadre);
-    border-radius:999px;padding:4px 13px;font-weight:600;font-size:.95rem;cursor:pointer;user-select:none}
-  #vue-repartition .jeton:hover{transform:translateY(-1px)}
-  #vue-repartition .jeton.choisi{background:var(--cadre);color:var(--jaune);box-shadow:0 0 0 3px var(--jaune)}
-  #vue-repartition .jeton.place{background:#E6F1E9;border-color:var(--vert);color:var(--vert)}
-  #vue-repartition .jeton .x{font-weight:800;opacity:.5;padding:0 2px}
-  #vue-repartition .jeton .x:hover{opacity:1}
-  #vue-repartition .aide{font-family:"Segoe UI",system-ui,sans-serif;font-size:.76rem;color:#7A746A;margin-top:8px}
-
-  /* ── cadre du tableau ── */
-  #vue-repartition .frame{background:var(--cadre);border-radius:14px;padding:10px;box-shadow:0 10px 34px rgba(0,0,0,.22)}
-  #vue-repartition .liseret{height:7px;background:var(--jaune);border-radius:4px}
-  #vue-repartition .liseret.haut{margin-bottom:8px}
-  #vue-repartition .liseret.bas{margin-top:8px}
-  #vue-repartition .board-wrap{container-type:inline-size;position:relative;width:100%;aspect-ratio:1316/924;
-    background:var(--plateau);border-radius:8px;overflow:hidden}
-
-  #vue-repartition .el{position:absolute}
-  #vue-repartition .lbl-entete{display:flex;align-items:center;font-weight:700;font-size:2.2cqw;letter-spacing:.04em;text-transform:uppercase}
-  #vue-repartition .pl-badge{display:flex;align-items:center;justify-content:center;text-align:center;
+  }#heritage #h-repartition *{box-sizing:border-box;margin:0;padding:0}#heritage #h-repartition{font-family:"Barlow Condensed","Segoe UI",system-ui,sans-serif;background:#E9E9E2;padding:14px;color:var(--encre)}#heritage #h-repartition .page{max-width:1260px;margin:0 auto}#heritage #h-repartition h1{font-size:1.25rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cadre);margin-bottom:10px;font-weight:700}#heritage #h-repartition h1 small{display:block;font-size:.72rem;color:#7A746A;letter-spacing:.16em;font-weight:600}#heritage /* ── barre équipe ── */
+  #h-repartition .equipe{background:#fff;border:1.5px solid var(--trait);border-radius:10px;padding:12px 14px;margin-bottom:12px}#heritage #h-repartition .equipe-titre{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
+    background:var(--cadre);color:#fff;display:inline-block;padding:4px 14px;border-radius:4px;margin-bottom:10px}#heritage #h-repartition .equipe-saisie{display:flex;gap:8px;margin-bottom:10px}#heritage #h-repartition .equipe-saisie input{flex:1;font-family:"Segoe UI",system-ui,sans-serif;font-size:.9rem;padding:8px 12px;border:1.5px solid var(--gris-doux);border-radius:6px}#heritage #h-repartition .equipe-saisie button{font:inherit;font-size:.95rem;font-weight:700;letter-spacing:.04em;padding:8px 18px;border:none;border-radius:6px;
+    background:var(--rouge);color:#fff;cursor:pointer}#heritage #h-repartition .equipe-saisie button:hover{filter:brightness(.92)}#heritage #h-repartition .jetons{display:flex;flex-wrap:wrap;gap:8px}#heritage #h-repartition .jeton{display:inline-flex;align-items:center;gap:6px;background:var(--jaune);border:1.5px solid var(--cadre);
+    border-radius:999px;padding:4px 13px;font-weight:600;font-size:.95rem;cursor:pointer;user-select:none}#heritage #h-repartition .jeton:hover{transform:translateY(-1px)}#heritage #h-repartition .jeton.choisi{background:var(--cadre);color:var(--jaune);box-shadow:0 0 0 3px var(--jaune)}#heritage #h-repartition .jeton.place{background:#E6F1E9;border-color:var(--vert);color:var(--vert)}#heritage #h-repartition .jeton .x{font-weight:800;opacity:.5;padding:0 2px}#heritage #h-repartition .jeton .x:hover{opacity:1}#heritage #h-repartition .aide{font-family:"Segoe UI",system-ui,sans-serif;font-size:.76rem;color:#7A746A;margin-top:8px}#heritage /* ── cadre du tableau ── */
+  #h-repartition .frame{background:var(--cadre);border-radius:14px;padding:10px;box-shadow:0 10px 34px rgba(0,0,0,.22)}#heritage #h-repartition .liseret{height:7px;background:var(--jaune);border-radius:4px}#heritage #h-repartition .liseret.haut{margin-bottom:8px}#heritage #h-repartition .liseret.bas{margin-top:8px}#heritage #h-repartition .board-wrap{container-type:inline-size;position:relative;width:100%;aspect-ratio:1316/924;
+    background:var(--plateau);border-radius:8px;overflow:hidden}#heritage #h-repartition .el{position:absolute}#heritage #h-repartition .lbl-entete{display:flex;align-items:center;font-weight:700;font-size:2.2cqw;letter-spacing:.04em;text-transform:uppercase}#heritage #h-repartition .pl-badge{display:flex;align-items:center;justify-content:center;text-align:center;
     background:var(--rouge);color:#fff;font-weight:700;font-size:1.15cqw;letter-spacing:.12em;
-    border-radius:6px;line-height:1.25}
-  #vue-repartition .divider{border-top:3px dashed var(--jaune)}
-  #vue-repartition .strip{background:var(--gris-equip);border-radius:3px}
-  #vue-repartition .wall{background:var(--cadre);border-radius:3px;opacity:.85}
-  #vue-repartition .bar-dark,#vue-repartition .bar-rouge,#vue-repartition .bar-bleu,#vue-repartition .bar-violet{
+    border-radius:6px;line-height:1.25}#heritage #h-repartition .divider{border-top:3px dashed var(--jaune)}#heritage #h-repartition .strip{background:var(--gris-equip);border-radius:3px}#heritage #h-repartition .wall{background:var(--cadre);border-radius:3px;opacity:.85}#heritage #h-repartition .bar-dark, #heritage #h-repartition .bar-rouge, #heritage #h-repartition .bar-bleu, #heritage #h-repartition .bar-violet{
     display:flex;align-items:center;justify-content:center;color:#fff;
-    font-weight:600;font-size:1.15cqw;letter-spacing:.12em;border-radius:4px}
-  #vue-repartition .bar-dark{background:var(--cadre)}
-  #vue-repartition .bar-rouge{background:var(--rouge)}
-  #vue-repartition .bar-bleu{background:var(--bleu)}
-  #vue-repartition .bar-violet{background:var(--violet)}
-  #vue-repartition .row-blanche{background:#fff;border:1px solid var(--gris-doux);border-radius:4px}
-  #vue-repartition .lbl-station,#vue-repartition .lbl-station-2l{display:flex;align-items:center;justify-content:center;text-align:center;
-    font-weight:700;font-size:1.2cqw;letter-spacing:.1em;color:var(--encre);line-height:1.2}
-  #vue-repartition .tag-gris{display:flex;align-items:center;justify-content:center;background:var(--gris-doux);
-    border:1px solid var(--trait);border-radius:4px;font-weight:700;font-size:1.2cqw;letter-spacing:.12em}
-  #vue-repartition .tag-bleu{display:flex;align-items:center;justify-content:center;background:var(--bleu);color:#fff;
-    border-radius:3px;font-weight:600;font-size:1cqw;letter-spacing:.14em}
-  #vue-repartition .tag-vert{display:flex;align-items:center;justify-content:center;text-align:center;background:var(--vert);color:#fff;
-    border-radius:4px;font-weight:600;font-size:.85cqw;letter-spacing:.08em;line-height:1.3}
-  #vue-repartition .tag-rouge{display:flex;align-items:center;justify-content:center;background:var(--rouge);color:#fff;
-    border-radius:4px;font-weight:700;font-size:1.6cqw}
-  #vue-repartition .tag-accent{display:flex;align-items:center;justify-content:center;background:var(--rouge);color:#fff;
-    border-radius:4px;font-weight:700;font-size:1.5cqw}
-  #vue-repartition .equip,#vue-repartition .equip-mini,#vue-repartition .equip-strip,#vue-repartition .equip-tall{background:var(--gris-equip);border-radius:4px;
+    font-weight:600;font-size:1.15cqw;letter-spacing:.12em;border-radius:4px}#heritage #h-repartition .bar-dark{background:var(--cadre)}#heritage #h-repartition .bar-rouge{background:var(--rouge)}#heritage #h-repartition .bar-bleu{background:var(--bleu)}#heritage #h-repartition .bar-violet{background:var(--violet)}#heritage #h-repartition .row-blanche{background:#fff;border:1px solid var(--gris-doux);border-radius:4px}#heritage #h-repartition .lbl-station, #heritage #h-repartition .lbl-station-2l{display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:700;font-size:1.2cqw;letter-spacing:.1em;color:var(--encre);line-height:1.2}#heritage #h-repartition .tag-gris{display:flex;align-items:center;justify-content:center;background:var(--gris-doux);
+    border:1px solid var(--trait);border-radius:4px;font-weight:700;font-size:1.2cqw;letter-spacing:.12em}#heritage #h-repartition .tag-bleu{display:flex;align-items:center;justify-content:center;background:var(--bleu);color:#fff;
+    border-radius:3px;font-weight:600;font-size:1cqw;letter-spacing:.14em}#heritage #h-repartition .tag-vert{display:flex;align-items:center;justify-content:center;text-align:center;background:var(--vert);color:#fff;
+    border-radius:4px;font-weight:600;font-size:.85cqw;letter-spacing:.08em;line-height:1.3}#heritage #h-repartition .tag-rouge{display:flex;align-items:center;justify-content:center;background:var(--rouge);color:#fff;
+    border-radius:4px;font-weight:700;font-size:1.6cqw}#heritage #h-repartition .tag-accent{display:flex;align-items:center;justify-content:center;background:var(--rouge);color:#fff;
+    border-radius:4px;font-weight:700;font-size:1.5cqw}#heritage #h-repartition .equip, #heritage #h-repartition .equip-mini, #heritage #h-repartition .equip-strip, #heritage #h-repartition .equip-tall{background:var(--gris-equip);border-radius:4px;
     display:flex;align-items:flex-start;justify-content:center;
-    color:#8C857A;font-weight:600;font-size:.95cqw;letter-spacing:.1em;text-transform:uppercase;padding-top:.3em}
-  #vue-repartition .equip-mini,#vue-repartition .equip-strip,#vue-repartition .equip-tall{padding-top:0}
-  #vue-repartition .equip-bas{align-items:flex-end;padding-bottom:.35em;padding-top:0}
-  #vue-repartition .col-vert{background:var(--gris-doux);border-radius:4px;display:flex;align-items:center;justify-content:center}
-  #vue-repartition .col-vert{writing-mode:vertical-rl;text-orientation:mixed;font-weight:700;font-size:1.2cqw;letter-spacing:.3em;color:#8C857A}
-  #vue-repartition .col-fond{background:var(--gris-doux);border-radius:4px}
-  #vue-repartition .col-sect{display:flex;align-items:center;justify-content:center;text-align:center;
+    color:#8C857A;font-weight:600;font-size:.95cqw;letter-spacing:.1em;text-transform:uppercase;padding-top:.3em}#heritage #h-repartition .equip-mini, #heritage #h-repartition .equip-strip, #heritage #h-repartition .equip-tall{padding-top:0}#heritage #h-repartition .equip-bas{align-items:flex-end;padding-bottom:.35em;padding-top:0}#heritage #h-repartition .col-vert{background:var(--gris-doux);border-radius:4px;display:flex;align-items:center;justify-content:center}#heritage #h-repartition .col-vert{writing-mode:vertical-rl;text-orientation:mixed;font-weight:700;font-size:1.2cqw;letter-spacing:.3em;color:#8C857A}#heritage #h-repartition .col-fond{background:var(--gris-doux);border-radius:4px}#heritage #h-repartition .col-sect{display:flex;align-items:center;justify-content:center;text-align:center;
     font-weight:700;font-size:.8cqw;letter-spacing:.06em;color:#8C857A;text-transform:uppercase;
-    line-height:1.45;padding:0 .15em}
-  #vue-repartition .col-sect + .col-sect{border-top:1.5px solid var(--trait)}
-  #vue-repartition .outline{border:2px solid var(--encre);border-radius:4px}
-  #vue-repartition .outline-lbl{display:flex;align-items:center;justify-content:center;border:2px solid var(--encre);border-radius:4px;
-    color:var(--rouge);font-weight:700;font-size:1.35cqw;letter-spacing:.14em}
-  #vue-repartition .pl-ecran{display:flex;align-items:center;justify-content:center;background:var(--cadre);color:#fff;border-radius:6px;font-weight:600;font-size:1cqw;letter-spacing:.18em;border:2px solid #4A4540}
-  #vue-repartition .etoile{display:flex;align-items:center;justify-content:center;font-size:2.8cqw;color:var(--vert)}
-  #vue-repartition .equip-3{background:var(--gris-equip);border-radius:4px;display:flex;align-items:center;justify-content:space-between;padding:0 .5em;color:#7D766B;font-weight:600;font-size:.75cqw;letter-spacing:.06em}
-  #vue-repartition .card-cibles{background:#fff;border:1.5px solid var(--trait);border-radius:8px}
-  #vue-repartition .cell-head{display:flex;align-items:center;justify-content:center;text-align:center;
+    line-height:1.45;padding:0 .15em}#heritage #h-repartition .col-sect + .col-sect{border-top:1.5px solid var(--trait)}#heritage #h-repartition .outline{border:2px solid var(--encre);border-radius:4px}#heritage #h-repartition .outline-lbl{display:flex;align-items:center;justify-content:center;border:2px solid var(--encre);border-radius:4px;
+    color:var(--rouge);font-weight:700;font-size:1.35cqw;letter-spacing:.14em}#heritage #h-repartition .pl-ecran{display:flex;align-items:center;justify-content:center;background:var(--cadre);color:#fff;border-radius:6px;font-weight:600;font-size:1cqw;letter-spacing:.18em;border:2px solid #4A4540}#heritage #h-repartition .etoile{display:flex;align-items:center;justify-content:center;font-size:2.8cqw;color:var(--vert)}#heritage #h-repartition .equip-3{background:var(--gris-equip);border-radius:4px;display:flex;align-items:center;justify-content:space-between;padding:0 .5em;color:#7D766B;font-weight:600;font-size:.75cqw;letter-spacing:.06em}#heritage #h-repartition .card-cibles{background:#fff;border:1.5px solid var(--trait);border-radius:8px}#heritage #h-repartition .cell-head{display:flex;align-items:center;justify-content:center;text-align:center;
     background:var(--plateau);border:1.5px solid var(--encre);border-radius:4px 4px 0 0;
-    font-weight:700;font-size:1cqw;letter-spacing:.08em;line-height:1.2}
-
-  /* ── cases d'écriture ── */
-  #vue-repartition .case{position:absolute;background:#fff;border:1.5px solid var(--trait);border-radius:5px;
+    font-weight:700;font-size:1cqw;letter-spacing:.08em;line-height:1.2}#heritage /* ── cases d'écriture ── */
+  #h-repartition .case{position:absolute;background:#fff;border:1.5px solid var(--trait);border-radius:5px;
     font-family:Caveat,"Segoe Print","Bradley Hand",cursive;
     font-weight:700;color:var(--feutre);text-align:center;
     font-size:2cqw;padding:0 .3em;outline:none;transition:box-shadow .12s,border-color .12s;
-    box-shadow:inset 0 1px 3px rgba(0,0,0,.05)}
-  #vue-repartition .case:hover{border-color:var(--jaune);box-shadow:0 0 0 2px rgba(245,184,46,.45);cursor:text}
-  #vue-repartition .case:focus{border-color:var(--jaune);box-shadow:0 0 0 3px var(--jaune);background:#FFFDF4}
-  #vue-repartition .case.cible-assignation{border-color:var(--vert);box-shadow:0 0 0 2px rgba(62,142,90,.5);background:#F2F8F4}
-  #vue-repartition .case[data-id="date"],#vue-repartition .case[data-id="periode"]{font-family:inherit;font-weight:700;font-size:1.7cqw;color:var(--encre);letter-spacing:.04em}
-  #vue-repartition .case[data-id="suggestion"]{text-align:left;padding-left:.6em}
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.05)}#heritage #h-repartition .case:hover{border-color:var(--jaune);box-shadow:0 0 0 2px rgba(245,184,46,.45);cursor:text}#heritage #h-repartition .case:focus{border-color:var(--jaune);box-shadow:0 0 0 3px var(--jaune);background:#FFFDF4}#heritage #h-repartition .case.cible-assignation{border-color:var(--vert);box-shadow:0 0 0 2px rgba(62,142,90,.5);background:#F2F8F4}#heritage #h-repartition .case[data-id="date"], #heritage #h-repartition .case[data-id="periode"]{font-family:inherit;font-weight:700;font-size:1.7cqw;color:var(--encre);letter-spacing:.04em}#heritage #h-repartition .case[data-id="suggestion"]{text-align:left;padding-left:.6em}#heritage /* ── actions ── */
+  #h-repartition .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}#heritage #h-repartition .actions button{font:inherit;font-size:.95rem;font-weight:700;letter-spacing:.04em;padding:10px 20px;border-radius:7px;
+    border:1.5px solid var(--cadre);background:#fff;cursor:pointer}#heritage #h-repartition .actions button.principal{background:var(--rouge);border-color:var(--rouge);color:#fff}#heritage #h-repartition .actions button:hover{transform:translateY(-1px)}#heritage #h-repartition .statut{font-family:"Segoe UI",system-ui,sans-serif;font-size:.8rem;color:#7A746A;align-self:center;margin-left:auto}
 
-  /* ── actions ── */
-  #vue-repartition .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-  #vue-repartition .actions button{font:inherit;font-size:.95rem;font-weight:700;letter-spacing:.04em;padding:10px 20px;border-radius:7px;
-    border:1.5px solid var(--cadre);background:#fff;cursor:pointer}
-  #vue-repartition .actions button.principal{background:var(--rouge);border-color:var(--rouge);color:#fff}
-  #vue-repartition .actions button:hover{transform:translateY(-1px)}
-  #vue-repartition .statut{font-family:"Segoe UI",system-ui,sans-serif;font-size:.8rem;color:#7A746A;align-self:center;margin-left:auto}
-
-  @media print{
-    #vue-repartition{background:#fff;padding:0}
-    #vue-repartition .equipe,#vue-repartition .actions,#vue-repartition h1 small,#vue-repartition .aide,#vue-repartition .onglets,#vue-repartition #vue-plan{display:none!important}
-  #vue-repartition #vue-tableau{display:block!important}
-    #vue-repartition .page{max-width:none}
-    #vue-repartition .frame{box-shadow:none;border-radius:0;padding:6px}
-    #vue-repartition .case{box-shadow:none!important}
+  @media print{#heritage #h-repartition{background:#fff;padding:0}#heritage #h-repartition .equipe, #heritage #h-repartition .actions, #heritage #h-repartition h1 small, #heritage #h-repartition .aide, #heritage #h-repartition .onglets, #heritage #h-repartition #vue-plan{display:none!important}#heritage #h-repartition #vue-tableau{display:block!important}#heritage #h-repartition .page{max-width:none}#heritage #h-repartition .frame{box-shadow:none;border-radius:0;padding:6px}#heritage #h-repartition .case{box-shadow:none!important}
   }
-  @media print{
-    /* Impression du plan détaillé (depuis son onglet) : on sort le plan, pas le tableau.
+  @media print{#heritage /* Impression du plan détaillé (depuis son onglet) : on sort le plan, #heritage pas le tableau.
        Les cartes/zones vides sont déjà masquées en inline par filtrerPlan(). */
-    #vue-repartition.imprime-plan #vue-tableau{display:none!important}
-    #vue-repartition.imprime-plan #vue-plan{display:block!important;border:none;padding:0}
-    #vue-repartition.imprime-plan .equipe,
-    #vue-repartition.imprime-plan .actions,
-    #vue-repartition.imprime-plan .onglets,
-    #vue-repartition.imprime-plan h1 small,
-    #vue-repartition.imprime-plan #vue-plan .aide{display:none!important}
-    #vue-repartition.imprime-plan .cartes{grid-template-columns:repeat(2,1fr);gap:8px}
-    #vue-repartition.imprime-plan .zone{margin-bottom:12px;break-inside:avoid;page-break-inside:avoid}
-    #vue-repartition.imprime-plan .carte{break-inside:avoid;page-break-inside:avoid}
-  }
-  #vue-repartition .onglets{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-  #vue-repartition .onglet{font:inherit;font-size:.95rem;font-weight:700;letter-spacing:.05em;padding:9px 22px;border-radius:8px;
-    border:1.5px solid var(--trait);background:#fff;cursor:pointer;color:var(--encre)}
-  #vue-repartition .onglet.actif{background:var(--encre);color:#fff;border-color:var(--encre)}
-  #vue-repartition #vue-plan{background:#fff;border:1.5px solid var(--trait);border-radius:12px;padding:16px 16px 6px}
-  #vue-repartition .zone{margin-bottom:18px}
-  #vue-repartition .zone-titre{font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.85rem;
-    background:var(--encre);color:#fff;padding:6px 14px;border-radius:6px;display:inline-block;margin-bottom:10px}
-  #vue-repartition .cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
-  #vue-repartition .carte{border:1.5px solid var(--gris-doux);border-radius:8px;padding:10px;background:#fffdf9}
-  #vue-repartition .carte-titre{font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;color:#5d564c}
-  #vue-repartition .carte input{width:100%;box-sizing:border-box;font-family:"Segoe UI",system-ui,sans-serif;font-size:.9rem;
-    padding:6px 8px;border:1.5px solid var(--gris-doux);border-radius:6px;margin-bottom:6px;background:#fff}
-  #vue-repartition .carte .miroir{font-weight:700}
-  #vue-repartition .carte .lib{display:block;font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:#8C857A;margin:2px 0}
-  #vue-repartition .carte .field{position:relative}
-  #vue-repartition .carte textarea.extra{box-sizing:border-box;width:100%;resize:none;overflow:hidden;
+    #h-repartition.imprime-plan #vue-tableau{display:none!important}#heritage #h-repartition.imprime-plan #vue-plan{display:block!important;border:none;padding:0}#heritage #h-repartition.imprime-plan .equipe, #heritage #h-repartition.imprime-plan .actions, #heritage #h-repartition.imprime-plan .onglets, #heritage #h-repartition.imprime-plan h1 small, #heritage #h-repartition.imprime-plan #vue-plan .aide{display:none!important}#heritage #h-repartition.imprime-plan .cartes{grid-template-columns:repeat(2,1fr);gap:8px}#heritage #h-repartition.imprime-plan .zone{margin-bottom:12px;break-inside:avoid;page-break-inside:avoid}#heritage #h-repartition.imprime-plan .carte{break-inside:avoid;page-break-inside:avoid}
+  }#heritage #h-repartition .onglets{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}#heritage #h-repartition .onglet{font:inherit;font-size:.95rem;font-weight:700;letter-spacing:.05em;padding:9px 22px;border-radius:8px;
+    border:1.5px solid var(--trait);background:#fff;cursor:pointer;color:var(--encre)}#heritage #h-repartition .onglet.actif{background:var(--encre);color:#fff;border-color:var(--encre)}#heritage #h-repartition #vue-plan{background:#fff;border:1.5px solid var(--trait);border-radius:12px;padding:16px 16px 6px}#heritage #h-repartition .zone{margin-bottom:18px}#heritage #h-repartition .zone-titre{font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.85rem;
+    background:var(--encre);color:#fff;padding:6px 14px;border-radius:6px;display:inline-block;margin-bottom:10px}#heritage #h-repartition .cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}#heritage #h-repartition .carte{border:1.5px solid var(--gris-doux);border-radius:8px;padding:10px;background:#fffdf9}#heritage #h-repartition .carte-titre{font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;color:#5d564c}#heritage #h-repartition .carte input{width:100%;box-sizing:border-box;font-family:"Segoe UI",system-ui,sans-serif;font-size:.9rem;
+    padding:6px 8px;border:1.5px solid var(--gris-doux);border-radius:6px;margin-bottom:6px;background:#fff}#heritage #h-repartition .carte .miroir{font-weight:700}#heritage #h-repartition .carte .lib{display:block;font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:#8C857A;margin:2px 0}#heritage #h-repartition .carte .field{position:relative}#heritage #h-repartition .carte textarea.extra{box-sizing:border-box;width:100%;resize:none;overflow:hidden;
     min-height:2.2em;padding:6px 8px;margin-bottom:6px;border:1.5px solid var(--gris-doux);
     border-radius:6px;background:#fff;font-family:"Segoe UI",system-ui,sans-serif;
-    font-size:.82rem;line-height:1.32;white-space:pre-wrap;overflow-wrap:anywhere}
-  #vue-repartition .carte textarea.extra:focus{outline:none;border-color:var(--encre)}
-  #vue-repartition .suggest-box{position:absolute;left:0;right:0;top:calc(100% - 4px);z-index:60;background:#fff;
+    font-size:.82rem;line-height:1.32;white-space:pre-wrap;overflow-wrap:anywhere}#heritage #h-repartition .carte textarea.extra:focus{outline:none;border-color:var(--encre)}#heritage #h-repartition .suggest-box{position:absolute;left:0;right:0;top:calc(100% - 4px);z-index:60;background:#fff;
     border:1.5px solid var(--encre);border-radius:8px;max-height:200px;overflow-y:auto;
-    box-shadow:0 8px 22px rgba(0,0,0,.18)}
-  #vue-repartition .suggest-box .opt{padding:8px 11px;font-size:.8rem;line-height:1.25;cursor:pointer;
-    border-bottom:1px solid var(--gris-doux)}
-  #vue-repartition .suggest-box .opt:last-child{border-bottom:none}
-  #vue-repartition .suggest-box .opt:active,#vue-repartition .suggest-box .opt:hover{background:var(--gris-doux)}
-  #vue-repartition .copyright{margin-top:18px;padding:12px 4px 4px;border-top:1px solid var(--gris-doux);
+    box-shadow:0 8px 22px rgba(0,0,0,.18)}#heritage #h-repartition .suggest-box .opt{padding:8px 11px;font-size:.8rem;line-height:1.25;cursor:pointer;
+    border-bottom:1px solid var(--gris-doux)}#heritage #h-repartition .suggest-box .opt:last-child{border-bottom:none}#heritage #h-repartition .suggest-box .opt:active, #heritage #h-repartition .suggest-box .opt:hover{background:var(--gris-doux)}#heritage #h-repartition .copyright{margin-top:18px;padding:12px 4px 4px;border-top:1px solid var(--gris-doux);
     font-size:.66rem;line-height:1.5;color:#8C857A;text-align:center;break-inside:avoid}
+
+
+
+/* ============ Modules du personnel ============ */
+/* ============ Modules du personnel, habillés par le socle ============ */
+.section-titre{display:flex; align-items:baseline; gap:10px; margin:0 0 14px;}
+.section-titre h3{font-size:27px; margin:0; letter-spacing:-.5px; font-weight:700;}
+.section-titre .cpt{margin-left:auto; font-size:13.5px; color:var(--sourd);}
+
+.carte{
+  background:var(--papier); border:1px solid var(--filet);
+  padding:14px 16px; margin-bottom:10px;
+}
+.carte-retard{border-left:4px solid var(--action);}
+.titre-ligne{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+.titre-ligne b{font-size:16px; font-weight:600;}
+.meta{font-size:13.5px; color:var(--sourd); margin-top:3px;}
+.meta.fin{font-size:12.5px;}
+.meta a{color:var(--encre); text-decoration:none; border-bottom:1px solid var(--filet);}
+.gros{font-size:20px; font-weight:700;}
+.pt{font-size:12.5px; color:var(--sourd);}
+
+.actions{display:flex; gap:8px; margin-top:11px; flex-wrap:wrap; padding:0;}
+.mini-btn{
+  appearance:none; font:inherit; font-size:13.5px; font-weight:600; padding:7px 12px;
+  border:1px solid var(--filet); background:var(--papier); color:var(--encre); cursor:pointer;
+}
+.mini-btn:hover{border-color:var(--encre);}
+.mini-btn.plein{background:var(--encre); color:#fff; border-color:var(--encre);}
+.mini-btn.danger{color:var(--action); border-color:#F3C9C5;}
+.btn-ajout{
+  appearance:none; font:inherit; font-size:14.5px; font-weight:600; padding:11px 18px;
+  background:var(--action); color:#fff; border:0; cursor:pointer; margin-bottom:16px;
+}
+
+.etiquette{font-size:11.5px; font-weight:700; padding:3px 8px; margin-left:auto; white-space:nowrap;}
+.etiquette.rouge{background:#FDECEA; color:var(--action);}
+.etiquette.vert{background:#E7F4ED; color:var(--fait);}
+.etiquette.or,.etiquette.orange{background:#FFF8E1; color:#8A6400;}
+.etiquette.bleu{background:#E8EEF6; color:#28527A;}
+.etiquette.noir{background:var(--encre); color:#fff;}
+
+.vide{padding:24px 16px; color:var(--sourd); font-size:14.5px;
+  background:var(--papier); border:1px solid var(--filet);}
+.aide{font-size:13px; color:var(--sourd); padding:10px 14px; background:#FAFBFB;
+  border:1px solid var(--filet); margin-bottom:14px;}
+.legende{font-size:12.5px; color:var(--sourd); margin-top:10px;}
+
+.champ{margin-bottom:12px;}
+.champ label{display:block; font-size:12.5px; color:var(--sourd); margin-bottom:4px;}
+.champ input,.champ select,.champ textarea{
+  width:100%; font:inherit; font-size:15px; padding:10px 11px;
+  border:1px solid var(--filet); background:var(--papier); color:var(--encre);
+}
+.champ input:focus,.champ select:focus,.champ textarea:focus{
+  outline:2px solid var(--encre); outline-offset:-1px;}
+
+.mois-titre{
+  font-size:13px; font-weight:600; color:var(--action); margin:22px 0 9px;
+  border-bottom:1px solid var(--filet); padding-bottom:6px;
+  display:flex; align-items:center; text-transform:capitalize;
+}
+.mois-titre span{margin-left:auto; color:var(--sourd); font-weight:400;}
+
+/* Tableau de bord hérité */
+.tb-grille{display:flex; gap:26px; flex-wrap:wrap; background:var(--papier);
+  border:1px solid var(--filet); padding:16px; margin-bottom:16px;}
+.tb-carte b{display:block; font-size:26px; font-weight:700; line-height:1;}
+.tb-carte span{font-size:12.5px; color:var(--sourd);}
+.tb-ligne{display:flex; gap:14px; padding:11px 0; border-bottom:1px solid #EDEFF0; font-size:15px;}
+
+/* Ma journée */
+.j-jour{font-size:14px; color:var(--sourd); margin:0 0 20px;}
+.j-rappel{background:#FFF8E1; border-left:5px solid var(--signal);
+  padding:12px 16px; margin-bottom:16px; font-size:14.5px;}
+.j-rappel div+div{margin-top:5px;}
+.j-bloc{background:var(--papier); border:1px solid var(--filet); margin-bottom:16px;}
+.j-bloc h4{margin:0; font-size:13px; font-weight:600; color:var(--sourd);
+  padding:11px 16px; border-bottom:1px solid var(--filet);
+  display:flex; align-items:center; background:#FAFBFB;}
+.j-bloc h4 span{margin-left:auto; font-weight:400;}
+.j-bloc .vide{border:0; padding:20px 16px;}
+.j-ligne{display:flex; gap:14px; padding:12px 16px;
+  border-bottom:1px solid #EDEFF0; font-size:15px;}
+.j-ligne:last-child{border-bottom:0;}
+.j-date{flex:0 0 66px; color:var(--sourd); font-size:13.5px;}
+.j-txt{flex:1; min-width:0;}
+.j-retard .j-date{color:var(--action); font-weight:700;}
+.j-retard .j-txt{color:var(--action); font-weight:600;}
+.j-tache{display:flex; align-items:center; gap:11px; padding:11px 16px;
+  border-bottom:1px solid #EDEFF0;}
+.j-tache label{display:flex; align-items:center; gap:10px; flex:1; font-size:15px; cursor:pointer;}
+.j-tache input{width:21px; height:21px; margin:0; accent-color:var(--fait);}
+.j-ajout{display:flex; gap:9px; padding:12px 16px;}
+.j-ajout input{flex:1; font:inherit; font-size:15px; padding:9px 11px;
+  border:1px solid var(--filet); background:var(--papier); color:var(--encre);}
+
+/* Sous-onglets */
+.sous-barre{display:flex; gap:2px; margin-bottom:16px;
+  border-bottom:1px solid var(--filet); overflow-x:auto; -webkit-overflow-scrolling:touch;}
+.sous{appearance:none; background:none; border:0; border-bottom:3px solid transparent;
+  font:inherit; font-size:14.5px; color:var(--sourd); padding:9px 14px;
+  cursor:pointer; white-space:nowrap; flex:0 0 auto;}
+.sous.actif{color:var(--encre); font-weight:600; border-bottom-color:var(--action);}
+
+/* Fenêtre modale */
+.voile{position:fixed; inset:0; background:rgba(10,12,14,.55); z-index:60;
+  display:grid; place-items:center; padding:20px;}
+.modal{background:var(--papier); border:1px solid var(--filet); padding:22px;
+  width:100%; max-width:520px; max-height:84vh; overflow-y:auto;}
+.modal h4{margin:0 0 16px; font-size:19px; font-weight:700; letter-spacing:-.3px;}
+.rangee-btn{display:flex; gap:9px; margin-top:16px;}
+.btn-entrer{appearance:none; font:inherit; font-size:15px; font-weight:600;
+  padding:11px 18px; background:var(--encre); color:#fff; border:0; cursor:pointer;}
+.zone-envoi{display:flex; gap:9px; margin-top:12px;}
 
 </style>
 </head>
 <body>
 
-  <!-- ÉCRAN DE CODE -->
-  <div id="ecran-code" class="ecran">
-    <div class="carte-code">
-      <span class="badge-rond">ST-JOVITE #22028</span>
-      <h1>Préparation des quarts</h1>
-      <p>Entre ton code d'accès personnel</p>
-      <input id="code" type="text" inputmode="latin" autocomplete="off" autocapitalize="characters" maxlength="8" placeholder="• • • • • • • •">
-      <button class="btn-entrer" id="btn-entrer">Entrer</button>
-      <div class="err" id="err"></div>
-    </div>
-    <div class="filigrane-bas">Conçu et développé par Romuald Luce · © 2026 · usage interne McDonald's St-Jovite</div>
+<div id="ecran-code">
+  <div class="boite">
+    <h1>St-Jovite 22028</h1>
+    <p>Outil de gestion de quart</p>
+    <input id="code" type="password" inputmode="text" autocomplete="off" placeholder="Code d'accès">
+    <button id="btn-entrer" onclick="tenterAcces()">Entrer</button>
+    <div class="err" id="err"></div>
   </div>
+</div>
+<div id="menu" class="cache"></div>
+<div id="vue-calendrier" class="cache"></div>
+<div id="vue-rh" class="cache"></div>
 
-  <!-- MENU -->
-  <div id="menu" class="ecran cache">
-    <div class="entete-menu">
-      <span class="badge-rond">ST-JOVITE #22028</span>
-      <h2>Tes fiches de préparation</h2>
-      <div class="bienv">Connecté : <b id="qui">—</b></div>
-    </div>
-    <div class="grille-menu">
-      <button class="tuile" data-vue="comptoir"><span class="puce"></span><div class="t-titre">Liste pré-quart — Comptoir</div><div class="t-ss">Salle à manger · comptoir · hygiène</div></button>
-      <button class="tuile" data-vue="sav"><span class="puce"></span><div class="t-titre">Liste pré-quart — SAV</div><div class="t-ss">Service au volant · McCafé · hygiène</div></button>
-      <button class="tuile" data-vue="cuisine"><span class="puce"></span><div class="t-titre">Liste pré-quart — Cuisine</div><div class="t-ss">Production · chartes · hygiène</div></button>
-      <button class="tuile" data-vue="repartition"><span class="puce"></span><div class="t-titre">Plan de répartition</div><div class="t-ss">Positionnement de l'équipe · tâches et objectifs</div></button>
-      <button class="tuile" data-vue="postquart"><span class="puce"></span><div class="t-titre">Liste post-quart</div><div class="t-ss">Clôture et passation</div></button>
-      <button class="tuile" data-vue="calendrier"><span class="puce"></span><div class="t-titre">Calendrier événementiel</div><div class="t-ss">Événements régionaux · impact achalandage · météo</div></button>
-      <button class="tuile" data-vue="plannings"><span class="puce"></span><div class="t-titre">Plannings</div><div class="t-ss">Employés · règles · validateur de semaine</div></button>
-    </div>
-    <button class="btn-verrou" onclick="verrouiller()">Verrouiller la session</button>
-    <div class="filigrane-bas">Conçu et développé par Romuald Luce · © 2026 · Tous droits réservés</div>
-  </div>
+<nav class="cache" id="rail">
+  <div class="marque"><b>St-Jovite</b><span id="qui">22028</span></div>
+  <button data-v="journee">Ma journée</button>
+  <button data-v="quart">Le quart</button>
+  <button data-v="equipe">Équipe<span class="pastille cache" id="pastEquipe"></span></button>
+  <button data-v="formation">Formation</button>
+  <button data-v="calendrier">Calendrier</button>
+  <button data-v="departement">Département<span class="pastille cache" id="pastDept"></span></button>
+  <button data-v="reglages">Réglages</button>
+  <div class="bas"><span id="etatSync">Hors ligne</span><br><button onclick="verrouiller()">Verrouiller</button></div>
+</nav>
 
-  <!-- VUES (fiches) -->
-    <section class="vue cache" id="vue-comptoir">
+<main class="cache" id="corps">
+  <div class="page" id="page"></div>
+  <div class="page cache" id="pageHeritage">
+    <div class="retour"><button class="bt" onclick="fermerHeritage()">Retour</button></div>
+    <div id="heritage">
+<section class="vue-h" id="h-comptoir">
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
         <button class="btn rouge" onclick="window.print()">Imprimer / PDF</button>
@@ -453,7 +495,7 @@
         </div>
       </div>
     </section>
-    <section class="vue cache" id="vue-sav">
+<section class="vue-h" id="h-sav">
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
         <button class="btn rouge" onclick="window.print()">Imprimer / PDF</button>
@@ -539,7 +581,7 @@
         </div>
       </div>
     </section>
-    <section class="vue cache" id="vue-cuisine">
+<section class="vue-h" id="h-cuisine">
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
         <button class="btn rouge" onclick="window.print()">Imprimer / PDF</button>
@@ -644,7 +686,7 @@
         </div>
       </div>
     </section>
-    <section class="vue cache" id="vue-postquart">
+<section class="vue-h" id="h-postquart">
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
         <button class="btn rouge" onclick="window.print()">Imprimer / PDF</button>
@@ -735,8 +777,7 @@
         </div>
       </div>
     </section>
-
-    <section id="vue-repartition" class="vue-ext cache">
+<section id="h-repartition" class="vue-h">
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
       </div>
@@ -760,7 +801,7 @@
     <button class="onglet" data-vue="vue-plan">Plan détaillé — tâches et objectifs</button>
   </div>
 
-  <div id="vue-tableau">
+  <div id="h-tableau">
   <div class="frame">
     <div class="liseret haut"></div>
     <div class="board-wrap" id="board">
@@ -894,7 +935,7 @@
   </div>
   </div>
 
-  <div id="vue-plan" style="display:none">
+  <div id="h-plan" style="display:none">
     <p class="aide" style="margin-top:0">Le plan n'affiche que les postes occupés : place les prénoms dans le tableau de positionnement, ils apparaissent ici automatiquement. Les tâches et objectifs se choisissent dans la liste ou s'écrivent librement.</p>
     <p id="plan-vide" class="aide" style="display:none;margin-top:0;font-style:italic">Aucun poste occupé pour l'instant. Place des prénoms dans le tableau de positionnement pour les voir apparaître ici.</p>
     <div class="zone">
@@ -1276,20 +1317,7 @@
 
 
     </section>
-
-    <section id="vue-calendrier" class="cache">
-      <div class="barre-nav no-print">
-        <button class="btn clair" onclick="retourMenu()">← Menu</button>
-        <button class="btn clair" id="cal-refresh">Actualiser</button>
-        <span class="cal-statut" id="cal-statut"></span>
-      </div>
-      <div class="cal-zone">
-        <div class="cal-message" id="cal-message">Chargement du calendrier…</div>
-        <iframe class="cal-frame" id="cal-frame" title="Calendrier événementiel St-Jovite" style="display:none"></iframe>
-      </div>
-    </section>
-
-    <section id="vue-plannings" class="cache">
+<section id="h-plannings" class="vue-h">
       <div class="barre-nav no-print">
         <button class="btn clair" onclick="retourMenu()">← Menu</button>
       </div>
@@ -1297,7 +1325,16 @@
         <iframe class="cal-frame" id="plannings-frame" title="Outil plannings St-Jovite #22028" src="outil_plannings_stjovite.html"></iframe>
       </div>
     </section>
+    </div>
+  </div>
+</main>
+
+<div id="zonerh"><div id="zoneModal"></div></div>
+
 <script>
+'use strict';
+/* ================= JS hérité : plan de quart ================= */
+
   function sha256(ascii) {
     const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
       0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
@@ -1348,11 +1385,11 @@
   const elCode = document.getElementById('ecran-code');
   const elMenu = document.getElementById('menu');
   const vues = Array.from(document.querySelectorAll('.vue'));
-  const tousEcrans = [elCode, elMenu, ...vues, document.getElementById('vue-repartition'), document.getElementById('vue-calendrier'), document.getElementById('vue-plannings')];
+  const tousEcrans = [elCode, elMenu, ...vues, document.getElementById('vue-repartition'), document.getElementById('vue-calendrier'), document.getElementById('vue-plannings'), document.getElementById('vue-rh')].filter(Boolean);
 
   function montrer(el){
-    tousEcrans.forEach(x => x.classList.add('cache'));
-    el.classList.remove('cache');
+    tousEcrans.forEach(x => x && x.classList.add('cache'));
+    if(el) el.classList.remove('cache');
     window.scrollTo(0,0);
   }
 
@@ -1385,9 +1422,8 @@
   document.querySelectorAll('.tuile[data-vue]').forEach(b => {
     b.addEventListener('click', () => montrer(document.getElementById('vue-' + b.dataset.vue)));
   });
-  // --- Calendrier événementiel : rechargé depuis le gist à chaque ouverture ---
-  const GIST_CAL = 'https://gist.githubusercontent.com/GhostQuebec-png/374f968ebf5ab9ea5279b8f33fecfffe/raw';
-  const GIST_API = 'https://api.github.com/gists/374f968ebf5ab9ea5279b8f33fecfffe';
+  // --- Calendrier événementiel : fichier du dépôt, rechargé à chaque ouverture ---
+  const FICHIER_CAL = 'evenements.html';
   async function chargerCalendrier(){
     const frame = document.getElementById('cal-frame');
     const msg = document.getElementById('cal-message');
@@ -1397,21 +1433,9 @@
     frame.style.display='none';
     let html = null, err = '';
     try{
-      const r = await fetch(GIST_CAL + '?t=' + Date.now());
-      if(r.ok) html = await r.text(); else err = 'raw ' + r.status;
-    }catch(e){ err = 'raw ' + (e.name || 'err'); }
-    if(!html){
-      try{
-        const r2 = await fetch(GIST_API);
-        if(r2.ok){
-          const j = await r2.json();
-          const vals = Object.values(j.files);
-          const f = vals.find(x => /\.html$/i.test(x.filename)) || vals[0];
-          if(f && f.content) html = f.content;
-          else err += ' | api vide';
-        } else { err += ' | api ' + r2.status; }
-      }catch(e){ err += ' | api ' + (e.name || 'err'); }
-    }
+      const r = await fetch(FICHIER_CAL + '?t=' + Date.now());
+      if(r.ok) html = await r.text(); else err = 'HTTP ' + r.status;
+    }catch(e){ err = e.name || 'réseau'; }
     if(html){
       frame.srcdoc = html;
       frame.style.display='';
@@ -1604,8 +1628,8 @@
   // démarrage
   montrer(elCode);
   input.focus();
-</script>
-<script>
+
+
 /* ===== Logique du Plan de répartition — isolée ===== */
 (function(){
 const ROSTER_DEFAUT = ["Abdel Mounime","Abderrahman","Abderrazzak","Achraf","Aissa","Alessandro","Aube","Ayoub","Bader","Benjamin","Benoit","Charles","Charles-\u00c9mile","Christian","Damien","Denis","Emil","Emmy","\u00c9ric","Fatima","Hamza B.","Hamza N.","Irhisnat","Issa","Jimmy","Koffi","Lo\u00efc","Louka","Malick","Marie-Jos\u00e9e","Marie-Pier","Maxime","Michael","Mustapha","Naomie","Noah","Patrick","Rania","Raymond","Romalie","Romuald","Samuel","Simon","Th\u00e9o L.","Th\u00e9o R.","Thomas","Val\u00e9rie","William","Winie","Xavier","Yassmine","Zachary","Zahira","Zakaria"];
@@ -1656,7 +1680,7 @@ function majJetons(){
       e.stopPropagation();
       roster = roster.filter(n=>n!==nom);
       if(nomChoisi===nom) nomChoisi=null;
-      sauverRoster(); majJetons();
+      noterRetrait(nom); sauverRoster(); majJetons();
     });
     j.appendChild(x);
     j.addEventListener("click", ()=>{ nomChoisi = (nomChoisi===nom)?null:nom; majJetons(); });
@@ -1666,6 +1690,18 @@ function majJetons(){
     cont.innerHTML = '<span class="aide">Aucun prénom enregistré. Ajoute ton équipe — la liste est conservée d\'un quart à l\'autre.</span>';
   }
   cases.forEach(c=>c.classList.toggle("cible-assignation", !!nomChoisi && !c.value.trim()));
+}
+async function noterAjout(nom){
+  let l=[]; try{ l=JSON.parse(await stGet("stjovite-plan-ajouts")||"[]"); }catch(e){}
+  if(!l.includes(nom)){ l.push(nom); await stSet("stjovite-plan-ajouts", JSON.stringify(l)); }
+  let r=[]; try{ r=JSON.parse(await stGet("stjovite-plan-retraits")||"[]"); }catch(e){}
+  if(r.includes(nom)) await stSet("stjovite-plan-retraits", JSON.stringify(r.filter(x=>x!==nom)));
+}
+async function noterRetrait(nom){
+  let l=[]; try{ l=JSON.parse(await stGet("stjovite-plan-retraits")||"[]"); }catch(e){}
+  if(!l.includes(nom)){ l.push(nom); await stSet("stjovite-plan-retraits", JSON.stringify(l)); }
+  let a=[]; try{ a=JSON.parse(await stGet("stjovite-plan-ajouts")||"[]"); }catch(e){}
+  if(a.includes(nom)) await stSet("stjovite-plan-ajouts", JSON.stringify(a.filter(x=>x!==nom)));
 }
 async function sauverRoster(){ await stSet("stjovite-plan-roster", JSON.stringify(roster)); }
 
@@ -1677,7 +1713,7 @@ function ajouterNom(){
   if(!nom) return;
   if(!roster.some(n=>n.toLowerCase()===nom.toLowerCase())){
     roster.push(nom); roster.sort((a,b)=>a.localeCompare(b,"fr"));
-    sauverRoster();
+    noterAjout(nom); sauverRoster();
   }
   inp.value=""; majJetons(); inp.focus();
 }
@@ -1867,10 +1903,35 @@ document.querySelectorAll(".auto").forEach(ta=>{
   ta.addEventListener("blur", ()=> closeBox());
 });
 
-(async function init(){
-  const r = await stGet("stjovite-plan-roster");
-  if(r){ try{ roster = JSON.parse(r); }catch(e){ roster=[]; } }
-  if(!Array.isArray(roster) || roster.length===0){ roster = [...ROSTER_DEFAUT]; }
+function rosterDepuisEmployes(){
+  const emps = (typeof data!=="undefined" && data && Array.isArray(data.employes)) ? data.employes : [];
+  if(!emps.length) return null;
+  const compte = {};
+  emps.forEach(e=>{ compte[e.prenom] = (compte[e.prenom]||0)+1; });
+  return emps.map(e => compte[e.prenom] > 1 ? e.prenom + " " + (e.nom||"").charAt(0) + "." : e.prenom)
+             .sort((a,b)=>a.localeCompare(b,"fr"));
+}
+async function majRoster(){
+  const base = rosterDepuisEmployes();
+  if(!base){ return; }
+  let ajouts = [], retraits = [];
+  try{ ajouts   = JSON.parse(await stGet("stjovite-plan-ajouts")   || "[]"); }catch(e){}
+  try{ retraits = JSON.parse(await stGet("stjovite-plan-retraits") || "[]"); }catch(e){}
+  const set = new Set(base.concat(ajouts));
+  retraits.forEach(n => set.delete(n));
+  roster = [...set].sort((a,b)=>a.localeCompare(b,"fr"));
+  majJetons();
+}
+window.majRoster = majRoster;
+
+async function initPlan(){
+  const base = rosterDepuisEmployes();
+  if(base){ await majRoster(); }
+  else{
+    const r = await stGet("stjovite-plan-roster");
+    if(r){ try{ roster = JSON.parse(r); }catch(e){ roster=[]; } }
+    if(!Array.isArray(roster) || roster.length===0){ roster = [...ROSTER_DEFAUT]; }
+  }
   majJetons();
   const derniere = await stGet("stjovite-tableau:dernier");
   if(derniere){
@@ -1885,9 +1946,1100 @@ document.querySelectorAll(".auto").forEach(ta=>{
       }catch(e){}
     }
   }
+}
+
+window.initPlan = initPlan; window.tenter = tenter;
 })();
 
-})();
+
+/* ================= JS hérité : modules du personnel ================= */
+
+"use strict";
+/* ================= CONFIG LOCALE ================= */
+const LS_KEY = "mcdo_22028_gestion_cfg_v1";
+let cfg = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+let data = null;               // document partagé (Gist)
+let baseline = 0;              // updatedAt chargé
+let ongletActif = "journee";
+let calMois = new Date();      // mois affiché
+let calJourChoisi = null;
+let bandeauFerme = false;
+let fileSauvegarde = Promise.resolve();
+
+const POSTES_FORMATION = [{"code": "EXP", "lib": "Expérience-client", "fam": "Base"}, {"code": "SST", "lib": "Santé et sécurité", "fam": "Base"}, {"code": "SAM", "lib": "Salle à manger et borne", "fam": "Base"}, {"code": "HYG", "lib": "Hygiène alimentaire", "fam": "Base"}, {"code": "FRI", "lib": "Frites et patates hachées", "fam": "Base"}, {"code": "BOI", "lib": "Boissons et desserts", "fam": "Service"}, {"code": "ASAV", "lib": "Assemblage et présentation au SAV", "fam": "Service"}, {"code": "PSAV", "lib": "Prise de commande et paiement au SAV", "fam": "Service"}, {"code": "ACPT", "lib": "Comptoir : assemblage et présentation", "fam": "Service"}, {"code": "PCPT", "lib": "Comptoir : prise de commande et paiement", "fam": "Service"}, {"code": "PFR", "lib": "Produits frits", "fam": "Production"}, {"code": "GRI", "lib": "Gril", "fam": "Production"}, {"code": "AMO", "lib": "Assemblage du menu ordinaire", "fam": "Production"}, {"code": "PAMO", "lib": "Pratique de l'assemblage du menu ordinaire", "fam": "Production"}, {"code": "COND", "lib": "Conditionnement et préparation", "fam": "Production"}, {"code": "FOUR", "lib": "Cuisson au four", "fam": "Production"}, {"code": "ADEJ", "lib": "Assemblage du déjeuner", "fam": "Déjeuner"}, {"code": "CDEJ", "lib": "Cuisson du déjeuner", "fam": "Déjeuner"}];
+
+const PERSONNES = ["Romuald","Damien","Marie-Josée","Jimmy","Mustapha"];
+const MENTORS = ["Malick","Marie-Pier","Abderrahman","Fatima","Autre"];
+
+/* ================= DÉFINITION DES MODULES ================= */
+const MODULES = {
+  journee:  {label:"Ma journée", nav:1, custom:true},
+  calendrier:{label:"Calendrier", nav:1, array:"calendrier",
+    fields:[
+      {k:"titre",label:"Titre",type:"text",req:1},
+      {k:"date",label:"Date",type:"date",req:1},
+      {k:"type",label:"Type",type:"select",options:["Échéance","Évaluation","Réunion","Formation","Employé du mois","Autre"]},
+      {k:"notes",label:"Notes",type:"textarea"},
+      {k:"fait",label:"Fait",type:"checkbox"}
+    ]},
+  equipe:   {label:"Équipe", nav:1, custom:true},
+  formation:{label:"Formation", nav:1, custom:true},
+  departement:{label:"Département", nav:1, custom:true},
+  employes: {label:"Employés", array:"employes",
+    fields:[
+      {k:"prenom",label:"Prénom",type:"text",req:1},
+      {k:"nom",label:"Nom",type:"text",req:1},
+      {k:"tel",label:"Téléphone",type:"text"}
+    ]},
+  mentorats:{label:"Mentorats", array:"mentorats", custom:true,
+    fields:[
+      {k:"equipier",label:"Équipier",type:"text",req:1},
+      {k:"embauche",label:"Date d'embauche",type:"date",req:1},
+      {k:"mentor",label:"Mentor",type:"select",options:MENTORS},
+      {k:"r30",label:"Rencontre J30 complétée",type:"checkbox"},
+      {k:"f30",label:"FRED J30 complété",type:"checkbox"},
+      {k:"r60",label:"Rencontre J60 complétée",type:"checkbox"},
+      {k:"f60",label:"FRED J60 complété",type:"checkbox"},
+      {k:"r90",label:"Rencontre J90 complétée",type:"checkbox"},
+      {k:"f90",label:"FRED J90 complété",type:"checkbox"},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  evaluations:{label:"Évaluations", array:"evaluations",
+    fields:[
+      {k:"employe",label:"Employé",type:"text",req:1},
+      {k:"type",label:"Type",type:"select",options:["Équipier","Instructeur / Leader d'équipe","Leader de quart","Maintenance","Probation","Point de contact 30 j","Point de contact 60 j","Point de contact 90 j"]},
+      {k:"date",label:"Date prévue",type:"date",req:1},
+      {k:"statut",label:"Statut",type:"select",options:["À planifier","Planifiée","Faite","Signée"]},
+      {k:"resp",label:"Responsable",type:"select",options:PERSONNES},
+      {k:"derniere",label:"Date de la dernière évaluation",type:"date"},
+      {k:"derniereNote",label:"Notation obtenue à la dernière",type:"text"},
+      {k:"taux",label:"Taux horaire actuel",type:"text"},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  fichesRole:{label:"Fiches de rôle", custom:true},
+  bulletinsDepartement:{label:"Bulletins de département", array:"bulletins",
+    fields:[
+      {k:"mois",label:"Mois (AAAA-MM)",type:"month",req:1},
+      {k:"resp",label:"Responsable",type:"select",options:PERSONNES},
+      {k:"tauxRoulement",label:"1. Taux de roulement — résultat (cible 45 %)",type:"text"},
+      {k:"formationsRetard",label:"1. Formations en retard (FCP/FRED)",type:"text"},
+      {k:"mentoratsAJour",label:"1. Mentorats à jour (J30/J60/J90)",type:"text"},
+      {k:"santeSecurite",label:"1. Rencontres santé/sécurité",type:"text"},
+      {k:"punchsAttente",label:"1. Corrections de punchs en attente",type:"text"},
+      {k:"horairesPauses",label:"1. Horaires / feuilles de pause manquants",type:"text"},
+      {k:"evaluationsRealisees",label:"2. Évaluations réalisées",type:"textarea"},
+      {k:"evaluationsAPlanifier",label:"2. Évaluations à planifier",type:"textarea"},
+      {k:"pointsContact",label:"2. Points de contact J30/J60/J90 réalisés",type:"textarea"},
+      {k:"devAssistants",label:"3. Développement — Assistants",type:"textarea"},
+      {k:"devGerantsQuart",label:"3. Développement — Gérants de quart",type:"textarea"},
+      {k:"devLeadersEquipe",label:"3. Développement — Leaders d'équipe",type:"textarea"},
+      {k:"devInstructeurs",label:"3. Développement — Instructeurs",type:"textarea"},
+      {k:"devEquipiers",label:"3. Développement — Équipiers",type:"textarea"},
+      {k:"meritesService",label:"4. Mérites de service",type:"textarea"},
+      {k:"petitsPlaisirs",label:"4. Petits plaisirs / motivation",type:"textarea"},
+      {k:"employeDuMoisTxt",label:"4. Employé du mois",type:"text"},
+      {k:"activiteEquipe",label:"4. Activité d'équipe",type:"textarea"},
+      {k:"contribASurveiller",label:"5. Contributions — à surveiller",type:"textarea"},
+      {k:"contribASouligner",label:"5. Contributions — à souligner",type:"textarea"},
+      {k:"forces",label:"6. Forces du département",type:"textarea"},
+      {k:"occasionsAmelioration",label:"6. Occasions d'amélioration",type:"textarea"},
+      {k:"plan1",label:"7. Action 1",type:"text"},
+      {k:"plan2",label:"7. Action 2",type:"text"},
+      {k:"plan3",label:"7. Action 3",type:"text"}
+    ]},
+  videos:{label:"Vidéos formation", array:"videos",
+    fields:[
+      {k:"titre",label:"Titre",type:"text",req:1},
+      {k:"url",label:"Lien (URL)",type:"url",req:1},
+      {k:"categorie",label:"Catégorie",type:"select",options:["Cuisine","Comptoir","McDrive","SAV / Salle","McCafé","Hygiène","Encadrement","Autre"]},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  metiers:{label:"Métiers de service", array:"metiers",
+    fields:[
+      {k:"employe",label:"Employé",type:"text",req:1},
+      {k:"poste",label:"Poste / métier",type:"select",options:["Comptoir","McDrive — prise de commande","McDrive — présentation","Cuisine — initiation","Grill","Frites","SAV","Salle","McCafé","Autre"]},
+      {k:"statut",label:"Statut",type:"select",options:["En formation","Validé","À revalider"]},
+      {k:"date",label:"Date visée / validée",type:"date"},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  anniversaires:{label:"Anniversaires", array:"anniversaires",
+    fields:[
+      {k:"nom",label:"Nom",type:"text",req:1},
+      {k:"date",label:"Date de naissance (l'année peut être approximative)",type:"date",req:1},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  punchs:{label:"Punchs", array:"punchs",
+    fields:[
+      {k:"employe",label:"Employé",type:"text",req:1},
+      {k:"date",label:"Date du punch à corriger",type:"date",req:1},
+      {k:"motif",label:"Motif",type:"text",req:1},
+      {k:"statut",label:"Statut",type:"select",options:["À corriger","Corrigé"]},
+      {k:"resp",label:"Traité par",type:"select",options:PERSONNES},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  employeMois:{label:"Employé du mois", array:"employeMois",
+    fields:[
+      {k:"mois",label:"Mois (AAAA-MM)",type:"month",req:1},
+      {k:"nom",label:"Employé proposé / retenu",type:"text",req:1},
+      {k:"motif",label:"Justification",type:"textarea"},
+      {k:"statut",label:"Statut",type:"select",options:["Proposé","Validé","Affiché"]}
+    ]},
+  documents:{label:"Documents", array:"documents",
+    fields:[
+      {k:"titre",label:"Titre",type:"text",req:1},
+      {k:"url",label:"Lien (Drive, GitHub, autre)",type:"url",req:1},
+      {k:"categorie",label:"Catégorie",type:"select",options:["Évaluations","Mentorat","Formation","RH","Communication","Fiches de rôle","Autre"]},
+      {k:"notes",label:"Notes",type:"textarea"}
+    ]},
+  messages:{label:"Messages", custom:true},
+  reglages:{label:"Réglages", nav:1, custom:true}
+};
+const ARRAYS = ["calendrier","mentorats","evaluations","bulletins","videos","metiers","anniversaires","punchs","employeMois","documents","employes","formations","taches"];
+
+/* ================= OUTILS ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function fmtDate(iso){if(!iso)return "—";const [a,m,j]=iso.split("-");const M=["janv","févr","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"];return `${+j} ${M[+m-1]} ${a}`;}
+function aujISO(){const d=new Date();return d.toISOString().slice(0,10);}
+function plusJours(iso,n){const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
+function joursEntre(a,b){return Math.round((new Date(b+"T12:00")-new Date(a+"T12:00"))/86400000);}
+
+function docVide(pinHash){
+  return {version:1, updatedAt:Date.now(),
+    meta:{pinHash, delaiRappel:7, ts:Date.now()},
+    deleted:[],
+    calendrier:[],mentorats:[],evaluations:[],bulletins:[],videos:[],metiers:[],
+    anniversaires:[],punchs:[],employeMois:[],documents:[],employes:[],formations:[],taches:[]};
+}
+
+/* ================= API GIST ================= */
+const FICHIER = "gestion-rh-22028.json";
+async function apiGist(method, url, body){
+  const r = await fetch(url,{method,headers:{
+    "Authorization":"token "+cfg.token,"Accept":"application/vnd.github+json",
+    ...(body?{"Content-Type":"application/json"}:{})
+  },body:body?JSON.stringify(body):undefined}).catch(()=>{throw new Error("RESEAU");});
+  if(!r.ok){throw new Error("HTTP"+r.status);}
+  return r.json();
+}
+async function lireGist(){
+  const g = await apiGist("GET","https://api.github.com/gists/"+cfg.gistId+"?t="+Date.now());
+  const f = g.files[FICHIER];
+  if(!f) throw new Error("Fichier introuvable dans l'espace");
+  let contenu = f.content;
+  if(f.truncated){const r=await fetch(f.raw_url);contenu=await r.text();}
+  return JSON.parse(contenu);
+}
+async function ecrireGist(doc){
+  await apiGist("PATCH","https://api.github.com/gists/"+cfg.gistId,
+    {files:{[FICHIER]:{content:JSON.stringify(doc)}}});
+}
+async function creerGist(doc){
+  const g = await apiGist("POST","https://api.github.com/gists",
+    {description:"Gestion du personnel — St-Jovite #22028 (espace privé)",public:false,
+     files:{[FICHIER]:{content:JSON.stringify(doc)}}});
+  return g.id;
+}
+
+/* ---- Fusion : conserve l'élément le plus récent par id, tombstones pour suppressions ---- */
+function fusionner(local, distant){
+  const out = docVide("");
+  out.deleted = [...new Set([...(local.deleted||[]),...(distant.deleted||[])])];
+  out.meta = (local.meta.ts>=distant.meta.ts)?{...distant.meta,...local.meta}:{...local.meta,...distant.meta};
+  out.meta.lastRead = {
+    Romuald:Math.max(local.meta.lastRead?.Romuald||0,distant.meta.lastRead?.Romuald||0),
+    Damien:Math.max(local.meta.lastRead?.Damien||0,distant.meta.lastRead?.Damien||0)};
+  const del = new Set(out.deleted);
+  for(const k of ARRAYS){
+    const map = new Map();
+    for(const it of (distant[k]||[])) map.set(it.id,it);
+    for(const it of (local[k]||[])){const d=map.get(it.id);if(!d||(it.ts||0)>=(d.ts||0))map.set(it.id,it);}
+    out[k] = [...map.values()].filter(it=>!del.has(it.id));
+  }
+  out.updatedAt = Date.now();
+  return out;
+}
+
+function sauvegarder(){
+  fileSauvegarde = fileSauvegarde.then(async ()=>{
+    majSync("busy");
+    try{
+      const distant = await lireGist();
+      data = fusionner(data, distant);
+      data.updatedAt = Date.now();
+      await ecrireGist(data);
+      baseline = data.updatedAt;
+      majSync("ok");
+    }catch(e){console.error(e);majSync("err");}
+  });
+  return fileSauvegarde;
+}
+async function rafraichir(silencieux){
+  try{
+    majSync("busy");
+    const distant = await lireGist();
+    if(distant.updatedAt !== baseline){
+      data = fusionner(data||docVide(""), distant);
+      baseline = distant.updatedAt;
+      rendre();
+    }
+    majSync("ok");
+  }catch(e){console.error(e);majSync("err");if(!silencieux)alert("Synchronisation impossible. Vérifie la connexion ou le token.");}
+}
+
+/* ================= ÉCHÉANCES / RAPPELS ================= */
+function prochaineEtapeMentorat(m){
+  const j30=plusJours(m.embauche,30), j60=plusJours(m.embauche,60), j90=plusJours(m.embauche,90);
+  if(!(m.r30&&m.f30)) return {etape:"J30",date:j30,manque:[!m.r30&&"rencontre",!m.f30&&"FRED"].filter(Boolean)};
+  if(!(m.r60&&m.f60)) return {etape:"J60",date:j60,manque:[!m.r60&&"rencontre",!m.f60&&"FRED"].filter(Boolean)};
+  if(!(m.r90&&m.f90)) return {etape:"J90",date:j90,manque:[!m.r90&&"rencontre",!m.f90&&"FRED"].filter(Boolean)};
+  return null;
+}
+function prochainAnniv(iso){
+  const auj=new Date();auj.setHours(12,0,0,0);
+  const [,m,j]=iso.split("-").map(Number);
+  let d=new Date(auj.getFullYear(),m-1,j,12);
+  if(d<auj) d=new Date(auj.getFullYear()+1,m-1,j,12);
+  return d.toISOString().slice(0,10);
+}
+function collecterEcheances(delaiForce){
+  const delai = delaiForce ?? (data.meta.delaiRappel ?? 7);
+  const auj = aujISO(); const lim = plusJours(auj, delai);
+  const out = [];
+  for(const e of data.calendrier) if(!e.fait && e.date<=lim) out.push({date:e.date,txt:`${e.titre} (calendrier${e.type?" — "+e.type:""})`,retard:e.date<auj});
+  for(const e of data.evaluations) if(e.statut!=="Faite"&&e.statut!=="Signée"&&e.date<=lim) out.push({date:e.date,txt:`Évaluation ${e.employe} — ${e.type||""}`,retard:e.date<auj});
+  for(const m of data.mentorats){const p=prochaineEtapeMentorat(m);if(p&&p.date<=lim)out.push({date:p.date,txt:`Mentorat ${m.equipier} — ${p.etape} (${p.manque.join(" + ")})`,retard:p.date<auj});}
+  for(const a of data.anniversaires){const d=prochainAnniv(a.date);if(d<=lim)out.push({date:d,txt:`Anniversaire de ${a.nom}`,retard:false});}
+  for(const p of data.punchs) if(p.statut!=="Corrigé") out.push({date:p.date,txt:`Punch à corriger — ${p.employe} (${p.motif})`,retard:p.date<auj});
+  out.sort((a,b)=>a.date.localeCompare(b.date));
+  return out;
+}
+
+/* ================= AMORÇAGE DES DONNÉES ================= */
+function estSupprime(id){ return (data.deleted||[]).some(d=>d.id===id); }
+function amorcer(){ return 0; }
+
+/* Import manuel des données (aucune donnée personnelle n'est stockée dans ce fichier) */
+function importerDonnees(){
+  const zone = $("zoneImport"); if(!zone) return;
+  let bloc;
+  try{ bloc = JSON.parse(zone.value); }
+  catch(e){ alert("Le texte collé n'est pas un bloc de données valide."); return; }
+  data.employes = data.employes||[]; data.formations = data.formations||[]; data.taches = data.taches||[];
+  let n = 0;
+  const ajouter = (cle, liste) => {
+    if(!Array.isArray(liste)) return;
+    const ids = new Set(data[cle].map(x=>x.id));
+    for(const e of liste){
+      if(!e || !e.id) continue;
+      if(ids.has(e.id) || estSupprime(e.id)) continue;
+      data[cle].push({...e, ts:Date.now()}); n++;
+    }
+  };
+  ajouter("employes", bloc.employes);
+  ajouter("evaluations", bloc.evaluations);
+  ajouter("formations", bloc.formations);
+  if(!n){ alert("Rien de nouveau à importer : ces données sont déjà présentes."); return; }
+  sauvegarder();
+  alert(n + " fiche" + (n>1?"s":"") + " importée" + (n>1?"s":"") + ".");
+  ongletActif = "journee"; rendre();
+}
+
+/* ================= UTILITAIRES ================= */
+function moisCourant(){ return aujISO().slice(0,7); }
+function fmtCourt(iso){const p=iso.split("-");
+  const M=["janv","févr","mars","avr","mai","juin","juil","août","sept","oct","nov","déc"];
+  return (+p[2])+" "+M[+p[1]-1];}
+function fmtMois(ym){const p=ym.split("-");
+  const M=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  return M[+p[1]-1]+" "+p[0];}
+function fmtLong(iso){const d=new Date(iso+"T12:00:00");
+  const t=d.toLocaleDateString("fr-CA",{weekday:"long",day:"numeric",month:"long"});
+  return t.charAt(0).toUpperCase()+t.slice(1);}
+
+/* ================= MA JOURNÉE ================= */
+function htmlJournee(){
+  const auj=aujISO();
+  const t=collecterEcheances(370);
+  const retard=t.filter(e=>e.date<auj), aujd=t.filter(e=>e.date===auj);
+  const sem=t.filter(e=>e.date>auj&&e.date<=plusJours(auj,7));
+  const mois=t.filter(e=>e.date>plusJours(auj,7)&&e.date<=plusJours(auj,30));
+
+  const rap=[];
+  if(!data.bulletins.some(b=>b.mois===moisCourant()))
+    rap.push("Bulletin du département Personnel de "+fmtMois(moisCourant())+" pas encore déposé.");
+  const st=data.evaluations.filter(e=>e.statut!=="Faite"&&e.statut!=="Signée"&&!e.type).length;
+  if(st) rap.push(st+" évaluation"+(st>1?"s":"")+" sans type défini.");
+
+  const ligne=e=>'<div class="j-ligne'+(e.retard?" j-retard":"")+'"><span class="j-date">'+
+    fmtCourt(e.date)+'</span><span class="j-txt">'+esc(e.txt)+'</span></div>';
+  const bloc=(titre,arr,vide,max)=>'<div class="j-bloc"><h4>'+titre+'<span>'+arr.length+'</span></h4>'+
+    (arr.length?arr.slice(0,max||99).map(ligne).join(""):'<div class="vide">'+vide+'</div>')+'</div>';
+
+  const tac=(data.taches||[]).filter(x=>!x.fait);
+  const htac=tac.length?tac.map(x=>'<div class="j-tache"><label><input type="checkbox" onchange="cocherTache(\''+
+      x.id+'\')"><span>'+esc(x.txt)+'</span></label><button class="mini-btn danger" onclick="supprimerTache(\''+
+      x.id+'\')">Retirer</button></div>').join("")
+    :'<div class="vide">Rien de noté.</div>';
+
+  return '<div class="section-titre"><h3>Ma journée</h3></div>'+
+    '<div class="j-jour">'+fmtLong(auj)+'</div>'+
+    (rap.length?'<div class="j-rappel">'+rap.map(r=>'<div>'+esc(r)+'</div>').join("")+'</div>':"")+
+    (retard.length?bloc("En retard",retard,"",12):"")+
+    bloc("Aujourd'hui",aujd,"Rien de prévu aujourd'hui.")+
+    bloc("Les 7 prochains jours",sem,"Rien cette semaine.")+
+    bloc("Les 30 prochains jours",mois,"Rien dans le mois.",15)+
+    '<div class="j-bloc"><h4>À ne pas oublier<span>'+tac.length+'</span></h4>'+htac+
+    '<div class="j-ajout"><input id="nouvelleTache" placeholder="Note pour aujourd\'hui" '+
+    'onkeydown="if(event.key===\'Enter\')ajouterTache()">'+
+    '<button class="mini-btn plein" onclick="ajouterTache()">Ajouter</button></div></div>';
+}
+function ajouterTache(){const i=$("nouvelleTache");if(!i||!i.value.trim())return;
+  data.taches=data.taches||[];
+  data.taches.push({id:uid(),txt:i.value.trim(),date:aujISO(),fait:false,ts:Date.now()});
+  sauvegarder();rendre();}
+function cocherTache(id){const t=(data.taches||[]).find(x=>x.id===id);if(!t)return;
+  t.fait=true;t.ts=Date.now();sauvegarder();rendre();}
+function supprimerTache(id){const t=(data.taches||[]).find(x=>x.id===id);if(!t)return;
+  t.fait=true;t.ts=Date.now();sauvegarder();rendre();}
+
+/* ================= ÉQUIPE ================= */
+let sousEquipe="evaluations";
+const SOUS_EQUIPE={evaluations:"Évaluations",employes:"Employés",mentorats:"Mentorats",
+  punchs:"Punchs",anniversaires:"Anniversaires",employeMois:"Employé du mois"};
+function allerSous(k){sousEquipe=k;rendre();}
+function htmlEquipe(){
+  const ong=Object.entries(SOUS_EQUIPE).map(function(p){
+    return '<button class="sous'+(p[0]===sousEquipe?" actif":"")+'" onclick="allerSous(\''+p[0]+'\')">'+p[1]+'</button>';
+  }).join("");
+  let c;
+  if(sousEquipe==="employes")c=htmlEmployes();
+  else if(sousEquipe==="mentorats")c=htmlMentorats();
+  else if(sousEquipe==="evaluations")c=htmlEvaluations();
+  else c=htmlListe(sousEquipe);
+  return '<div class="sous-barre">'+ong+'</div>'+c;
+}
+function htmlEmployes(){
+  const l=data.employes.slice().sort((a,b)=>(a.nom+a.prenom).localeCompare(b.nom+b.prenom,"fr"));
+  const cartes=l.map(e=>'<div class="carte"><div class="titre-ligne"><b>'+esc(e.prenom)+' '+esc(e.nom)+'</b></div>'+
+    '<div class="meta"><a href="tel:'+esc((e.tel||"").replace(/[^0-9+]/g,""))+'">'+esc(e.tel||"—")+'</a></div>'+
+    '<div class="actions"><button class="mini-btn" onclick="ouvrirForm(\'employes\',\''+e.id+'\')">Modifier</button>'+
+    '<button class="mini-btn danger" onclick="supprimer(\'employes\',\''+e.id+'\')">Supprimer</button></div></div>').join("");
+  return '<div class="section-titre"><h3>Employés</h3><span class="cpt">'+l.length+'</span></div>'+
+    '<button class="btn-ajout" onclick="ouvrirForm(\'employes\')">Ajouter un employé</button>'+cartes;
+}
+function htmlEvaluations(){
+  const auj=aujISO();
+  const l=data.evaluations.filter(e=>e.statut!=="Faite"&&e.statut!=="Signée")
+          .sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const faites=data.evaluations.length-l.length;
+  const grp={};for(const e of l){const k=String(e.date).slice(0,7);(grp[k]=grp[k]||[]).push(e);}
+  const corps=Object.keys(grp).map(function(ym){
+    return '<h4 class="mois-titre">'+fmtMois(ym)+'<span>'+grp[ym].length+'</span></h4>'+
+      grp[ym].map(e=>'<div class="carte'+(e.date<auj?" carte-retard":"")+'">'+
+      '<div class="titre-ligne"><b>'+esc(e.employe)+'</b>'+
+      (e.date<auj?'<span class="etiquette rouge">En retard</span>':"")+'</div>'+
+      '<div class="meta">'+fmtDate(e.date)+' · '+esc(e.type||"type à définir")+(e.resp?" · "+esc(e.resp):"")+'</div>'+
+      (e.derniereNote?'<div class="meta fin">Dernière : '+(e.derniere?fmtDate(e.derniere)+" — ":"")+
+        esc(e.derniereNote)+(e.taux?" — "+esc(e.taux)+" $/h":"")+'</div>':"")+
+      (e.notes?'<div class="meta fin">'+esc(e.notes)+'</div>':"")+
+      '<div class="actions"><button class="mini-btn plein" onclick="marquerEval(\''+e.id+'\')">Marquer faite</button>'+
+      '<button class="mini-btn" onclick="ouvrirForm(\'evaluations\',\''+e.id+'\')">Modifier</button>'+
+      '<button class="mini-btn danger" onclick="supprimer(\'evaluations\',\''+e.id+'\')">Supprimer</button></div></div>').join("");
+  }).join("");
+  return '<div class="section-titre"><h3>Évaluations à venir</h3><span class="cpt">'+l.length+'</span></div>'+
+    '<button class="btn-ajout" onclick="ouvrirForm(\'evaluations\')">Ajouter une évaluation</button>'+
+    (faites?'<div class="aide">'+faites+' évaluation'+(faites>1?"s":"")+' déjà marquée'+(faites>1?"s":"")+' faite.</div>':"")+
+    (corps||'<div class="vide">Aucune évaluation à venir.</div>');
+}
+function marquerEval(id){const e=data.evaluations.find(x=>x.id===id);if(!e)return;
+  e.statut="Faite";e.ts=Date.now();sauvegarder();rendre();}
+
+/* ================= FORMATION ================= */
+let sousForm="suivi";
+function allerForm(k){sousForm=k;rendre();}
+function manquesDe(f){return POSTES_FORMATION.filter((p,i)=>f.matrice[i]===".");}
+function htmlFormation(){
+  const ong=[["suivi","Par personne"],["manques","Par formation"],["videos","Vidéos"],["metiers","Métiers de service"]]
+    .map(p=>'<button class="sous'+(p[0]===sousForm?" actif":"")+'" onclick="allerForm(\''+p[0]+'\')">'+p[1]+'</button>').join("");
+  let c;
+  if(sousForm==="suivi")c=htmlFormSuivi();
+  else if(sousForm==="manques")c=htmlFormManques();
+  else c=htmlListe(sousForm);
+  return '<div class="sous-barre">'+ong+'</div>'+c;
+}
+function htmlFormSuivi(){
+  const l=data.formations.slice().sort((a,b)=>manquesDe(b).length-manquesDe(a).length||a.nom.localeCompare(b.nom,"fr"));
+  let total=0; l.forEach(f=>{total+=manquesDe(f).length;});
+  const cartes=l.map(function(f){
+    const m=manquesDe(f), anc=f.matrice.split("").filter(c=>c==="O").length;
+    return '<div class="carte"><div class="titre-ligne"><b>'+esc(f.nom)+'</b>'+
+      '<span class="etiquette '+(m.length?"rouge":"vert")+'">'+(m.length?m.length+" à donner":"complet")+'</span></div>'+
+      '<div class="meta">'+esc(f.role)+(anc?" · "+anc+" poste"+(anc>1?"s":"")+" sous l'ancien programme":"")+'</div>'+
+      (m.length?'<div class="meta fin">'+m.slice(0,4).map(p=>esc(p.lib)).join(", ")+
+        (m.length>4?" et "+(m.length-4)+" autre"+(m.length-4>1?"s":""):"")+'</div>':"")+
+      '<div class="actions"><button class="mini-btn" onclick="detailForm(\''+f.id+'\')">Mettre à jour</button></div></div>';
+  }).join("");
+  return '<div class="section-titre"><h3>Suivi des formations</h3><span class="cpt">'+total+' à donner</span></div>'+
+    '<div class="aide">C : programme actuel. O : ancien programme. Toucher « Mettre à jour » pour changer un poste.</div>'+cartes;
+}
+function detailForm(id){
+  const f=data.formations.find(x=>x.id===id);if(!f)return;
+  const cases=POSTES_FORMATION.map((p,i)=>'<div class="champ"><label>'+esc(p.lib)+'</label>'+
+    '<select onchange="majPoste(\''+f.id+'\','+i+',this.value)">'+
+    '<option value="C"'+(f.matrice[i]==="C"?" selected":"")+'>Formé</option>'+
+    '<option value="O"'+(f.matrice[i]==="O"?" selected":"")+'>Ancien programme</option>'+
+    '<option value="."'+(f.matrice[i]==="."?" selected":"")+'>À former</option></select></div>').join("");
+  $("zoneModal").innerHTML='<div class="voile" onclick="if(event.target===this){fermerForm();rendre();}">'+
+    '<div class="modal"><h4>'+esc(f.nom)+' — '+esc(f.role)+'</h4>'+cases+
+    '<div class="rangee-btn"><button class="btn-entrer" style="margin:0;" onclick="fermerForm();rendre();">Terminé</button></div>'+
+    '</div></div>';
+}
+function majPoste(id,i,v){const f=data.formations.find(x=>x.id===id);if(!f)return;
+  f.matrice=f.matrice.substring(0,i)+v+f.matrice.substring(i+1);f.ts=Date.now();sauvegarder();}
+function htmlFormManques(){
+  const blocs=POSTES_FORMATION.map(function(p,i){
+    const g=data.formations.filter(f=>f.matrice[i]===".").map(f=>f.nom).sort((a,b)=>a.localeCompare(b,"fr"));
+    if(!g.length)return "";
+    return '<div class="carte"><div class="titre-ligne"><b>'+esc(p.lib)+'</b>'+
+      '<span class="etiquette rouge">'+g.length+'</span></div>'+
+      '<div class="meta">'+esc(p.fam)+'</div><div class="meta fin">'+g.map(esc).join(" · ")+'</div></div>';
+  }).join("");
+  return '<div class="section-titre"><h3>Qui reste à former</h3></div>'+
+    '<div class="aide">Liste à utiliser pour convoquer une session complète d\'un seul coup.</div>'+
+    (blocs||'<div class="vide">Tout le monde est formé sur tous les postes.</div>');
+}
+
+/* ================= DÉPARTEMENT ================= */
+let sousDept="bulletins";
+function allerDept(k){sousDept=k;rendre();}
+function htmlDepartement(){
+  const ong=[["bulletins","Bulletins"],["fichesRole","Fiches de rôle"],["documents","Documents"]]
+    .map(p=>'<button class="sous'+(p[0]===sousDept?" actif":"")+'" onclick="allerDept(\''+p[0]+'\')">'+p[1]+'</button>').join("");
+  let c;
+  if(sousDept==="bulletins")c=htmlBulletins();
+  else if(sousDept==="fichesRole")c=htmlFichesRole();
+  else c=htmlListe("documents");
+  return '<div class="sous-barre">'+ong+'</div>'+c;
+}
+
+/* ================= RENDU ================= */
+function rendre(){
+  const q = $("quiSuisJe"); if(q) q.textContent = "St-Jovite 22028";
+  rendreNav(); rendreBandeau();
+  const z = $("zoneContenu");
+  if(ongletActif==="journee") z.innerHTML = htmlJournee();
+  else if(ongletActif==="calendrier") z.innerHTML = htmlCalendrier();
+  else if(ongletActif==="equipe") z.innerHTML = htmlEquipe();
+  else if(ongletActif==="formation") z.innerHTML = htmlFormation();
+  else if(ongletActif==="departement") z.innerHTML = htmlDepartement();
+  else if(ongletActif==="reglages") z.innerHTML = htmlReglages();
+  else z.innerHTML = htmlListe(ongletActif);
+}
+function nbNonLus(){
+  const lu = data.meta.lastRead?.[cfg.identite]||0;
+  return data.messages.filter(m=>m.de!==cfg.identite && m.ts>lu).length;
+}
+function rendreNav(){
+  const n = $("navBarre"); n.innerHTML="";
+  for(const [k,mod] of Object.entries(MODULES)){
+    if(!mod.nav) continue;
+    const b=document.createElement("button");
+    b.textContent=mod.label; if(k===ongletActif)b.classList.add("actif");
+    let badge=0;
+    if(k==="equipe")badge=data.punchs.filter(p=>p.statut!=="Corrigé").length;
+    if(k==="departement"){const moisAct=new Date().toISOString().slice(0,7);badge=(data.bulletins||[]).some(b=>b.mois===moisAct)?0:1;}
+    if(badge>0){const s=document.createElement("span");s.className="pastille";s.textContent=badge;b.appendChild(s);}
+    b.onclick=()=>{ongletActif=k;calJourChoisi=null;rendre();};
+    n.appendChild(b);
+  }
+}
+function rendreBandeau(){
+  if(ongletActif==="journee"){const z=$("bandeau")||$("zoneBandeau");if(z)z.innerHTML="";return;}
+  const z=$("zoneBandeau");
+  const ech = collecterEcheances();
+  if(bandeauFerme || !ech.length){z.innerHTML="";return;}
+  const items = ech.slice(0,6).map(e=>`<li>${e.retard?"<b style='color:var(--rouge-fonce)'>EN RETARD — </b>":""}${esc(e.txt)} · ${fmtDate(e.date)}</li>`).join("");
+  z.innerHTML = `<div class="bandeau-rappel"><div><b>Rappels — ${ech.length} échéance${ech.length>1?"s":""} à surveiller</b><ul>${items}</ul></div><button class="fermer" onclick="bandeauFerme=true;rendreBandeau()">×</button></div>`;
+}
+
+/* ---- Tableau de bord ---- */
+function htmlTableau(){
+  const ech = collecterEcheances();
+  const punchsOuverts = data.punchs.filter(p=>p.statut!=="Corrigé").length;
+  const mentoratsActifs = data.mentorats.filter(m=>prochaineEtapeMentorat(m)).length;
+  const evalsAVenir = data.evaluations.filter(e=>e.statut!=="Faite"&&e.statut!=="Signée").length;
+  const lignes = ech.slice(0,10).map(e=>`<div class="tb-ligne"><span class="d">${fmtDate(e.date)}</span><span>${e.retard?"<b style='color:var(--rouge-fonce)'>EN RETARD — </b>":""}${esc(e.txt)}</span></div>`).join("")||`<div class="vide">Aucune échéance dans les ${data.meta.delaiRappel??7} prochains jours.</div>`;
+  return `<div class="section-titre"><h3>Tableau de bord</h3></div>
+  <div class="tb-grille">
+    <div class="tb-carte"><h5>Punchs à corriger</h5><div class="gros" style="color:${punchsOuverts?"var(--rouge)":"var(--vert)"}">${punchsOuverts}</div></div>
+    <div class="tb-carte"><h5>Mentorats en cours</h5><div class="gros">${mentoratsActifs}</div></div>
+    <div class="tb-carte"><h5>Évaluations à venir</h5><div class="gros">${evalsAVenir}</div></div>
+    <div class="tb-carte"><h5>Messages non lus</h5><div class="gros" style="color:${nbNonLus()?"var(--rouge)":"inherit"}">${nbNonLus()}</div></div>
+  </div>
+  <div class="tb-carte" style="margin-top:12px;"><h5>Prochaines échéances</h5>${lignes}</div>`;
+}
+
+/* ---- Calendrier ---- */
+function evenementsDuJour(iso){
+  const out=[];
+  for(const e of data.calendrier) if(e.date===iso) out.push({c:"rouge",t:`${e.titre}${e.fait?" (fait)":""}`,mod:"calendrier",id:e.id});
+  for(const e of data.evaluations) if(e.date===iso) out.push({c:"bleu",t:`Évaluation ${e.employe} — ${e.statut||""}`,mod:"evaluations",id:e.id});
+  for(const m of data.mentorats){const p=prochaineEtapeMentorat(m);["30","60","90"].forEach(n=>{if(plusJours(m.embauche,+n)===iso)out.push({c:"vert",t:`Mentorat ${m.equipier} — J${n}`,mod:"mentorats",id:m.id});});}
+  for(const a of data.anniversaires){if(a.date.slice(5)===iso.slice(5))out.push({c:"or",t:`Anniversaire de ${a.nom}`,mod:"anniversaires",id:a.id});}
+  for(const p of data.punchs) if(p.date===iso&&p.statut!=="Corrigé") out.push({c:"orange",t:`Punch à corriger — ${p.employe}`,mod:"punchs",id:p.id});
+  for(const e of data.employeMois){if(e.mois && iso===e.mois+"-01")out.push({c:"noir",t:`Employé du mois : ${e.nom} (${e.statut||"Proposé"})`,mod:"employeMois",id:e.id});}
+  return out;
+}
+function htmlCalendrier(){
+  const a=calMois.getFullYear(), m=calMois.getMonth();
+  const nomMois = calMois.toLocaleDateString("fr-CA",{month:"long",year:"numeric"});
+  const premier = new Date(a,m,1); const decal=(premier.getDay()+6)%7; // lundi=0
+  const nbJours = new Date(a,m+1,0).getDate();
+  const noms=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(n=>`<div class="cal-jour-nom">${n}</div>`).join("");
+  let cases="";
+  for(let i=0;i<decal;i++) cases+=`<div class="cal-case hors"></div>`;
+  for(let j=1;j<=nbJours;j++){
+    const iso=`${a}-${String(m+1).padStart(2,"0")}-${String(j).padStart(2,"0")}`;
+    const evs=evenementsDuJour(iso);
+    const pts=evs.slice(0,5).map(e=>`<span class="pt ${e.c}"></span>`).join("");
+    const cls=["cal-case",iso===aujISO()?"aujourdhui":"",iso===calJourChoisi?"choisi":""].join(" ");
+    cases+=`<div class="${cls}" onclick="calJourChoisi='${iso}';rendre()">${j}<div class="cal-points">${pts}</div></div>`;
+  }
+  let detail="";
+  if(calJourChoisi){
+    const evs=evenementsDuJour(calJourChoisi);
+    detail=`<div class="carte" style="margin-top:12px;"><div class="titre-ligne"><b>${fmtDate(calJourChoisi)}</b>
+      <button class="mini-btn plein" style="margin-left:auto" onclick="ouvrirForm('calendrier',null,'${calJourChoisi}')">+ Ajouter à cette date</button></div>
+      ${evs.length?evs.map(e=>`<div class="tb-ligne"><span class="pt ${e.c}" style="flex:none;margin-top:4px;"></span><span>${esc(e.t)}</span></div>`).join(""):`<div class="meta">Rien à cette date.</div>`}</div>`;
+  }
+  return `<div class="section-titre"><h3>Calendrier</h3><button class="btn-ajout" onclick="ouvrirForm('calendrier')">+ Ajouter</button></div>
+  <div class="cal-tete"><button class="cal-nav" onclick="calMois=new Date(${a},${m-1},1);rendre()">‹</button><b>${nomMois}</b><button class="cal-nav" onclick="calMois=new Date(${a},${m+1},1);rendre()">›</button></div>
+  <div class="cal-grille">${noms}${cases}</div>
+  <div class="legende"><span><span class="pt rouge"></span>Calendrier</span><span><span class="pt bleu"></span>Évaluations</span><span><span class="pt vert"></span>Mentorats</span><span><span class="pt or"></span>Anniversaires</span><span><span class="pt orange"></span>Punchs</span><span><span class="pt noir"></span>Employé du mois</span></div>
+  ${detail}`;
+}
+
+/* ---- Listes génériques ---- */
+function etiquetteStatut(v){
+  if(!v)return "";
+  const map={"Corrigé":"vert","Validé":"vert","Faite":"vert","Signée":"vert","Affiché":"vert",
+    "À corriger":"rouge","Retard":"rouge","À revalider":"orange","En formation":"bleu",
+    "Planifiée":"bleu","À planifier":"or","Proposé":"or","Validé ":"vert"};
+  return `<span class="etiquette ${map[v]||""}">${esc(v)}</span>`;
+}
+function htmlListe(cle){
+  const mod=MODULES[cle];
+  const items=[...data[mod.array]];
+  const champDate = mod.fields.find(f=>f.type==="date"||f.type==="month");
+  if(champDate) items.sort((x,y)=>String(x[champDate.k]||"").localeCompare(String(y[champDate.k]||"")));
+  const cartes = items.map(it=>{
+    const titreChamp = mod.fields[0].k;
+    const lignes = mod.fields.slice(1).filter(f=>f.type!=="checkbox"&&it[f.k]).map(f=>{
+      if(f.type==="url") return `<a href="${esc(it[f.k])}" target="_blank" rel="noopener">${esc(it[f.k])}</a>`;
+      if(f.k==="statut") return "";
+      if(f.type==="date") return `${f.label} : ${fmtDate(it[f.k])}`;
+      return `${f.label} : ${esc(it[f.k])}`;
+    }).filter(Boolean).join(" · ");
+    return `<div class="carte"><div class="titre-ligne"><b>${esc(it[titreChamp])}</b>${it.statut?etiquetteStatut(it.statut):""}${it.fait?`<span class="etiquette vert">Fait</span>`:""}</div>
+      <div class="meta">${lignes||""}</div>
+      <div class="actions">
+        ${cle==="punchs"&&it.statut!=="Corrigé"?`<button class="mini-btn plein" onclick="marquerPunch('${it.id}')">Marquer corrigé</button>`:""}
+        ${cle==="calendrier"&&!it.fait?`<button class="mini-btn plein" onclick="marquerFait('${it.id}')">Marquer fait</button>`:""}
+        <button class="mini-btn" onclick="ouvrirForm('${cle}','${it.id}')">Modifier</button>
+        <button class="mini-btn danger" onclick="supprimer('${cle}','${it.id}')">Supprimer</button>
+      </div></div>`;
+  }).join("")||`<div class="vide">Rien pour l'instant. Utilise « + Ajouter ».</div>`;
+  return `<div class="section-titre"><h3>${mod.label}</h3><button class="btn-ajout" onclick="ouvrirForm('${cle}')">+ Ajouter</button></div>${cartes}`;
+}
+
+/* ---- Mentorats (rendu spécifique J30/J60/J90) ---- */
+function htmlMentorats(){
+  const items=[...data.mentorats].sort((a,b)=>String(a.embauche).localeCompare(String(b.embauche)));
+  const cartes=items.map(m=>{
+    const p=prochaineEtapeMentorat(m);
+    const statut = p ? (p.date<aujISO()?`<span class="etiquette rouge">Retard ${p.etape}</span>`:`<span class="etiquette bleu">En attente ${p.etape}</span>`) : `<span class="etiquette vert">Complété</span>`;
+    const etapes=["30","60","90"].map(n=>{
+      const d=plusJours(m.embauche,+n);
+      const r=m["r"+n],f=m["f"+n];
+      return `<div class="tb-ligne"><span class="d">J${n} · ${fmtDate(d)}</span>
+        <label style="font-weight:600;"><input type="checkbox" ${r?"checked":""} onchange="cocherMentorat('${m.id}','r${n}',this.checked)"> Rencontre</label>
+        <label style="font-weight:600;"><input type="checkbox" ${f?"checked":""} onchange="cocherMentorat('${m.id}','f${n}',this.checked)"> FRED</label></div>`;
+    }).join("");
+    return `<div class="carte"><div class="titre-ligne"><b>${esc(m.equipier)}</b>${statut}<span class="etiquette">Mentor : ${esc(m.mentor||"—")}</span></div>
+      <div class="meta">Embauche : ${fmtDate(m.embauche)}${m.notes?" · "+esc(m.notes):""}</div>
+      ${etapes}
+      <div class="actions"><button class="mini-btn" onclick="ouvrirForm('mentorats','${m.id}')">Modifier</button>
+      <button class="mini-btn danger" onclick="supprimer('mentorats','${m.id}')">Supprimer</button></div></div>`;
+  }).join("")||`<div class="vide">Aucun mentorat en cours. Utilise « + Ajouter ».</div>`;
+  return `<div class="section-titre"><h3>Mentorats — J30 / J60 / J90</h3><button class="btn-ajout" onclick="ouvrirForm('mentorats')">+ Ajouter</button></div>${cartes}`;
+}
+function cocherMentorat(id,champ,val){
+  const m=data.mentorats.find(x=>x.id===id); if(!m)return;
+  m[champ]=val; m.ts=Date.now(); sauvegarder(); rendre();
+}
+/* ---- Fiches de rôle (contenu statique de référence) ---- */
+function htmlFichesRole(){
+  const fiche=(titre,niveau,sections,citation)=>`<div class="carte">
+    <div class="titre-ligne"><b>${titre}</b><span class="etiquette bleu">${niveau}</span></div>
+    ${sections.map(s=>`<div style="margin-top:10px;"><b style="color:var(--rouge-fonce);font-size:12.5px;text-transform:uppercase;letter-spacing:.3px;">${s.titre}</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">${s.items.map(i=>`<li style="margin-bottom:5px;line-height:1.45;font-size:14px;">${i}</li>`).join("")}</ul></div>`).join("")}
+    ${citation?`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--ligne);font-weight:700;font-size:13.5px;text-align:center;">${citation}</div>`:""}
+  </div>`;
+
+  const salarie=fiche("Leader de quart salarié","Assistant gérant",[
+    {titre:"Responsabilités principales",items:[
+      "Superviser les opérations du restaurant pendant son quart de travail",
+      "Soutenir le leader de restaurant dans la gestion globale",
+      "Assurer une excellente expérience-client",
+      "Encadrer et développer les employés",
+      "Pourrait être responsable d'un département",
+      "Fait le suivi des objectifs avec les autres membres de la gestion : quintiles, OPH, coût des aliments",
+      "S'assurer que les employés appliquent les bonnes marches à suivre"]},
+    {titre:"Gestion d'équipe",items:["Encadrer l'équipe, participer à l'embauche et à la formation","Donner de la rétroaction en lien avec les procédures","Gérer les conflits et maintenir un bon climat"]},
+    {titre:"Opérations",items:["S'assurer que les normes (qualité, rapidité, propreté) sont respectées","Gérer les périodes de fort achalandage","Superviser les ouvertures et fermetures","Vérifier les inventaires et les commandes"]},
+    {titre:"Gestion administrative",items:["Suivi des coûts (main-d'œuvre, pertes alimentaires)","Analyser les performances du restaurant","Participation à la planification des horaires"]},
+    {titre:"Expérience-client",items:["Gérer les plaintes des clients","S'assurer que le service soit rapide et chaleureux","Maintenir les normes de satisfaction"]},
+    {titre:"Qualités clés",items:["Meneur naturel","Gestion du stress","Sens des responsabilités","Bon communicateur","Esprit d'analyse"]},
+    {titre:"Compétences clés",items:["Gestion des priorités","Prise de décisions rapides","Formation et développement d'équipe","Organisation et rigueur","Orientation résultats"]},
+    {titre:"Attitudes",items:["Proactif","Présent sur le plancher (diriger efficacement)","Positif","Énergique","Axé sur les solutions"]}
+  ]);
+
+  const quart=fiche("Leader de quart","Gérant de quart",[
+    {titre:"Responsabilités principales",items:[
+      "Superviser l'équipe (cuisine, comptoir, volant) : bras droit de l'équipe salariale",
+      "Assurer la rapidité et la qualité du service : parle des quintiles et de l'OPH",
+      "Gérer les priorités en temps réel (rush, manque de personnel, imprévus) : complète sa liste pré-quart",
+      "S'assurer du respect des normes (propreté, sécurité alimentaire, procédures)",
+      "Motive les employés, maintient une bonne ambiance, donne de la rétroaction et du soutien, délègue pour donner confiance",
+      "Gère certaines situations avec les clients (plaintes, demandes spéciales)",
+      "Fait des tâches administratives de base (argent, inventaire, assignation des postes), fait partie d'un département"]},
+    {titre:"Qualités clés",items:["Meneur naturel : décisions rapides, guide son équipe","Communique clairement, consignes simples","Reste calme en période de pointe","Proactif (anticipe les problèmes)","Esprit d'équipe, met la main à la pâte"]},
+    {titre:"Comportements exemplaires",items:["Accueille les clients avec énergie et sourire","Intervient rapidement en cas de problème client","Encourage son équipe (rétroaction positive, encadrement)","Montre l'exemple (ponctualité, professionnalisme)"]}
+  ],"« Un excellent leader de quart exemplaire fait en sorte que le client reparte avec une expérience rapide, agréable et sans problème. »");
+
+  return `<div class="section-titre"><h3>Fiches de rôle</h3></div>
+    <div class="meta" style="margin-bottom:12px;">Fiches officielles affichées en restaurant. Toujours utiliser la bonne fiche selon le destinataire.</div>
+    ${salarie}${quart}`;
+}
+
+/* ---- Bulletins de département (rendu spécifique, formulaire générique) ---- */
+function htmlBulletins(){
+  const items=[...(data.bulletins||[])].sort((a,b)=>String(b.mois||"").localeCompare(String(a.mois||"")));
+  const M=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  const moisTxt=m=>{if(!m)return "—";const [a,mo]=m.split("-");return `${M[+mo-1]} ${a}`;};
+  const cartes=items.map(b=>{
+    const resume=[
+      b.tauxRoulement?`Roulement : ${esc(b.tauxRoulement)}`:"",
+      b.formationsRetard?`Formations en retard : ${esc(b.formationsRetard)}`:"",
+      b.punchsAttente?`Punchs en attente : ${esc(b.punchsAttente)}`:""
+    ].filter(Boolean).join(" · ");
+    return `<div class="carte">
+      <div class="titre-ligne"><b>Bulletin — ${moisTxt(b.mois)}</b>${b.resp?`<span class="etiquette">${esc(b.resp)}</span>`:""}</div>
+      <div class="meta">${resume||"Aucun indicateur renseigné."}</div>
+      <div class="actions">
+        <button class="mini-btn" onclick="toggleBulletin('${b.id}')">Voir le détail</button>
+        <button class="mini-btn" onclick="ouvrirForm('bulletinsDepartement','${b.id}')">Modifier</button>
+        <button class="mini-btn danger" onclick="supprimer('bulletinsDepartement','${b.id}')">Supprimer</button>
+      </div>
+      <div id="detail_${b.id}" class="cache" style="margin-top:12px;border-top:1px solid var(--ligne);padding-top:12px;">${detailBulletin(b)}</div>
+    </div>`;
+  }).join("")||`<div class="vide">Aucun bulletin. Utilise « + Ajouter » pour créer celui du mois.</div>`;
+  return `<div class="section-titre"><h3>Bulletins de département</h3><button class="btn-ajout" onclick="ouvrirForm('bulletinsDepartement')">+ Ajouter</button></div>${cartes}`;
+}
+function toggleBulletin(id){const d=$("detail_"+id);if(d)d.classList.toggle("cache");}
+function detailBulletin(b){
+  const l=(label,val)=>val?`<div style="margin-bottom:6px;font-size:13.5px;"><b>${esc(label)} :</b> ${esc(val)}</div>`:"";
+  return [
+    l("Taux de roulement",b.tauxRoulement),l("Formations en retard",b.formationsRetard),
+    l("Mentorats à jour",b.mentoratsAJour),l("Santé/sécurité",b.santeSecurite),
+    l("Punchs en attente",b.punchsAttente),l("Horaires/pauses manquants",b.horairesPauses),
+    l("Évaluations réalisées",b.evaluationsRealisees),l("Évaluations à planifier",b.evaluationsAPlanifier),
+    l("Points de contact",b.pointsContact),l("Développement — Assistants",b.devAssistants),
+    l("Développement — Gérants de quart",b.devGerantsQuart),l("Développement — Leaders d'équipe",b.devLeadersEquipe),
+    l("Développement — Instructeurs",b.devInstructeurs),l("Développement — Équipiers",b.devEquipiers),
+    l("Mérites de service",b.meritesService),l("Petits plaisirs",b.petitsPlaisirs),
+    l("Employé du mois",b.employeDuMoisTxt),l("Activité d'équipe",b.activiteEquipe),
+    l("Contributions — à surveiller",b.contribASurveiller),l("Contributions — à souligner",b.contribASouligner),
+    l("Forces",b.forces),l("Occasions d'amélioration",b.occasionsAmelioration),
+    l("Action 1",b.plan1),l("Action 2",b.plan2),l("Action 3",b.plan3)
+  ].join("");
+}
+function marquerPunch(id){const p=data.punchs.find(x=>x.id===id);if(!p)return;p.statut="Corrigé";p.resp=cfg.identite;p.ts=Date.now();sauvegarder();rendre();}
+function marquerFait(id){const e=data.calendrier.find(x=>x.id===id);if(!e)return;e.fait=true;e.ts=Date.now();sauvegarder();rendre();}
+
+/* ---- Messagerie ---- */
+function htmlMessages(){
+  const msgs=[...data.messages].sort((a,b)=>a.ts-b.ts);
+  const fil=msgs.map(m=>`<div class="msg ${m.de===cfg.identite?"moi":"lui"}">${esc(m.texte)}<div class="m-meta">${esc(m.de)} · ${new Date(m.ts).toLocaleString("fr-CA",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div></div>`).join("")||`<div class="vide">Aucun message. Écris le premier.</div>`;
+  return `<div class="section-titre"><h3>Messages — Romuald / Damien</h3><button class="mini-btn" onclick="rafraichir()">Actualiser</button></div>
+  <div class="fil" id="filMsgs" style="max-height:55vh;overflow-y:auto;">${fil}</div>
+  <div class="zone-envoi"><textarea id="msgTexte" placeholder="Écrire un message…"></textarea><button onclick="envoyerMsg()">Envoyer</button></div>`;
+}
+function envoyerMsg(){
+  const t=$("msgTexte").value.trim(); if(!t)return;
+  data.messages.push({id:uid(),de:cfg.identite,texte:t,ts:Date.now()});
+  data.meta.lastRead[cfg.identite]=Date.now(); data.meta.ts=Date.now();
+  $("msgTexte").value=""; sauvegarder(); rendre();
+}
+function marquerLu(){
+  const avant=data.meta.lastRead[cfg.identite]||0;
+  const dernier=Math.max(0,...data.messages.map(m=>m.ts));
+  if(dernier>avant){data.meta.lastRead[cfg.identite]=Date.now();data.meta.ts=Date.now();sauvegarder();}
+}
+
+/* ---- Réglages ---- */
+function htmlReglages(){
+  return `<div class="section-titre"><h3>Réglages</h3></div>
+  <div class="carte"><b>Rappels</b><div class="meta">Afficher les échéances qui arrivent dans les prochains jours :</div>
+    <div class="champ" style="max-width:200px;margin-top:8px;"><input type="number" id="regDelai" min="1" max="60" value="${data.meta.delaiRappel??7}"></div>
+    <button class="mini-btn plein" onclick="majDelai()">Enregistrer</button></div>
+  <div class="carte"><b>Code d'accès</b><div class="meta">Le nouveau code s'appliquera aux deux appareils.</div>
+    <div class="champ" style="max-width:260px;margin-top:8px;"><input type="password" id="regPin" placeholder="Nouveau code"></div>
+    <button class="mini-btn plein" onclick="majPin()">Changer le code</button></div>
+  <div class="carte"><b>Importer des données</b>
+    <div class="meta">Colle ici le bloc de données fourni (employés, évaluations, formations). L'import ajoute uniquement ce qui manque, il n'écrase rien.</div>
+    <div class="champ" style="margin-top:8px;"><textarea id="zoneImport" rows="4" placeholder="Coller le bloc de données ici"></textarea></div>
+    <button class="mini-btn plein" onclick="importerDonnees()">Importer</button></div>
+  <div class="carte"><b>Espace partagé</b>
+    <div class="meta">Identifiant de l'espace (à transmettre à l'autre appareil avec le code d'accès) :<br><code style="font-size:13px;word-break:break-all;">${esc(cfg.gistId)}</code></div>
+    <div class="actions"><button class="mini-btn" onclick="rafraichir()">Forcer la synchronisation</button>
+    <button class="mini-btn danger" onclick="reconfigurer()">Réinitialiser cet appareil</button></div></div>`;
+}
+async function majDelai(){data.meta.delaiRappel=Math.max(1,Math.min(60,+$("regDelai").value||7));data.meta.ts=Date.now();await sauvegarder();rendre();}
+async function majPin(){
+  const p=$("regPin").value.trim(); if(p.length<4){alert("Minimum 4 caractères.");return;}
+  data.meta.pinHash=await sha256(p);data.meta.ts=Date.now();
+  localStorage.setItem(LS_KEY,JSON.stringify({...cfg,pinHash:data.meta.pinHash}));cfg.pinHash=data.meta.pinHash;
+  await sauvegarder();alert("Code changé.");rendre();
+}
+
+/* ---- Formulaire générique ---- */
+function ouvrirForm(cle,id,datePre){
+  const mod=MODULES[cle]; const it=id?data[mod.array].find(x=>x.id===id):null;
+  const champs=mod.fields.map(f=>{
+    const v=it?(it[f.k]??""):(f.type==="date"&&datePre?datePre:"");
+    if(f.type==="select") return `<div class="champ"><label>${f.label}</label><select id="f_${f.k}">${f.options.map(o=>`<option ${v===o?"selected":""}>${o}</option>`).join("")}</select></div>`;
+    if(f.type==="textarea") return `<div class="champ"><label>${f.label}</label><textarea id="f_${f.k}">${esc(v)}</textarea></div>`;
+    if(f.type==="checkbox") return `<div class="champ"><label style="display:flex;align-items:center;gap:8px;text-transform:none;"><input type="checkbox" id="f_${f.k}" ${v?"checked":""} style="width:auto;"> ${f.label}</label></div>`;
+    const type=f.type==="month"?"month":(f.type==="url"?"url":f.type);
+    return `<div class="champ"><label>${f.label}${f.req?" *":""}</label><input type="${type}" id="f_${f.k}" value="${esc(v)}"></div>`;
+  }).join("");
+  $("zoneModal").innerHTML=`<div class="voile" onclick="if(event.target===this)fermerForm()"><div class="modal">
+    <h4>${it?"Modifier":"Ajouter"} — ${mod.label}</h4>${champs}
+    <div class="rangee-btn"><button class="btn-sec" style="margin:0;" onclick="fermerForm()">Annuler</button>
+    <button class="btn-entrer" style="margin:0;" onclick="validerForm('${cle}','${id||""}')">Enregistrer</button></div></div></div>`;
+}
+function fermerForm(){$("zoneModal").innerHTML="";}
+function validerForm(cle,id){
+  const mod=MODULES[cle];
+  const it = id?data[mod.array].find(x=>x.id===id):{id:uid()};
+  for(const f of mod.fields){
+    const el=$("f_"+f.k);
+    const v=f.type==="checkbox"?el.checked:el.value.trim();
+    if(f.req&&!v){alert(`Le champ « ${f.label} » est obligatoire.`);return;}
+    it[f.k]=v;
+  }
+  it.ts=Date.now(); it.par=cfg.identite;
+  if(!id) data[mod.array].push(it);
+  fermerForm(); sauvegarder(); rendre();
+}
+function supprimer(cle,id){
+  if(!confirm("Supprimer cet élément ?"))return;
+  const mod=MODULES[cle];
+  data[mod.array]=data[mod.array].filter(x=>x.id!==id);
+  data.deleted.push(id);
+  sauvegarder(); rendre();
+}
+
+/* ================= DÉMARRAGE / CONFIG ================= */
+let cfgIdentite=null, cfgMode=null;
+function choisirIdentite(q){cfgIdentite=q;$("chxR").classList.toggle("actif",q==="Romuald");$("chxD").classList.toggle("actif",q==="Damien");}
+function modeEspace(m){cfgMode=m;
+  $("chxNouveau").classList.toggle("actif",m==="nouveau");$("chxJoindre").classList.toggle("actif",m==="joindre");
+  $("cfgGistId").classList.toggle("cache",m!=="joindre");
+  $("cfgPin").placeholder = m==="nouveau"?"Code d'accès à définir":"Code d'accès de l'espace";
+  $("aideEspace").innerHTML = m==="nouveau"
+    ?"<b>Créer l'espace :</b> à faire une seule fois, sur le premier appareil. Un identifiant d'espace te sera donné à transmettre à Damien avec le code d'accès."
+    :"<b>Rejoindre l'espace :</b> colle ici l'identifiant fourni par le premier appareil, puis entre le même code d'accès.";}
+async function lancerConfig(){
+  const err=$("cfgErr");err.textContent="";
+  const token=$("cfgToken").value.replace(/\s+/g,""), pin=$("cfgPin").value.trim(), gid=$("cfgGistId").value.replace(/\s+/g,"");
+  if(!cfgIdentite){err.textContent="Choisis ton identité.";return;}
+  if(!token.startsWith("gh")){err.textContent="Token GitHub invalide.";return;}
+  if(pin.length<4){err.textContent="Code d'accès : minimum 4 caractères.";return;}
+  if(!cfgMode){err.textContent="Choisis : créer ou rejoindre l'espace.";return;}
+  if(cfgMode==="joindre"&&!gid){err.textContent="Colle l'identifiant de l'espace.";return;}
+  $("btnConfig").disabled=true;$("btnConfig").textContent="Connexion…";
+  try{
+    cfg={identite:cfgIdentite,token,gistId:gid,pinHash:await sha256(pin)};
+    if(cfgMode==="nouveau"){
+      const doc=docVide(cfg.pinHash);
+      cfg.gistId=await creerGist(doc);
+      data=doc;baseline=doc.updatedAt;
+      localStorage.setItem(LS_KEY,JSON.stringify(cfg));
+      alert("Espace créé.\n\nIdentifiant à transmettre à Damien :\n"+cfg.gistId+"\n\n(aussi visible dans Réglages)");
+    }else{
+      data=await lireGist();
+      if(data.meta.pinHash!==cfg.pinHash){err.textContent="Code d'accès incorrect pour cet espace.";$("btnConfig").disabled=false;$("btnConfig").textContent="Valider la configuration";return;}
+      baseline=data.updatedAt;
+      localStorage.setItem(LS_KEY,JSON.stringify(cfg));
+    }
+    demarrerApp();
+  }catch(e){console.error(e);
+    let msg="Échec : "+e.message;
+    if(e.message==="RESEAU") msg="Connexion à GitHub bloquée. Ouvre cette page depuis ghostquebec-png.github.io (pas depuis un aperçu ni un fichier local).";
+    else if(e.message==="HTTP401") msg="GitHub refuse le token (401). Le token est incorrect, expiré ou mal copié. Régénère-en un et recolle-le.";
+    else if(e.message==="HTTP403") msg="GitHub refuse l'action (403). Le token n'a probablement pas la portée « gist » (case « essentiel »).";
+    else if(e.message==="HTTP404") msg=cfgMode==="joindre"?"Espace introuvable (404) : vérifie l'identifiant collé, ou le token n'a pas la portée « gist ».":"Erreur 404 : le token n'a probablement pas la portée « gist ».";
+    err.textContent=msg;
+    $("btnConfig").disabled=false;$("btnConfig").textContent="Valider la configuration";}
+}
+async function verifierPin(){
+  const p=$("pinEntree").value.trim();
+  if(await sha256(p)===cfg.pinHash){
+    $("pinErr").textContent="";
+    try{data=await lireGist();baseline=data.updatedAt;
+      if(data.meta.pinHash&&data.meta.pinHash!==cfg.pinHash){cfg.pinHash=data.meta.pinHash;localStorage.setItem(LS_KEY,JSON.stringify(cfg));
+        if(await sha256(p)!==cfg.pinHash){$("pinErr").textContent="Le code a été changé. Entre le nouveau code.";return;}}
+    }catch(e){console.error(e);$("pinErr").textContent="Connexion à l'espace impossible. Réessaie.";return;}
+    demarrerApp();
+  }else $("pinErr").textContent="Code incorrect.";
+}
+function reconfigurer(){
+  if(!confirm("Réinitialiser la configuration de cet appareil ? (les données partagées dans l'espace ne sont pas effacées)"))return;
+  localStorage.removeItem(LS_KEY);location.reload();
+}
+function demarrerApp(){
+  
+  majSync("ok"); rendre();
+  setInterval(()=>rafraichir(true), 45000);
+}
+
+
+/* ================= ÉVÉNEMENTS DE LA RÉGION ================= */
+const EVENTS=[
+{nom:"Rodéofest Mont Blanc",url:"https://skimontblanc.com/evenement/rodeofest_montblanc/",map:"Ski Mont-Blanc, 1006 Route 117, Saint-Faustin-Lac-Carré, QC",d:"2026-08-28",f:"2026-08-29",lieu:"Ski Mont-Blanc (8 km)",cat:"Festival",imp:"Fort",vis:6000,pct:55,statut:"Manqué",note:"5e édition tenue les 28 et 29 août 2026, contrairement à ce que le calendrier indiquait. Rodéo professionnel, concerts country, danse en ligne, camions de rue. Événement conservé en archive : comparer les ventes de ce week-end pour mesurer l'écart de prévision."},
+{nom:"L'automne au sommet (Corona)",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-09-19",f:"2026-10-10",lieu:"Sommet Tremblant (12 km)",cat:"Festival",imp:"Léger",vis:900,pct:20,statut:"Nouveau",note:"DJ au sommet quatre samedis après-midi (19 et 26 septembre, 3 et 10 octobre). Accès par télécabine ou à pied. Impact diffus, surtout au retour en fin d'après-midi."},
+{nom:"Mélodies d'automne",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-09-19",f:"2026-10-12",lieu:"Village piétonnier Tremblant (12 km)",cat:"Festival",imp:"Léger",vis:1200,pct:22,statut:"Décalé",note:"Remplace l'entrée « Rythmes d'automne » : le nom officiel et les dates ont changé. Concerts les fins de semaine, place Saint-Bernard, deux représentations par jour."},
+{nom:"La Classique Tremblant",url:"https://www.tremblant.ca/quoi-faire/evenements/la-classique-tremblant",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-10-17",f:"2026-10-17",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Moyen",vis:1500,pct:35,statut:"Nouveau",note:"12e édition, course en sentier de 1 à 30 km. Départs dès 6 h 30 : ouverture déjeuner à renforcer, pic au retour entre 10 h et midi."},
+{nom:"Halloween Tremblant",url:"https://www.tremblant.ca/quoi-faire/evenements/halloween",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-10-31",f:"2026-10-31",lieu:"Village piétonnier Tremblant (12 km)",cat:"Familial",imp:"Léger",vis:1200,pct:25,statut:"Nouveau",note:"Animation, stations de bonbons et maquillages de 10 h à 15 h. Public familial, sortie de site vers midi et en début d'après-midi."},
+{nom:"Ouverture de la saison de ski",url:"https://www.tremblant.ca/quoi-faire/evenements/ouverture-saison-ski",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-11-26",f:"2026-11-26",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Moyen",vis:1800,pct:30,statut:"Nouveau",note:"Lancement de la saison 2026-2027 dès 8 h au pied de la télécabine Express. Opportunité déjeuner. ATTENTION : deuxième jour de la formation gérant de Romuald, couverture à verrouiller avec Damien."},
+{nom:"Coupe du monde Tremblant PwC",url:"https://www.tremblant.ca/quoi-faire/evenements/coupe-du-monde-tremblant",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-12-05",f:"2026-12-06",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Fort",vis:7000,pct:60,statut:"Nouveau",note:"Audi FIS Coupe du monde de ski alpin, slalom géant féminin. Événement international sur deux jours, en pleine saison de ski. Le plus gros week-end de décembre avec le 24h."},
+{nom:"Journée Super Démo",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-12-19",f:"2026-12-19",lieu:"Village piétonnier Tremblant (12 km)",cat:"Familial",imp:"Léger",vis:800,pct:20,statut:"Nouveau",note:"Essais de skis et planches 2026-27, 8 h à 15 h 30. Gratuit. Premier des trois rendez-vous de la saison."},
+{nom:"Journée Super Démo",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-01-09",f:"2027-01-09",lieu:"Village piétonnier Tremblant (12 km)",cat:"Familial",imp:"Léger",vis:800,pct:20,statut:"Confirmé",note:"Deuxième rendez-vous Super Démo de la saison, 8 h à 15 h 30."},
+{nom:"Journée Super Démo",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-02-20",f:"2027-02-20",lieu:"Village piétonnier Tremblant (12 km)",cat:"Familial",imp:"Léger",vis:800,pct:20,statut:"Confirmé",note:"Troisième et dernier Super Démo de la saison, 8 h à 15 h 30. Semaine de relâche approchante : volume déjà élevé."},
+{nom:"Traversée nocturne (The North Face)",url:"https://www.tremblant.ca/quoi-faire/evenements/traversee-nocturne",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-02-27",f:"2027-02-27",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Léger",vis:700,pct:22,statut:"Confirmé",note:"Ski de randonnée en soirée, ascension puis descente sous les étoiles. Souper servi sur place au Chalet des Voyageurs : peu de report vers le restaurant, sauf départs en fin de soirée."},
+{nom:"Party au sommet Corona",url:"https://www.tremblant.ca/quoi-faire/evenements/party-au-sommet",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-04-17",f:"2027-04-17",lieu:"Sommet Tremblant (12 km)",cat:"Festival",imp:"Moyen",vis:2500,pct:35,statut:"Confirmé",note:"Fête de fin de saison de ski, midi à 16 h au sommet, artistes québécois. Fort passage au retour entre 16 h et 19 h."},
+{nom:"BLOOMAFEST Tremblant",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-05-08",f:"2027-05-09",lieu:"Station Tremblant (12 km)",cat:"Festival",imp:"Moyen",vis:2800,pct:38,statut:"Confirmé",note:"3e édition. Ouvre la saison estivale. Volume estimé d'après 2026, programmation non publiée."},
+{nom:"Festival International du Blues",url:"https://bluestremblant.ca/",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-07-07",f:"2027-07-11",lieu:"Village piétonnier Tremblant (12 km)",cat:"Festival",imp:"Fort",vis:5200,pct:60,statut:"Confirmé",note:"Plus de 100 spectacles gratuits sur 5 jours. Impact chaque soir, très fort le week-end."},
+{nom:"NBHPA Dek Hockey",url:"https://www.nbhpa.com",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-06-02",f:"2027-06-06",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Fort",vis:3200,pct:52,statut:"À confirmer",note:"Championnat provincial 2027 annoncé, dates non publiées. Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"Festi-Bière Mont-Blanc",url:"https://mont-blanc.quebec/festi-biere/",map:"Parc de la Gare, 420 Rue de la Gare, Mont-Blanc, QC",d:"2027-06-11",f:"2027-06-12",lieu:"Ski Mont-Blanc (8 km)",cat:"Festival",imp:"Fort",vis:3800,pct:55,statut:"À confirmer",note:"10e édition. Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"Spartan Race",url:"https://ca.spartan.com/fr/races/mont-tremblant",map:"Chalet du Versant Nord, 2590 Chemin Charles-Duncan, Mont-Tremblant, QC",d:"2027-06-12",f:"2027-06-13",lieu:"Station Tremblant, versant Nord (12 km)",cat:"Sportif",imp:"Fort",vis:4500,pct:58,statut:"À confirmer",note:"Chevauchement probable avec le Festi-Bière, comme en 2026. Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"IRONMAN 70.3 Mont-Tremblant",url:"https://www.ironman.com/im703-mont-tremblant",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-06-19",f:"2027-06-20",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Fort",vis:6500,pct:65,statut:"À confirmer",note:"Mi-juin 2027 annoncé sans date ferme. Routes partiellement fermées le dimanche matin : impact livraisons. Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"Festi Jazz Mont-Tremblant",url:"https://jazztremblant.com",map:"Espace public, 885 Rue de Saint-Jovite, Mont-Tremblant, QC",d:"2027-07-28",f:"2027-08-01",lieu:"Centre-ville St-Jovite (300 m)",cat:"Festival",imp:"Fort",vis:4800,pct:70,statut:"À confirmer",note:"20e édition. L'événement le plus proche du restaurant, scènes à l'Espace public. Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"Salsa Tremblant",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-08-20",f:"2027-08-22",lieu:"Village piétonnier Tremblant (12 km)",cat:"Festival",imp:"Moyen",vis:2200,pct:40,statut:"À confirmer",note:"Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"Rodéofest Mont Blanc",url:"https://skimontblanc.com/evenement/rodeofest_montblanc/",map:"Ski Mont-Blanc, 1006 Route 117, Saint-Faustin-Lac-Carré, QC",d:"2027-08-27",f:"2027-08-28",lieu:"Ski Mont-Blanc (8 km)",cat:"Festival",imp:"Fort",vis:6000,pct:55,statut:"À confirmer",note:"6e édition. La date a bougé chaque année depuis 2022 (août, septembre, puis août) : à vérifier impérativement, l'édition 2026 est passée inaperçue. Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"Fête de la musique Tremblant",url:"https://fetedelamusiquetremblant.com",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-09-03",f:"2027-09-06",lieu:"Village piétonnier Tremblant (12 km)",cat:"Festival",imp:"Fort",vis:4000,pct:55,statut:"À confirmer",note:"Long week-end de la fête du Travail. Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"24h Tremblant",url:"https://www.24htremblant.com",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2027-12-10",f:"2027-12-12",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Fort",vis:4500,pct:58,statut:"À confirmer",note:"27e édition. Passage continu jour et nuit pendant l'événement. Date estimée d'après la récurrence des éditions précédentes. Non publiée par l'organisateur au 6 septembre 2026. À revérifier en février 2027."},
+{nom:"BLOOMAFEST Tremblant",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-05-08",f:"2026-05-09",lieu:"Station Tremblant (12 km)",cat:"Festival",imp:"Moyen",vis:2500,pct:35,statut:"Nouveau",note:"2e édition, têtes d'affiche majeures (Half Moon Run, The Beaches). Ajout rétroactif pour l'archive annuelle. Volume estimé, pas de chiffre officiel."},
+{nom:"Trail du Mont-Blanc",url:"https://skimontblanc.com",map:"Ski Mont-Blanc, 1006 Route 117, Saint-Faustin-Lac-Carré, QC",d:"2026-05-30",f:"2026-05-30",lieu:"Ski Mont-Blanc (8 km)",cat:"Sportif",imp:"Moyen",vis:800,pct:35,statut:"Nouveau",note:"Course en sentier au Mont-Blanc. Coureurs et accompagnateurs passent sur la 117 — pic au retour en après-midi."},
+{nom:"NBHPA Dek Hockey",url:"https://www.tremblant.ca/quoi-faire/evenements/festival-nbhpa",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-06-03",f:"2026-06-07",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Fort",vis:3200,pct:52,statut:"Décalé",note:"Festival de dek hockey sur 5 jours (vs 3 en 2025). Achalandage en soirée et entre les matchs, étalé sur toute la semaine."},
+{nom:"Festi-Bière Mont-Blanc",url:"https://mont-blanc.quebec/festi-biere/",map:"Parc de la Gare, 420 Rue de la Gare, Mont-Blanc, QC",d:"2026-06-12",f:"2026-06-13",lieu:"Ski Mont-Blanc (8 km)",cat:"Festival",imp:"Fort",vis:3800,pct:55,statut:"Décalé",note:"Festival brassicole, parc de la Gare. Vendredi 16h-23h, samedi 13h-23h. Fort passage en fin de soirée et le lendemain midi. ATTENTION : chevauche la Spartan le samedi 13."},
+{nom:"Spartan Race",url:"https://ca.spartan.com/fr/races/mont-tremblant",map:"Chalet du Versant Nord, 2590 Chemin Charles-Duncan, Mont-Tremblant, QC",d:"2026-06-13",f:"2026-06-14",lieu:"Station Tremblant, versant Nord (12 km)",cat:"Sportif",imp:"Fort",vis:4500,pct:58,statut:"Décalé",note:"Premier week-end Trifecta de la saison 2026 (Sprint, Super, Beast, Ultra, Kids) : volume au-dessus d'une année normale. Pic le matin des départs (6h-9h) et retours dès 13h. Week-end critique avec le Festi-Bière."},
+{nom:"IRONMAN 70.3 Mont-Tremblant",url:"https://www.ironman.com/im703-mont-tremblant",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-06-20",f:"2026-06-21",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Fort",vis:6500,pct:65,statut:"Décalé",note:"Deux courses : Triathlon 5150 samedi (1 800 athlètes) et 70.3 dimanche (3 700 athlètes), plus familles et supporteurs. Routes partiellement fermées dimanche matin — prévoir l'impact sur les livraisons."},
+{nom:"BMX Sensation",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-06-26",f:"2026-06-28",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Moyen",vis:1500,pct:38,statut:"Nouveau",note:"Compétition BMX, public jeune et familial. Achalandage en après-midi."},
+{nom:"Les Rythmes Tremblant (série)",url:"https://lesrythmestremblant.ca",map:"Place Saint-Bernard, Village piétonnier Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-07-04",f:"2026-08-29",lieu:"Village piétonnier Tremblant (12 km)",cat:"Festival",imp:"Léger",vis:1500,pct:20,statut:"Nouveau",note:"Concerts gratuits Place Saint-Bernard, surtout les samedis soirs. Impact diffus, sauf le final 28-29 août : Zachary Richard puis Louis-Jean Cormier — passage soutenu ces deux soirs."},
+{nom:"Festival du Blues",url:"https://bluestremblant.ca/",map:"Village piétonnier Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-07-08",f:"2026-07-12",lieu:"Village piétonnier Tremblant (12 km)",cat:"Festival",imp:"Fort",vis:5200,pct:60,statut:"Décalé",note:"5 jours consécutifs, concerts gratuits en plein air. Impact chaque soir, très fort le week-end. Public local + touristes."},
+{nom:"Rythmes Tremblant — New Country",url:"https://lesrythmestremblant.ca",map:"Village piétonnier Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-07-16",f:"2026-07-18",lieu:"Village piétonnier Tremblant (12 km)",cat:"Festival",imp:"Moyen",vis:2800,pct:42,statut:"Nouveau",note:"Concerts country gratuits. Clientèle régionale qui transite par la 117 en soirée."},
+{nom:"Vacances de la construction",url:"https://www.ccq.org/fr-CA/avantages-sociaux/dates-conges-vacances",map:"Corridor Route 117, Saint-Jovite (Mont-Tremblant), QC",d:"2026-07-19",f:"2026-08-01",lieu:"Corridor 117 (flux Montréal–Tremblant)",cat:"Familial",imp:"Fort",vis:45000,pct:55,statut:"Stable",note:"Congé obligatoire CCQ, deux semaines complètes : près de 200 000 travailleurs québécois en vacances, pic majeur de trafic touristique vers les Laurentides sur toute la période. Semaine 1 : 19–25 juil. — Semaine 2 : 26 juil.–1er août. Départs le week-end du 18–19 juillet ; retours massifs vers Montréal le week-end du 1er–2 août (renforcer midi et après-midi). Fin de période chevauchée par le Festi Jazz au centre-ville (29 juil.–2 août) : double affluence. Volume cumulé estimé ; dates officielles CCQ."},
+{nom:"Festi Jazz Mont-Tremblant",url:"https://jazztremblant.com/",map:"Espace public, 885 Rue de Saint-Jovite, Mont-Tremblant, QC",d:"2026-07-29",f:"2026-08-02",lieu:"Centre-ville St-Jovite (300 m)",cat:"Festival",imp:"Fort",vis:4800,pct:57,statut:"Décalé",note:"Scènes directement au centre-ville, à 300 m du restaurant. L'événement le plus proche de l'année — achalandage continu en soirée."},
+{nom:"Boréalys by UTMB",url:"https://borealys.utmb.world",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-08-14",f:"2026-08-16",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Fort",vis:4000,pct:50,statut:"Nouveau",note:"1re édition mondiale — seule étape UTMB à l'est des Rocheuses. Participants internationaux logés dans toute la région. Départs très tôt (3h-6h) : opportunité déjeuner."},
+{nom:"Salsa Tremblant",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Village piétonnier Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-08-21",f:"2026-08-23",lieu:"Village piétonnier Tremblant (12 km)",cat:"Festival",imp:"Moyen",vis:2500,pct:40,statut:"Décalé",note:"Festival latin gratuit, tout le village transformé. Soirées dansantes — passage au retour tard en soirée."},
+{nom:"Fête de la musique Tremblant",url:"https://fetedelamusiquetremblant.com",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-09-04",f:"2026-09-07",lieu:"Station Tremblant (12 km)",cat:"Festival",imp:"Fort",vis:3500,pct:48,statut:"Décalé",note:"Long week-end de la fête du Travail, 30+ concerts gratuits (dir. Angèle Dubeau). Familles + touristes."},
+{nom:"Saison des couleurs (période)",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Mont-Tremblant, QC",d:"2026-09-26",f:"2026-10-25",lieu:"Région Tremblant (0-20 km)",cat:"Familial",imp:"Fort",vis:30000,pct:45,statut:"Période",note:"Saison des couleurs : 5 fins de semaine de très fort trafic touristique sur la 117. Le plus gros volume cumulé de l'automne."},
+{nom:"Marché public St-Jovite",url:"https://vdmt.ca/evenements",map:"Centre-ville Saint-Jovite, Rue de Saint-Jovite, Mont-Tremblant, QC",d:"2026-06-13",f:"2026-09-26",lieu:"Centre-ville St-Jovite (1 km)",cat:"Local",imp:"Léger",vis:600,pct:18,statut:"Stable",note:"Tous les samedis matin en saison. Clientèle locale fidèle — impact léger mais récurrent sur le déjeuner."},
+{nom:"Théâtre Le Patriote",url:"https://www.theatrepatriote.com",map:"Théâtre Le Patriote, 258 Rue de Saint-Jovite, Mont-Tremblant, QC",d:"2026-06-01",f:"2026-12-31",lieu:"St-Jovite (2 km)",cat:"Local",imp:"Léger",vis:400,pct:30,statut:"Stable",note:"Spectacles en soirée toute l'année. Sorties de salle vers 22h-22h30 : opportunité fin de soirée selon programmation."},
+{nom:"Village de Noël Tremblant",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Village piétonnier Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-11-28",f:"2026-12-20",lieu:"Village piétonnier Tremblant (12 km)",cat:"Familial",imp:"Moyen",vis:8000,pct:35,statut:"Stable",note:"Fins de semaine de l'Avent : animation familiale, marchés. Trafic 117 soutenu les samedis."},
+{nom:"24h Tremblant",url:"https://www.24htremblant.com",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-12-11",f:"2026-12-13",lieu:"Station Tremblant (12 km)",cat:"Sportif",imp:"Fort",vis:4500,pct:55,statut:"Décalé",note:"4 500 participants en relais ski/course/marche + spectacles. Passage continu jour et nuit — renforcer le quart de nuit si ouvert."},
+{nom:"Réveillon du Nouvel An",url:"https://www.tremblant.ca/quoi-faire/evenements",map:"Station Mont-Tremblant, 1000 Chemin des Voyageurs, Mont-Tremblant, QC",d:"2026-12-31",f:"2026-12-31",lieu:"Station Tremblant (12 km)",cat:"Familial",imp:"Moyen",vis:6000,pct:30,statut:"Stable",note:"Feux d'artifice et festivités à la station. Fort passage en début de soirée à l'aller."}
+];
+const FERIES=[
+{nom:"Jour de l'An",d:"2027-01-01",note:"Vendredi férié. Vérifier les heures d'ouverture. Retours de vacanciers sur la 117."},
+{nom:"Vendredi saint",d:"2027-03-26",note:"Long week-end de Pâques, fin de saison de ski : trafic soutenu vers les stations."},
+{nom:"Lundi de Pâques",d:"2027-03-29",note:"Retours vers Montréal en après-midi."},
+{nom:"Journée nationale des patriotes",d:"2027-05-24",note:"Long week-end de mai : ouverture de la saison touristique."},
+{nom:"Fête nationale du Québec",d:"2027-06-24",note:"Jeudi férié. Célébrations locales à St-Jovite et Tremblant."},
+{nom:"Fête du Canada",d:"2027-07-01",note:"Jeudi férié. Vacances de la construction qui approchent."},
+{nom:"Fête du Travail",d:"2027-09-06",note:"Lundi férié, chevauche la Fête de la musique. Gros retours vers Montréal, pic 14 h-18 h."},
+{nom:"Action de grâce",d:"2027-10-11",note:"Lundi férié en pleine saison des couleurs. L'un des plus gros lundis de l'année."},
+{nom:"Noël",d:"2027-12-25",note:"Samedi. Vérifier les heures d'ouverture. Trafic vacanciers dès le 26."},
+{nom:"Lendemain de Noël",d:"2027-12-26",note:"Dimanche. Début de la semaine forte des Fêtes en station."},
+{nom:"Journée nationale des patriotes",d:"2026-05-18",note:"Long week-end de mai : début de la saison touristique, trafic 117 en hausse dès le vendredi soir."},
+{nom:"Fête nationale du Québec",d:"2026-06-24",note:"Mercredi férié. Célébrations locales à St-Jovite et Tremblant. Volume familial en journée."},
+{nom:"Fête du Canada",d:"2026-07-01",note:"Mercredi férié. Semaine de vacances de la construction qui approche — trafic touristique soutenu."},
+{nom:"Fête du Travail",d:"2026-09-07",note:"Lundi férié — chevauche la Fête de la musique. Très gros retours vers Montréal en après-midi : pic 14h-18h."},
+{nom:"Action de grâce",d:"2026-10-12",note:"Lundi férié en pleine saison des couleurs. L'un des plus gros lundis de l'année sur la 117."},
+{nom:"Noël",d:"2026-12-25",note:"Vérifier les heures d'ouverture du restaurant. Trafic vacanciers vers les stations dès le 26."},
+{nom:"Lendemain de Noël",d:"2026-12-26",note:"Férié fédéral. Début des vacances de ski : très fort trafic montant vers Tremblant."}
+];
+
+
+/* ================= ROUTEUR UNIFIÉ ================= */
+
+let vueActive = "journee";
+
+function aller(v){
+  vueActive = v;
+  document.querySelectorAll('#rail button[data-v]').forEach(b=>b.classList.toggle('actif', b.dataset.v===v));
+  document.getElementById('pageHeritage').classList.add('cache');
+  document.getElementById('page').classList.remove('cache');
+  ongletActif = (v==="journee") ? "journee" : v;
+  const z = document.getElementById('page');
+  if(v==="journee")        z.innerHTML = htmlJournee();
+  else if(v==="quart")     z.innerHTML = htmlQuart();
+  else if(v==="equipe")    z.innerHTML = htmlEquipe();
+  else if(v==="formation") z.innerHTML = htmlFormation();
+  else if(v==="calendrier")z.innerHTML = htmlCalendrierUnifie();
+  else if(v==="departement")z.innerHTML = htmlDepartement();
+  else if(v==="reglages")  z.innerHTML = htmlReglages();
+  majPastilles();
+  document.getElementById('corps').scrollTop = 0;
+}
+function rendre(){ if(document.getElementById('rail').classList.contains('cache')) return; aller(vueActive); }
+function rendreNav(){ majPastilles(); }
+function rendreBandeau(){}
+
+function majSync(etat){
+  const e=document.getElementById('etatSync'); if(!e) return;
+  e.textContent = etat==="ok" ? "Données à jour" : etat==="busy" ? "Synchronisation…" : "Hors ligne";
+  e.style.color = etat==="err" ? "#FF8A80" : "#71787E";
+}
+function majPastilles(){
+  const p1=document.getElementById('pastEquipe'), p2=document.getElementById('pastDept');
+  const n1=(data.punchs||[]).filter(p=>p.statut!=="Corrigé").length;
+  const mois=new Date().toISOString().slice(0,7);
+  const n2=(data.bulletins||[]).some(b=>b.mois===mois)?0:1;
+  p1.textContent=n1; p1.classList.toggle('cache', !n1);
+  p2.textContent=n2; p2.classList.toggle('cache', !n2);
+}
+
+/* ---------- Le quart : grille vers les vues héritées ---------- */
+const VUES_QUART = [
+  ["repartition","Plan de répartition","Positionnement de l'équipe"],
+  ["comptoir","Pré-quart comptoir","Vérifications d'ouverture"],
+  ["sav","Pré-quart service au volant","Vérifications d'ouverture"],
+  ["cuisine","Pré-quart cuisine","Vérifications d'ouverture"],
+  ["postquart","Post-quart","Transmission au leader entrant"],
+  ["plannings","Plannings","Règles et validateur de semaine"]
+];
+function htmlQuart(){
+  const cases = VUES_QUART.map(v=>
+    `<button class="case" onclick="ouvrirHeritage('${v[0]}')"><b>${v[1]}</b><span>${v[2]}</span></button>`).join("");
+  const auj = aujISO();
+  const enCours = EVENTS.filter(e => e.d <= auj && (e.f||e.d) >= auj);
+  const ferie   = FERIES.find(f => f.d === auj);
+  const aVenir  = EVENTS.filter(e => e.d > auj && e.d <= plusJours(auj,14))
+                        .sort((a,b)=>a.d.localeCompare(b.d));
+
+  let ctx = "";
+  if(ferie) ctx += `<div class="rangee tard"><span class="date">Férié</span><span class="quoi">
+      <span class="qui">${esc(ferie.nom)}</span><span class="prec">${esc(ferie.note||"")}</span></span></div>`;
+  for(const e of enCours){
+    ctx += `<div class="rangee${e.imp==="Fort"?" tard":""}"><span class="date">${esc(e.imp)}</span>
+      <span class="quoi"><span class="qui">${esc(e.nom)}</span>
+      <span class="prec">${esc(e.lieu||"")}${e.pct?" — "+e.pct+" % de passage estimé":""}${e.vis?", "+e.vis+" visiteurs":""}</span></span></div>`;
+  }
+  if(!ctx) ctx = `<div class="vide">Aucun événement régional aujourd'hui. Dotation normale sur les deux rushs, 11 h à 13 h et 17 h à 19 h.</div>`;
+
+  const suite = aVenir.slice(0,4).map(e=>`<div class="rangee"><span class="date">${fmtCourt(e.d)}</span>
+      <span class="quoi"><span class="qui">${esc(e.nom)}</span>
+      <span class="prec">${esc(e.lieu||"")}${e.pct?" — "+e.pct+" %":""}</span></span>
+      ${e.imp==="Fort"?'<span class="et tard">Fort</span>':""}</div>`).join("");
+
+  return `<h1 class="t">Le quart</h1><p class="st">Préparer, tenir, transmettre</p>
+    <div class="grille">${cases}</div>
+    <div class="bloc" style="margin-top:16px;"><h2>Contexte du jour</h2>${ctx}</div>
+    ${suite ? `<div class="bloc"><h2>À prévoir dans les 14 jours<em>${aVenir.length}</em></h2>${suite}</div>` : ""}`;
+}
+function ouvrirHeritage(id){
+  document.getElementById('page').classList.add('cache');
+  document.getElementById('pageHeritage').classList.remove('cache');
+  document.querySelectorAll('#heritage .vue-h').forEach(s=>s.style.display='none');
+  const el=document.getElementById('h-'+id);
+  if(el) el.style.display='block';
+  document.getElementById('corps').scrollTop=0;
+}
+function fermerHeritage(){ aller("quart"); }
+
+/* ---------- Calendrier unifié : échéances + événements ---------- */
+function htmlCalendrierUnifie(){
+  const auj=aujISO();
+  const items=[];
+  for(const e of collecterEcheances(400)){
+    items.push({d:e.date, t:e.txt, s:"equipe", tard:e.date<auj});
+  }
+  if(typeof EVENTS!=="undefined"){
+    for(const e of EVENTS){
+      if((e.f||e.d) < auj) continue;
+      items.push({d:e.d, t:e.nom, s:"region", lieu:e.lieu, imp:e.imp, pct:e.pct});
+    }
+  }
+  items.sort((a,b)=>a.d.localeCompare(b.d));
+  const grp={};
+  for(const it of items.slice(0,80)){ const k=it.d.slice(0,7); (grp[k]=grp[k]||[]).push(it); }
+  const corps=Object.keys(grp).map(ym=>`<div class="bloc"><h2>${fmtMois(ym)}<em>${grp[ym].length}</em></h2>`+
+    grp[ym].map(it=>`<div class="rangee${it.tard?" tard":""}">
+      <span class="date">${fmtCourt(it.d)}</span>
+      <span class="quoi"><span class="qui">${esc(it.t)}</span>
+      ${it.s==="region"?`<span class="prec">${esc(it.lieu||"")}${it.pct?" — "+it.pct+" % de passage estimé":""}</span>`:""}</span>
+      ${it.s==="region"&&it.imp==="Fort"?'<span class="et tard">Fort</span>':""}
+      </div>`).join("")+`</div>`).join("");
+  return `<h1 class="t">Calendrier</h1>
+    <p class="st">Les échéances de l'équipe et les événements de la région, au même endroit</p>
+    ${corps||'<div class="vide">Rien à venir.</div>'}`;
+}
+
+/* ---------- Accès ---------- */
+function tenterAcces(){
+  tenter();
+  const nom = (document.getElementById('qui')||{}).textContent || "";
+  if(nom && nom !== "22028"){ demarrerOutil(); }
+}
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && !document.getElementById('ecran-code').classList.contains('cache')) tenterAcces();
+});
+
+/* ---------- Démarrage ---------- */
+async function demarrerOutil(){
+  if(typeof initPlan==="function"){ try{ await initPlan(); }catch(e){ console.warn(e); } }
+  document.getElementById('ecran-code').classList.add('cache');
+  document.getElementById('rail').classList.remove('cache');
+  document.getElementById('corps').classList.remove('cache');
+  document.getElementById('page').innerHTML =
+    '<h1 class="t">Ma journée</h1><p class="st">Chargement des données…</p>';
+  // Données du personnel : espace privé, jamais dans ce fichier
+  if(!data) data = docVide("");
+  if(cfg && cfg.token && cfg.gistId){
+    try{
+      const distant = await lireGist();
+      data = fusionner(data, distant);
+      baseline = distant.updatedAt;
+      majSync("ok");
+      setInterval(()=>rafraichir(true), 45000);
+    }catch(e){
+      console.warn(e); majSync("err");
+    }
+  }else{
+    majSync("err");
+  }
+  if(typeof majRoster==="function"){ try{ await majRoster(); }catch(e){ console.warn(e); } }
+  aller("journee");
+}
+document.querySelectorAll('#rail button[data-v]').forEach(b=>
+  b.addEventListener('click',()=>aller(b.dataset.v)));
+
 </script>
 </body>
 </html>
