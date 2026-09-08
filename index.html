@@ -2225,7 +2225,7 @@ function importerDonnees(){
   const zone = $("zoneImport"); if(!zone) return;
   let bloc;
   try{ bloc = JSON.parse(zone.value); }
-  catch(e){ alert("Le texte collé n'est pas un bloc de données valide."); return; }
+  catch(e){ alert(!zone.value.trim() ? "La zone est vide. Utilise le bouton de choix de fichier au-dessus, c'est plus fiable que le copier-coller." : "Le texte colle n'est pas complet (" + zone.value.length + " caracteres lus). Utilise plutot le bouton de choix de fichier."); return; }
   data.employes = data.employes||[]; data.formations = data.formations||[]; data.taches = data.taches||[];
   let n = 0;
   const ajouter = (cle, liste) => {
@@ -2908,6 +2908,7 @@ function aller(v){
     let h = "";
     try{ h = htmlReglages(); }catch(e){ h = '<div class="section-titre"><h3>Reglages</h3></div>'; }
     z.innerHTML = h.replace('</div>', '</div>' + htmlConfigEspace());
+    ajouterImportFichier();
   }
   majPastilles();
   document.getElementById('corps').scrollTop = 0;
@@ -3010,6 +3011,31 @@ function htmlCalendrierUnifie(){
 
 
 
+
+/* ---------- Import par fichier, plus fiable que le collage sur iPad ---------- */
+function ajouterImportFichier(){
+  const zone = document.getElementById('zoneImport');
+  if(!zone || document.getElementById('fichierImport')) return;
+  const bloc = document.createElement('div');
+  bloc.style.marginBottom = '10px';
+  bloc.innerHTML =
+    '<div class="meta" style="margin-bottom:6px;"><b>Methode recommandee :</b> choisir directement le fichier donnees-a-importer.json.</div>' +
+    '<input type="file" id="fichierImport" accept=".json,application/json,text/plain">' +
+    '<div class="meta" style="margin-top:6px;">Ou, si tu preferes, colle le texte dans la zone ci-dessous.</div>';
+  zone.parentNode.parentNode.insertBefore(bloc, zone.parentNode);
+  document.getElementById('fichierImport').addEventListener('change', function(ev){
+    const f = ev.target.files && ev.target.files[0];
+    if(!f) return;
+    const lecteur = new FileReader();
+    lecteur.onload = function(){
+      zone.value = String(lecteur.result || "");
+      importerDonnees();
+    };
+    lecteur.onerror = function(){ alert("Lecture du fichier impossible."); };
+    lecteur.readAsText(f);
+  });
+}
+
 /* ---------- Integrite des donnees ---------- */
 const TABLEAUX = ["calendrier","mentorats","evaluations","bulletins","videos","metiers",
   "anniversaires","punchs","employeMois","documents","employes","formations","taches","deleted"];
@@ -3032,7 +3058,11 @@ function htmlConfigEspace(){
       : 'Non connecte. Les donnees restent seulement sur cet iPad et seront perdues si Safari vide son stockage.') +
     '</div>' +
     '<div class="champ" style="margin-top:10px;"><label>Jeton GitHub</label>' +
-    '<input type="password" id="cfgToken" placeholder="' + (c.token ? "Jeton enregistre, laisser vide pour le garder" : "ghp_...") + '"></div>' +
+    '<input type="text" id="cfgToken" autocomplete="off" autocorrect="off" ' +
+    'autocapitalize="off" spellcheck="false" name="jeton-gist-22028" ' +
+    'placeholder="' + (c.token ? "Jeton enregistre, laisser vide pour le garder" : "ghp_...") + '">' +
+    '<div class="meta">Doit commencer par ghp_ et faire une quarantaine de caracteres. ' +
+    'Si Safari a rempli ce champ tout seul, efface-le et colle le vrai jeton.</div></div>' +
     '<div class="champ"><label>Identifiant du gist</label>' +
     '<input type="text" id="cfgGist" value="' + esc(c.gistId || "") + '" placeholder="ex. 374f968ebf5ab9..."></div>' +
     '<div class="actions"><button class="mini-btn plein" onclick="connecterEspace()">Connecter</button>' +
@@ -3046,6 +3076,9 @@ async function connecterEspace(){
   const ancien = (typeof cfg==="object" && cfg) ? cfg : {};
   cfg = { token: t || ancien.token || "", gistId: g, pinHash: ancien.pinHash || "" };
   if(!cfg.token){ alert("Il manque le jeton GitHub."); return; }
+  if(cfg.token.indexOf("ghp_") !== 0){
+    if(!confirm("Ce jeton ne commence pas par ghp_.\n\nC'est peut-etre un mot de passe rempli par Safari, ou un jeton fine-grained, qui ne donne pas acces aux gists.\n\nEssayer quand meme ?")) return;
+  }
   localStorage.setItem(LS_KEY, JSON.stringify(cfg));
   await testerEspace();
 }
@@ -3062,8 +3095,19 @@ async function testerEspace(){
     rendre();
   }catch(e){
     majSync("err");
-    alert("Connexion impossible : " + (e && e.message ? e.message : e) +
-      "\n\nVerifie le jeton (droit gist) et l'identifiant.");
+    const m = (e && e.message) ? e.message : String(e);
+    let quoi;
+    if(m.indexOf("401") >= 0){
+      quoi = "GitHub refuse le jeton. Trois causes possibles :" +
+        "\n\n1. Le champ contient autre chose que le jeton, par exemple un mot de passe rempli par Safari. Efface-le et recolle." +
+        "\n\n2. Le jeton est de type fine-grained. Il faut un jeton classic." +
+        "\n\n3. Le jeton a expire ou a ete revoque. Verifie sur github.com/settings/tokens.";
+    }else if(m.indexOf("404") >= 0){
+      quoi = "Gist introuvable. Soit l'identifiant est errone, soit la case gist n'est pas cochee sur le jeton.";
+    }else{
+      quoi = "Verifie ta connexion, puis le jeton et l'identifiant.";
+    }
+    alert("Connexion impossible : " + m + "\n\n" + quoi);
   }
 }
 
