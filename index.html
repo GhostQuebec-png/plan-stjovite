@@ -2703,7 +2703,7 @@ function htmlReglages(){
     <div class="champ" style="margin-top:8px;"><textarea id="zoneImport" rows="4" placeholder="Coller le bloc de données ici"></textarea></div>
     <button class="mini-btn plein" onclick="importerDonnees()">Importer</button></div>
   <div class="carte"><b>Espace partagé</b>
-    <div class="meta">Identifiant de l'espace (à transmettre à l'autre appareil avec le code d'accès) :<br><code style="font-size:13px;word-break:break-all;">${esc(cfg.gistId)}</code></div>
+    <div class="meta">Identifiant de l'espace (à transmettre à l'autre appareil avec le code d'accès) :<br><code style="font-size:13px;word-break:break-all;">${esc((cfg&&cfg.gistId)||'non connecte')}</code></div>
     <div class="actions"><button class="mini-btn" onclick="rafraichir()">Forcer la synchronisation</button>
     <button class="mini-btn danger" onclick="reconfigurer()">Réinitialiser cet appareil</button></div></div>`;
 }
@@ -2903,7 +2903,11 @@ function aller(v){
   else if(v==="formation") z.innerHTML = htmlFormation();
   else if(v==="calendrier")z.innerHTML = htmlCalendrierUnifie();
   else if(v==="departement")z.innerHTML = htmlDepartement();
-  else if(v==="reglages")  z.innerHTML = htmlReglages();
+  else if(v==="reglages"){
+    let h = "";
+    try{ h = htmlReglages(); }catch(e){ h = '<div class="section-titre"><h3>Reglages</h3></div>'; }
+    z.innerHTML = h.replace('</div>', '</div>' + htmlConfigEspace());
+  }
   majPastilles();
   document.getElementById('corps').scrollTop = 0;
 }
@@ -2999,6 +3003,52 @@ function htmlCalendrierUnifie(){
   return `<h1 class="t">Calendrier</h1>
     <p class="st">Les échéances de l'équipe et les événements de la région, au même endroit</p>
     ${corps||'<div class="vide">Rien à venir.</div>'}`;
+}
+
+
+/* ---------- Espace de sauvegarde ---------- */
+function htmlConfigEspace(){
+  const c = (typeof cfg==="object" && cfg) ? cfg : {};
+  const branche = !!(c.token && c.gistId);
+  return '<div class="carte"><b>Espace de sauvegarde</b>' +
+    '<div class="meta">' + (branche
+      ? 'Connecte. Les donnees sont sauvegardees hors de cet appareil.'
+      : 'Non connecte. Les donnees restent seulement sur cet iPad et seront perdues si Safari vide son stockage.') +
+    '</div>' +
+    '<div class="champ" style="margin-top:10px;"><label>Jeton GitHub</label>' +
+    '<input type="password" id="cfgToken" placeholder="' + (c.token ? "Jeton enregistre, laisser vide pour le garder" : "ghp_...") + '"></div>' +
+    '<div class="champ"><label>Identifiant du gist</label>' +
+    '<input type="text" id="cfgGist" value="' + esc(c.gistId || "") + '" placeholder="ex. 374f968ebf5ab9..."></div>' +
+    '<div class="actions"><button class="mini-btn plein" onclick="connecterEspace()">Connecter</button>' +
+    (branche ? '<button class="mini-btn" onclick="testerEspace()">Tester</button>' : '') +
+    '</div></div>';
+}
+async function connecterEspace(){
+  const t = document.getElementById('cfgToken').value.trim();
+  const g = document.getElementById('cfgGist').value.trim();
+  if(!g){ alert("Il manque l'identifiant du gist."); return; }
+  const ancien = (typeof cfg==="object" && cfg) ? cfg : {};
+  cfg = { token: t || ancien.token || "", gistId: g, pinHash: ancien.pinHash || "" };
+  if(!cfg.token){ alert("Il manque le jeton GitHub."); return; }
+  localStorage.setItem(LS_KEY, JSON.stringify(cfg));
+  await testerEspace();
+}
+async function testerEspace(){
+  majSync("busy");
+  try{
+    const distant = await lireGist();
+    data = fusionner(data || docVide(""), distant);
+    baseline = distant.updatedAt;
+    majSync("ok");
+    alert("Espace connecte. " +
+      ((data.employes||[]).length) + " employes, " +
+      ((data.evaluations||[]).length) + " evaluations.");
+    rendre();
+  }catch(e){
+    majSync("err");
+    alert("Connexion impossible : " + (e && e.message ? e.message : e) +
+      "\n\nVerifie le jeton (droit gist) et l'identifiant.");
+  }
 }
 
 /* ---------- Filet de securite ---------- */
