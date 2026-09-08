@@ -2892,6 +2892,7 @@ let vueActive = "journee";
 
 function aller(v){
   vueActive = v;
+  data = normaliser(data);
   document.querySelectorAll('#rail button[data-v]').forEach(b=>b.classList.toggle('actif', b.dataset.v===v));
   document.getElementById('pageHeritage').classList.add('cache');
   document.getElementById('page').classList.remove('cache');
@@ -2922,9 +2923,11 @@ function majSync(etat){
 }
 function majPastilles(){
   const p1=document.getElementById('pastEquipe'), p2=document.getElementById('pastDept');
-  const n1=(data.punchs||[]).filter(p=>p.statut!=="Corrigé").length;
+  if(!p1||!p2) return;
+  const d = (data && typeof data==="object") ? data : {};
+  const n1=(d.punchs||[]).filter(p=>p.statut!=="Corrigé").length;
   const mois=new Date().toISOString().slice(0,7);
-  const n2=(data.bulletins||[]).some(b=>b.mois===mois)?0:1;
+  const n2=(d.bulletins||[]).some(b=>b.mois===mois)?0:1;
   p1.textContent=n1; p1.classList.toggle('cache', !n1);
   p2.textContent=n2; p2.classList.toggle('cache', !n2);
 }
@@ -3006,6 +3009,19 @@ function htmlCalendrierUnifie(){
 }
 
 
+
+/* ---------- Integrite des donnees ---------- */
+const TABLEAUX = ["calendrier","mentorats","evaluations","bulletins","videos","metiers",
+  "anniversaires","punchs","employeMois","documents","employes","formations","taches","deleted"];
+function normaliser(d){
+  if(!d || typeof d !== "object") d = docVide("");
+  if(!d.meta || typeof d.meta !== "object") d.meta = {delaiRappel:7, ts:Date.now()};
+  for(const t of TABLEAUX){ if(!Array.isArray(d[t])) d[t] = []; }
+  if(!d.version) d.version = 1;
+  if(!d.updatedAt) d.updatedAt = Date.now();
+  return d;
+}
+
 /* ---------- Espace de sauvegarde ---------- */
 function htmlConfigEspace(){
   const c = (typeof cfg==="object" && cfg) ? cfg : {};
@@ -3036,8 +3052,8 @@ async function connecterEspace(){
 async function testerEspace(){
   majSync("busy");
   try{
-    const distant = await lireGist();
-    data = fusionner(data || docVide(""), distant);
+    const distant = normaliser(await lireGist());
+    data = normaliser(fusionner(normaliser(data), distant));
     baseline = distant.updatedAt;
     majSync("ok");
     alert("Espace connecte. " +
@@ -3097,12 +3113,12 @@ async function demarrerOutil(){
   document.getElementById('corps').classList.remove('cache');
   document.getElementById('page').innerHTML =
     '<h1 class="t">Ma journee</h1><p class="st">Chargement des donnees...</p>';
-  if(!data) data = docVide("");
+  data = normaliser(data);
   if(typeof initPlan==="function"){ try{ await initPlan(); }catch(e){ signaler(e,"plan de quart"); } }
   if(cfg && cfg.token && cfg.gistId){
     try{
-      const distant = await lireGist();
-      data = fusionner(data, distant);
+      const distant = normaliser(await lireGist());
+      data = normaliser(fusionner(normaliser(data), distant));
       baseline = distant.updatedAt;
       majSync("ok");
       setInterval(()=>rafraichir(true), 45000);
