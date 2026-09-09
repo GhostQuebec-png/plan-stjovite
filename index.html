@@ -65,7 +65,7 @@ nav .bas{margin-top:auto; padding:14px 18px 0; font-size:11px; color:#71787E;}
 nav .bas button{padding:6px 0; font-size:11.5px; color:#71787E; border:0;}
 
 main{flex:1; min-width:0; overflow-y:auto; height:100vh;}
-.page{max-width:800px; padding:26px 30px 80px;}
+.page{max-width:1240px; padding:26px 32px 80px;}
 h1.t{font-size:27px; margin:0 0 3px; letter-spacing:-.5px; font-weight:700;}
 p.st{color:var(--sourd); font-size:14px; margin:0 0 22px;}
 
@@ -149,9 +149,68 @@ p.st{color:var(--sourd); font-size:14px; margin:0 0 22px;}
   h1.t{font-size:23px;}
   .tete .grand{font-size:24px;}
 }
-@media print{
-  nav{display:none;} main{height:auto; overflow:visible;} .page{padding:0; max-width:none;}
+
+/* ---- Deux colonnes sur grand ecran, une seule sinon ---- */
+@media (min-width:1000px){
+  .colonnes{column-count:2; column-gap:18px;}
+  .colonnes>.carte, .colonnes>.j-bloc, .colonnes>.bloc{
+    break-inside:avoid; -webkit-column-break-inside:avoid; display:inline-block; width:100%;}
 }
+
+/* ---- Vues de quart : pleine largeur, elles sont concues pour ca ---- */
+#pageHeritage{max-width:none; padding:18px 22px 60px;}
+#heritage .page{max-width:none !important; padding:0 !important;}
+#heritage .feuille{max-width:none;}
+/* aucun texte ne doit deborder de sa boite */
+#heritage .el, #heritage .case, #heritage .lbl-entete, #heritage .col-sect{
+  overflow:hidden; text-overflow:ellipsis;}
+#heritage .lbl-entete, #heritage .col-sect, #heritage .lbl-station{
+  white-space:nowrap; line-height:1.05;}
+
+
+/* ---- Ajustement des libelles du plan : plus aucun texte ne deborde ---- */
+#heritage #h-repartition .el{min-width:0;}
+@media (max-width:700px){
+  #heritage #h-repartition .board-wrap{min-width:680px;}
+  #pageHeritage{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+}
+
+/* ---- Impression ---- */
+@media print{
+  /* le chassis est en flex plein ecran : il faut le remettre en flux normal pour paginer */
+  html,body{background:#fff !important; height:auto !important; display:block !important;
+    margin:0 !important; padding:0 !important;}
+  main{display:block !important; width:auto !important;}
+  nav, .retour, .sous-barre, .btn-ajout, .mini-btn, .j-ajout, .ajout,
+  #ecran-code, .voile{display:none !important;}
+  main{height:auto !important; overflow:visible !important;}
+  .page{max-width:none !important; padding:0 !important;}
+  #pageHeritage{overflow:visible !important; padding:0 !important;}
+  .bloc, .carte, .j-bloc{break-inside:avoid; page-break-inside:avoid; box-shadow:none;}
+  a[href]:after{content:"";}
+
+  /* Plan de repartition : le tableau seul, sur une page paysage */
+  #h-repartition .equipe-bloc, #h-repartition .equipe-titre, #h-repartition .jeton,
+  #h-repartition .aide, #h-repartition .onglets, #h-repartition .actions,
+  #h-repartition input[type=text], #h-repartition button{display:none !important;}
+  #h-repartition h1{font-size:11pt !important; margin:0 0 2mm !important;}
+  #h-repartition .board-wrap{height:183mm !important; width:auto !important;
+    max-width:100% !important; min-width:0 !important; margin:0 auto !important;
+    border-radius:0 !important;}
+
+  /* Listes de quart : compactees pour tenir sur une page */
+  #h-comptoir, #h-sav, #h-cuisine, #h-postquart{font-size:8.5pt !important;}
+  #h-comptoir .ligne, #h-sav .ligne, #h-cuisine .ligne, #h-postquart .ligne{
+    padding:1mm 2mm !important; min-height:0 !important;}
+  #h-comptoir .bloc-titre, #h-sav .bloc-titre, #h-cuisine .bloc-titre, #h-postquart .bloc-titre{
+    padding:1.1mm 2mm !important; font-size:8pt !important;}
+  #h-comptoir h1, #h-sav h1, #h-cuisine h1, #h-postquart h1{
+    font-size:12pt !important; margin:0 0 2mm !important;}
+  #h-comptoir .ck, #h-sav .ck, #h-cuisine .ck, #h-postquart .ck{
+    width:3.4mm !important; height:3.4mm !important;}
+  #heritage .feuille{padding:0 !important; box-shadow:none !important; border:0 !important;}
+}
+
 
 /* ============ CSS hérité : vues de quart ============ */
   :root{
@@ -2007,7 +2066,8 @@ const MODULES = {
   evaluations:{label:"Évaluations", array:"evaluations",
     fields:[
       {k:"employe",label:"Employé",type:"text",req:1},
-      {k:"type",label:"Type",type:"select",options:["Équipier","Instructeur / Leader d'équipe","Leader de quart","Maintenance","Probation","Point de contact 30 j","Point de contact 60 j","Point de contact 90 j"]},
+      {k:"type",label:"Nature de l'évaluation",type:"select",options:["Rendement","Salaire","Probation","Point de contact 30 j","Point de contact 60 j","Point de contact 90 j","À définir"]},
+      {k:"formulaire",label:"Formulaire à utiliser",type:"select",options:["Équipier / instructeur / leader d'équipe","Leader de quart","Maintenance","Probation","Salarié — fait par Damien","À déterminer"]},
       {k:"date",label:"Date prévue",type:"date",req:1},
       {k:"statut",label:"Statut",type:"select",options:["À planifier","Planifiée","Faite","Signée"]},
       {k:"resp",label:"Responsable",type:"select",options:PERSONNES},
@@ -2208,7 +2268,7 @@ function collecterEcheances(delaiForce){
   const auj = aujISO(); const lim = plusJours(auj, delai);
   const out = [];
   for(const e of data.calendrier) if(!e.fait && e.date<=lim) out.push({date:e.date,txt:`${e.titre} (calendrier${e.type?" — "+e.type:""})`,retard:e.date<auj});
-  for(const e of data.evaluations) if(e.statut!=="Faite"&&e.statut!=="Signée"&&e.date<=lim) out.push({date:e.date,txt:`Évaluation ${e.employe} — ${e.type||""}`,retard:e.date<auj});
+  for(const e of data.evaluations) if(e.statut!=="Faite"&&e.statut!=="Signée"&&e.date<=lim) out.push({date:e.date,txt:`Évaluation ${e.employe} — ${e.type||"NATURE À DÉFINIR"}`+(e.formulaire?` · formulaire ${e.formulaire}`:""),retard:e.date<auj});
   for(const m of data.mentorats){const p=prochaineEtapeMentorat(m);if(p&&p.date<=lim)out.push({date:p.date,txt:`Mentorat ${m.equipier} — ${p.etape} (${p.manque.join(" + ")})`,retard:p.date<auj});}
   for(const a of data.anniversaires){const d=prochainAnniv(a.date);if(d<=lim)out.push({date:d,txt:`Anniversaire de ${a.nom}`,retard:false});}
   for(const p of data.punchs) if(p.statut!=="Corrigé") out.push({date:p.date,txt:`Punch à corriger — ${p.employe} (${p.motif})`,retard:p.date<auj});
@@ -2340,11 +2400,15 @@ function htmlEvaluations(){
       grp[ym].map(e=>'<div class="carte'+(e.date<auj?" carte-retard":"")+'">'+
       '<div class="titre-ligne"><b>'+esc(e.employe)+'</b>'+
       (e.date<auj?'<span class="etiquette rouge">En retard</span>':"")+'</div>'+
-      '<div class="meta">'+fmtDate(e.date)+' · '+esc(e.type||"type à définir")+(e.resp?" · "+esc(e.resp):"")+'</div>'+
+      '<div class="meta">'+fmtDate(e.date)+' · <b>'+esc(e.type||"NATURE À DÉFINIR")+'</b>'+
+        (e.formulaire?' · formulaire '+esc(e.formulaire):' · formulaire à déterminer')+
+        (e.resp?' · '+esc(e.resp):'')+'</div>'+
       (e.derniereNote?'<div class="meta fin">Dernière : '+(e.derniere?fmtDate(e.derniere)+" — ":"")+
         esc(e.derniereNote)+(e.taux?" — "+esc(e.taux)+" $/h":"")+'</div>':"")+
       (e.notes?'<div class="meta fin">'+esc(e.notes)+'</div>':"")+
-      '<div class="actions"><button class="mini-btn plein" onclick="marquerEval(\''+e.id+'\')">Marquer faite</button>'+
+      '<div class="actions"><button class="mini-btn plein" onclick="preparerFormulaire(\''+e.id+'\')">Formulaire</button>'+
+      '<button class="mini-btn" onclick="voirAugmentations(\''+e.id+'\')">Augmentations</button>'+
+      '<button class="mini-btn" onclick="marquerEval(\''+e.id+'\')">Faite</button>'+
       '<button class="mini-btn" onclick="ouvrirForm(\'evaluations\',\''+e.id+'\')">Modifier</button>'+
       '<button class="mini-btn danger" onclick="supprimer(\'evaluations\',\''+e.id+'\')">Supprimer</button></div></div>').join("");
   }).join("");
@@ -2415,12 +2479,12 @@ function htmlFormManques(){
 let sousDept="bulletins";
 function allerDept(k){sousDept=k;rendre();}
 function htmlDepartement(){
-  const ong=[["bulletins","Bulletins"],["fichesRole","Fiches de rôle"],["documents","Documents"]]
+  const ong=[["bulletins","Bulletins"],["formulaires","Formulaires"],["fichesRole","Fiches de rôle"]]
     .map(p=>'<button class="sous'+(p[0]===sousDept?" actif":"")+'" onclick="allerDept(\''+p[0]+'\')">'+p[1]+'</button>').join("");
   let c;
   if(sousDept==="bulletins")c=htmlBulletins();
-  else if(sousDept==="fichesRole")c=htmlFichesRole();
-  else c=htmlListe("documents");
+  else if(sousDept==="formulaires")c=htmlFormulaires();
+  else c=htmlFichesRole();
   return '<div class="sous-barre">'+ong+'</div>'+c;
 }
 
@@ -2886,6 +2950,210 @@ const FERIES=[
 ];
 
 
+/* ================= FORMULAIRES ET DOCUMENTS ================= */
+const DOSSIER_FORM = "formulaires/";
+
+/* Correspondance des champs, relevee dans chaque PDF */
+const FORMULAIRES = [
+  {id:"equipier", fichier:"evaluation-equipier-instructeur-leader-equipe.pdf",
+   titre:"Évaluation de rendement — équipier, instructeur, leader d'équipe",
+   cat:"Évaluation", quand:"Évaluation semestrielle ou révision salariale d'un équipier, d'un instructeur ou d'un leader d'équipe.",
+   champs:{nom:"Nom de lemployée", date:"Date de lévaluation", entree:"Date dentrée en fonction",
+           poste:"Poste actuel", gerant:"RendementNom dude la gérante", nature:"Liste déroulante2"}},
+  {id:"probation", fichier:"evaluation-probation.pdf",
+   titre:"Évaluation de probation",
+   cat:"Évaluation", quand:"Fin de la période de probation d'un nouvel employé.",
+   champs:{nom:"Nom de lemployée", date:"Date de lévaluation", entree:"Date dentrée en fonction",
+           poste:"Poste actuel", gerant:"PROBATIONNom dude la gérante"}},
+  {id:"leaderquart", fichier:"evaluation-leader-de-quart.pdf",
+   titre:"Évaluation de rendement — leader de quart et gérant de département",
+   cat:"Évaluation", quand:"Évaluation d'un leader de quart, d'un assistant ou d'un gérant de département.",
+   champs:{date:"Texte3", nom:"Texte5", gerant:"Texte6"}},
+  {id:"maintenance", fichier:"evaluation-maintenance.pdf",
+   titre:"Évaluation de rendement — maintenance",
+   cat:"Évaluation", quand:"Évaluation du préposé à l'entretien ménager.",
+   champs:{nom:"Nom", date:"Date de lévaluation", superieur:"Votre supérieure immédiate",
+           restaurant:"Numéro du restaurant", prochaine:"Date la prochaine évaluation"}},
+  {id:"suivi6", fichier:"suivi-6-mois-nouveau-poste.pdf",
+   titre:"Suivi après 6 mois au nouveau poste",
+   cat:"Promotion", quand:"Six mois après une promotion vers leader de quart, assistant ou gérant.",
+   champs:{date:"Texte3", nom:"Texte5", gerant:"Texte6"}},
+  {id:"suivi3", fichier:"suivi-3-mois-promotion.pdf",
+   titre:"Suivi après 3 mois — instructeur, leader d'équipe, expérience-client",
+   cat:"Promotion", quand:"Trois mois après une promotion vers instructeur, leader d'équipe ou spécialiste de l'expérience-client.",
+   champs:{}},
+  {id:"disciplinaire", fichier:"mesure-disciplinaire.pdf",
+   titre:"Rencontre avec employé — mesure disciplinaire",
+   cat:"Discipline", quand:"Avertissement écrit, suspension ou congédiement. Après la séance conseil, jamais avant d'avoir cherché la cause.",
+   champs:{nom:"Prénom et nom de lemployé", date:"Date de lévénement"}},
+  {id:"conseil", fichier:"seance-conseil.pdf",
+   titre:"Séance conseil",
+   cat:"Discipline", quand:"Première étape : avertissement oral documenté. À utiliser avant toute mesure plus grave.",
+   champs:{nom:"Prénom et nom de lemployé", date:"Date"}},
+  {id:"cotes", fichier:"guide-cotes-evaluation-2026.pdf",
+   titre:"Guide des cotes d'évaluation 2026 et augmentations",
+   cat:"Référence", quand:"À consulter avant d'attribuer une cote. Contient la grille de critères et les augmentations par poste.",
+   champs:{}}
+];
+
+/* Augmentations 2026, guide des cotes */
+const AUGMENTATIONS = {
+  "Leader de quart":            {normal:[0,0.20,0.40,0.55,0.75], max:[0,0.15,0.20,0.30,0.35]},
+  "Équipier":                   {normal:[0,0.15,0.25,0.35,0.50], max:[0,0.10,0.15,0.20,0.25]},
+  "Maintenance":                {normal:[0,0.15,0.25,0.35,0.50], max:[0,0.10,0.15,0.20,0.25]}
+};
+const COTES = ["Rendement inacceptable","Partiellement satisfaisant","Rendement bon",
+               "Rendement excellent","Rendement exceptionnel"];
+
+function bareme(formulaire){
+  if(formulaire && formulaire.indexOf("Leader de quart") === 0) return AUGMENTATIONS["Leader de quart"];
+  if(formulaire === "Maintenance") return AUGMENTATIONS["Maintenance"];
+  return AUGMENTATIONS["Équipier"];
+}
+function tauxNombre(t){
+  if(!t) return null;
+  const n = parseFloat(String(t).replace(",", ".").replace(/[^0-9.]/g, ""));
+  return isNaN(n) ? null : n;
+}
+function htmlAugmentations(e){
+  const b = bareme(e.formulaire), t = tauxNombre(e.taux);
+  const lignes = COTES.map(function(c,i){
+    const a = b.normal[i], m = b.max[i];
+    const nt = t !== null ? (t + a).toFixed(2).replace(".", ",") + " $" : "—";
+    const nm = t !== null ? (t + m).toFixed(2).replace(".", ",") + " $" : "—";
+    return '<div class="rangee"><span class="date">' + a.toFixed(2).replace(".", ",") + ' $</span>' +
+      '<span class="quoi"><span class="qui">' + c + '</span>' +
+      '<span class="prec">Nouveau taux : ' + nt + ' — au maximum de l\'échelle : ' + nm + ' (+' +
+      m.toFixed(2).replace(".", ",") + ' $)</span></span></div>';
+  }).join("");
+  return '<div class="bloc"><h2>Augmentations selon la cote<em>taux actuel ' +
+    (e.taux ? esc(e.taux) + ' $/h' : 'inconnu') + '</em></h2>' + lignes +
+    '<div class="aide">Calcul indicatif d\'après le guide des cotes 2026. À vérifier et à inscrire à la main sur le formulaire avant impression.</div></div>';
+}
+
+/* ---------- Pré-remplissage du PDF ---------- */
+let pdflibPret = null;
+function chargerPdfLib(){
+  if(pdflibPret) return pdflibPret;
+  pdflibPret = new Promise(function(ok, non){
+    if(window.PDFLib) return ok(window.PDFLib);
+    const s = document.createElement('script');
+    s.src = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
+    s.onload = function(){ ok(window.PDFLib); };
+    s.onerror = function(){ non(new Error("Impossible de charger l'outil PDF. Vérifie la connexion.")); };
+    document.head.appendChild(s);
+  });
+  return pdflibPret;
+}
+function sansAccentsMaj(s){
+  return String(s || "").replace(/[ÉÈÊË]/g, "E").replace(/[ÀÂÄ]/g, "A")
+    .replace(/[ÎÏ]/g, "I").replace(/[ÔÖ]/g, "O").replace(/[ÙÛÜ]/g, "U").replace(/Ç/g, "C");
+}
+function formulairePour(e){
+  const f = e.formulaire || "";
+  if(f.indexOf("Leader de quart") === 0) return FORMULAIRES.find(x => x.id === "leaderquart");
+  if(f === "Maintenance") return FORMULAIRES.find(x => x.id === "maintenance");
+  if(e.type === "Probation") return FORMULAIRES.find(x => x.id === "probation");
+  if(f.indexOf("Salarié") === 0) return FORMULAIRES.find(x => x.id === "leaderquart");
+  return FORMULAIRES.find(x => x.id === "equipier");
+}
+function posteDe(nomEval){
+  const p = String(nomEval).split(",");
+  const inv = p.length > 1 ? (p[1].trim() + " " + p[0].trim()) : nomEval;
+  const norm = function(s){ return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z]/g, "").split("").sort().join(""); };
+  const f = (data.formations || []).find(x => norm(x.nom) === norm(inv));
+  return f ? f.role : "";
+}
+async function preparerFormulaire(id){
+  const e = data.evaluations.find(x => x.id === id);
+  if(!e) return;
+  const modele = formulairePour(e);
+  if(!modele){ alert("Aucun formulaire ne correspond à cette évaluation."); return; }
+  try{
+    const PDFLib = await chargerPdfLib();
+    const r = await fetch(DOSSIER_FORM + modele.fichier);
+    if(!r.ok) throw new Error("Formulaire introuvable dans le depot (" + modele.fichier + ")");
+    const doc = await PDFLib.PDFDocument.load(await r.arrayBuffer());
+    const form = doc.getForm();
+    const c = modele.champs;
+    const mettre = function(cle, valeur){
+      if(!cle || !valeur) return;
+      try{ form.getTextField(cle).setText(sansAccentsMaj(valeur)); }catch(ex){
+        try{ form.getDropdown(cle).select(valeur); }catch(ex2){}
+      }
+    };
+    mettre(c.nom, e.employe);
+    mettre(c.date, fmtDate(e.date));
+    mettre(c.poste, posteDe(e.employe));
+    mettre(c.gerant, "Luce Romuald");
+    mettre(c.superieur, "Luce Romuald");
+    mettre(c.restaurant, "22028");
+    if(c.nature && e.type) mettre(c.nature, e.type === "Salaire" ? "Salariale" : "Rendement");
+    form.updateFieldAppearances && form.updateFieldAppearances();
+    const octets = await doc.save();
+    const nomFichier = "eval-" + String(e.employe).replace(/[,\s]+/g, "-").toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "") + "-" + e.date + ".pdf";
+    const lien = document.createElement('a');
+    lien.href = URL.createObjectURL(new Blob([octets], {type:"application/pdf"}));
+    lien.download = nomFichier;
+    document.body.appendChild(lien); lien.click(); lien.remove();
+    setTimeout(function(){ URL.revokeObjectURL(lien.href); }, 4000);
+  }catch(ex){
+    alert("Préparation impossible : " + (ex && ex.message ? ex.message : ex) +
+      "\n\nVérifie que le dossier formulaires est bien dans le dépôt.");
+  }
+}
+
+/* ---------- Bibliothèque de documents ---------- */
+function htmlFormulaires(){
+  const cats = {};
+  FORMULAIRES.forEach(function(f){ (cats[f.cat] = cats[f.cat] || []).push(f); });
+  const perso = (data.documents || []).filter(x => x.url);
+  let h = '<div class="section-titre"><h3>Formulaires et documents</h3>' +
+          '<span class="cpt">' + (FORMULAIRES.length + perso.length) + '</span></div>' +
+          '<div class="aide">Les formulaires d\'évaluation se pré-remplissent depuis la fiche de chaque évaluation, onglet Équipe.</div>';
+  Object.keys(cats).forEach(function(cat){
+    h += '<h4 class="mois-titre">' + esc(cat) + '<span>' + cats[cat].length + '</span></h4>';
+    h += cats[cat].map(function(f){
+      return '<div class="carte"><div class="titre-ligne"><b>' + esc(f.titre) + '</b></div>' +
+        '<div class="meta">' + esc(f.quand) + '</div>' +
+        '<div class="actions">' +
+        '<a class="mini-btn plein" href="' + DOSSIER_FORM + f.fichier + '" target="_blank" rel="noopener">Ouvrir</a>' +
+        '<a class="mini-btn" href="' + DOSSIER_FORM + f.fichier + '" download>Télécharger</a>' +
+        '</div></div>';
+    }).join("");
+  });
+  if(perso.length){
+    h += '<h4 class="mois-titre">Mes documents<span>' + perso.length + '</span></h4>';
+    h += perso.map(function(d){
+      return '<div class="carte"><div class="titre-ligne"><b>' + esc(d.titre || "Document") + '</b>' +
+        (d.categorie ? '<span class="etiquette bleu">' + esc(d.categorie) + '</span>' : '') + '</div>' +
+        (d.notes ? '<div class="meta">' + esc(d.notes) + '</div>' : '') +
+        '<div class="actions">' +
+        '<a class="mini-btn plein" href="' + esc(d.url) + '" target="_blank" rel="noopener">Ouvrir</a>' +
+        '<button class="mini-btn" onclick="ouvrirForm(\'documents\',\'' + d.id + '\')">Modifier</button>' +
+        '<button class="mini-btn danger" onclick="supprimer(\'documents\',\'' + d.id + '\')">Supprimer</button>' +
+        '</div></div>';
+    }).join("");
+  }
+  h += '<button class="btn-ajout" style="margin-top:16px;" onclick="ouvrirForm(\'documents\')">Ajouter un document ou un lien</button>';
+  return h;
+}
+
+function voirAugmentations(id){
+  const e = data.evaluations.find(x => x.id === id);
+  if(!e) return;
+  $("zoneModal").innerHTML =
+    '<div class="voile" onclick="if(event.target===this){fermerForm();}">' +
+    '<div class="modal"><h4>' + esc(e.employe) + '</h4>' +
+    '<div class="meta" style="margin-bottom:12px;">' + esc(e.formulaire || "") + '</div>' +
+    htmlAugmentations(e) +
+    '<div class="rangee-btn"><button class="btn-entrer" style="margin:0;" onclick="fermerForm();">Fermer</button></div>' +
+    '</div></div>';
+}
+
+
 /* ================= ROUTEUR UNIFIÉ ================= */
 
 let vueActive = "journee";
@@ -2971,15 +3239,109 @@ function htmlQuart(){
     <div class="bloc" style="margin-top:16px;"><h2>Contexte du jour</h2>${ctx}</div>
     ${suite ? `<div class="bloc"><h2>À prévoir dans les 14 jours<em>${aVenir.length}</em></h2>${suite}</div>` : ""}`;
 }
+
+/* ---------- Ajustement des libelles : aucun texte ne doit deborder ---------- */
+const SEL_AJUST = '.lbl-entete, .lbl-station, .col-sect, .col-fond, .tag-gris, .bar-dark, ' +
+                  '.pl-ecran, .equip, .equip-mini, .equip-strip, .equip-tall, .matrice-titre';
+let ajustEnCours = false;
+function ajusterTextes(racine){
+  if(ajustEnCours) return;
+  ajustEnCours = true;
+  try{
+    const els = (racine || document).querySelectorAll(SEL_AJUST);
+    for(const e of els){
+      e.style.fontSize = "";           // repartir de la valeur prevue par la feuille de style
+      if(e.clientWidth === 0) continue;
+      let t = parseFloat(getComputedStyle(e).fontSize);
+      if(!t || isNaN(t)) continue;
+      let garde = 0;
+      while((e.scrollWidth > e.clientWidth + 1 || e.scrollHeight > e.clientHeight + 1)
+            && t > 4 && garde++ < 40){
+        t = t - Math.max(0.25, t * 0.05);
+        e.style.fontSize = t.toFixed(2) + "px";
+      }
+    }
+  }finally{ ajustEnCours = false; }
+}
+let minuteurAjust = null;
+function ajusterPlusTard(){
+  clearTimeout(minuteurAjust);
+  minuteurAjust = setTimeout(function(){
+    const p = document.getElementById('pageHeritage');
+    if(p && !p.classList.contains('cache')) ajusterTextes(p);
+  }, 120);
+}
+window.addEventListener('resize', ajusterPlusTard);
+window.addEventListener('beforeprint', function(){
+  const p = document.getElementById('pageHeritage');
+  if(p && !p.classList.contains('cache')) ajusterTextes(p);
+});
+
+
+/* ---------- Mise a l'echelle pour tenir sur une feuille ---------- */
+const MM = 3.7795275591;
+function ajusterPourImpression(){
+  const z = document.getElementById('pageHeritage');
+  if(!z || z.classList.contains('cache')) return;
+  const vue = z.querySelector('.vue-h:not([style*="display: none"])');
+  if(!vue) return;
+  const paysage = (document.getElementById('styleImpression') || {textContent:""})
+                    .textContent.indexOf("landscape") >= 0;
+  const hauteurUtile = (paysage ? 194 : 281) * MM;
+  const largeurUtile = (paysage ? 281 : 194) * MM;
+
+  // simuler la largeur reelle du papier, sinon la mesure ne veut rien dire
+  const largeurAvant = z.style.width;
+  z.style.width = largeurUtile + "px";
+  vue.style.zoom = "";
+  ajusterTextes(z);
+
+  // reduire par petits pas jusqu'a tenir sur une page
+  let facteur = 1, garde = 0;
+  while(vue.getBoundingClientRect().height > hauteurUtile && facteur > 0.42 && garde++ < 30){
+    facteur -= 0.03;
+    vue.style.zoom = facteur.toFixed(3);
+    ajusterTextes(z);
+  }
+  z.style.width = largeurAvant;
+}
+
+function retablirApresImpression(){
+  const z = document.getElementById('pageHeritage');
+  if(!z) return;
+  z.querySelectorAll('.vue-h').forEach(function(v){ v.style.zoom = ""; });
+  ajusterTextes(z);
+}
+window.addEventListener('beforeprint', ajusterPourImpression);
+window.addEventListener('afterprint', retablirApresImpression);
+
+/* toutes les vues de quart sont plus larges que hautes : paysage, une feuille chacune */
+const FORMAT_IMPRESSION = {
+  repartition:"A4 landscape", plannings:"A4 landscape", comptoir:"A4 landscape",
+  sav:"A4 landscape", cuisine:"A4 landscape", postquart:"A4 landscape"
+};
+function reglerImpression(format){
+  let s = document.getElementById('styleImpression');
+  if(!s){ s = document.createElement('style'); s.id = 'styleImpression'; document.head.appendChild(s); }
+  s.textContent = '@page{size:' + format + '; margin:8mm;}';
+}
+reglerImpression("A4 portrait");
+
 function ouvrirHeritage(id){
+  reglerImpression(FORMAT_IMPRESSION[id] || "A4 portrait");
   document.getElementById('page').classList.add('cache');
   document.getElementById('pageHeritage').classList.remove('cache');
   document.querySelectorAll('#heritage .vue-h').forEach(s=>s.style.display='none');
   const el=document.getElementById('h-'+id);
   if(el) el.style.display='block';
   document.getElementById('corps').scrollTop=0;
+  requestAnimationFrame(function(){
+    const z = document.getElementById('pageHeritage');
+    ajusterTextes(z);
+    setTimeout(function(){ ajusterTextes(z); }, 250);
+  });
 }
-function fermerHeritage(){ aller("quart"); }
+function fermerHeritage(){ reglerImpression("A4 portrait"); aller("quart"); }
 
 /* ---------- Calendrier unifié : échéances + événements ---------- */
 function htmlCalendrierUnifie(){
